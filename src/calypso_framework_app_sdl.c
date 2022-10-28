@@ -436,7 +436,7 @@ void calypso_framework_app_sdl_run()
         // Run Early Update App Stage Systems
         for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
             if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE)
+                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE)
                 {
                     if (_calypso_framework_app_sdl_systems_states[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT)
                         _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
@@ -456,7 +456,7 @@ void calypso_framework_app_sdl_run()
         // Run Late Update App Stage Systems
         for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
             if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE)
+                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE)
                 {
                     if (_calypso_framework_app_sdl_systems_states[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT)
                         _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
