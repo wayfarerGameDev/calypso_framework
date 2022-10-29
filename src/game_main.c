@@ -46,7 +46,7 @@ void update(void)
 
     if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_W))
     {
-        printf("W Pressed\n");
+        printf("W Held\n");
     }
 }
 
