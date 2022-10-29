@@ -66,7 +66,12 @@ void calypso_framework_renderer_sdl_init(SDL_Window* sdl_window)
 {
     // Only Init Once
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_NULL)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Renderer Error: renderer already init");
+        printf("\033[0;00m"); // White
         return;
+    }
 
     // Validate SDL Window
     if (sdl_window == NULL)
@@ -100,7 +105,7 @@ void calypso_framework_renderer_sdl_init(SDL_Window* sdl_window)
 * \brief Deinitializes renderer
 * \return void
 */
-void calypso_framework_renderer_sdl_deinit()
+void calypso_framework_renderer_sdl_deinit(void)
 {
     // Free Fonts
     TTF_CloseFont(_calypso_framework_renderer_sdl_font_current_ttf);
@@ -175,7 +180,7 @@ void calypso_framework_renderer_set_render_color_from_color_array(const Uint8 co
 * \brief Clear renderer.
 * \return void
 */
-void calypso_framework_renderer_clear()
+void calypso_framework_renderer_clear(void)
 {
     // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
@@ -196,7 +201,7 @@ void calypso_framework_renderer_clear()
 * \brief Render present frame.
 * \return void
 */
-void calypso_framework_renderer_render_present()
+void calypso_framework_renderer_render_present(void)
 {
      // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)

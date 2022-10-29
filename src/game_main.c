@@ -1,5 +1,6 @@
 // Includes
 #include "calypso_framework_app_sdl.c"
+#include "calypso_framework_input_sdl.c"
 #include "calypso_framework_renderer_sdl.c"
 
 // Game Data
@@ -12,6 +13,9 @@ void start(void)
     calypso_framework_renderer_sdl_init(calypso_framework_app_sdl_get_sdl_window());
     calypso_framework_renderer_set_clear_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_black);
     calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
+
+    // Setup Input
+    calypso_framework_input_sdl_init(calypso_framework_app_sdl_get_sdl_window());
 }
 
 void load_content(void)
@@ -36,6 +40,14 @@ void update(void)
 {
     // Get Game Delta Time From App
     _game_delta_time = calypso_framework_app_sdl_get_time_delta_time();
+
+    // Update Input
+    calypso_framework_input_sdl_update();
+
+    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_W))
+    {
+        printf("W Pressed\n");
+    }
 }
 
 void render_start(void)
