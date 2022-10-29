@@ -15,7 +15,7 @@
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL        0
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT        1
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING     2
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_EXIT        3
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN        3
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR       4
 unsigned int _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
 
@@ -52,9 +52,8 @@ int* _calypso_framework_app_sdl_systems_app_stages;
 unsigned int _calypso_framework_app_sdl_system_count = 0;
 
 /**
- * Gets app's sdl window
- * 
- * @return SDL_Window*
+* \brief Gets app's sdl window
+* \return SDL_Window*
 */
 SDL_Window* calypso_framework_app_sdl_get_sdl_window()
 {
@@ -62,10 +61,9 @@ SDL_Window* calypso_framework_app_sdl_get_sdl_window()
 }
 
 /**
- * Sets window's icon
- * 
- * @param icon SDL_Surface*
- * @return void
+* \brief Sets window's icon
+* \param icon SDL_Surface*
+* \return void
 */
 void calypso_framework_app_sdl_set_window_icon(SDL_Surface* icon)
 {
@@ -82,10 +80,10 @@ void calypso_framework_app_sdl_set_window_icon(SDL_Surface* icon)
 }
 
 /**
- * Sets window's title
- * 
- * @param title const char*
- * @return void
+* \brief window's title
+* 
+* \param title const char*
+* \return void
 */
 void calypso_framework_app_sdl_set_window_title(const char* title)
 {
@@ -93,9 +91,9 @@ void calypso_framework_app_sdl_set_window_title(const char* title)
 }
 
 /**
- * Sets window's ability to be resizable enabled
- * @param bIsResizable const bool
- * @return void
+* \brief Sets window's ability to be resizable enabled
+* \param bIsResizable const bool
+* \return void
 */
 void calypso_framework_app_sdl_set_window_resizable(const bool bIsResizable)
 {
@@ -103,8 +101,8 @@ void calypso_framework_app_sdl_set_window_resizable(const bool bIsResizable)
 }
 
 /**
- * Sets app's time frame rate to be uncapped
- * @return void
+* \brief Sets app's time frame rate to be uncapped
+* \return void
 */
 void calypso_framework_app_sdl_set_time_frame_rate_target_uncapped()
 {
@@ -114,9 +112,9 @@ void calypso_framework_app_sdl_set_time_frame_rate_target_uncapped()
 }
 
 /**
- * Sets app's time frame rate target
- * @param frame_rate const unsigned int
- * @return void
+* \brief Sets app's time frame rate target
+* \param frame_rate const unsigned int
+* \return void
 */
 void calypso_framework_app_sdl_set_time_frame_target_rate(const unsigned int frame_rate)
 {
@@ -125,8 +123,8 @@ void calypso_framework_app_sdl_set_time_frame_target_rate(const unsigned int fra
 }
 
 /**
- * Gets app's time frame rate
- * @return float
+* \brief Gets app's time frame rate
+* \return float
 */
 float calypso_framework_app_sdl_get_time_frame_rate()
 {
@@ -134,8 +132,8 @@ float calypso_framework_app_sdl_get_time_frame_rate()
 }
 
 /**
- * Gets app's time frame rate as ptr
- * @return float
+* \brief Gets app's time frame rate as ptr
+* \return float
 */
 float* calypso_framework_app_sdl_get_time_frame_rate_ptr()
 {
@@ -143,22 +141,26 @@ float* calypso_framework_app_sdl_get_time_frame_rate_ptr()
 }
 
 /**
- * Gets app's time delta time as pointer
- * @return float
+* \brief Gets app's time delta time
+* \return float
 */
 float calypso_framework_app_sdl_get_time_delta_time()
 {
     return _calypso_framework_app_sdl_time_delta_time;
 }
 
+/**
+* \brief Gets app's time delta time as ptr
+* \return float
+*/
 float* calypso_framework_app_sdl_get_time_delta_time_ptr()
 {
     return &_calypso_framework_app_sdl_time_delta_time;
 }
 
 /**
- * Prints app's time data
- * @return void
+* \brief Prints app's time data
+* \return void
 */
 void calypso_framework_app_sdl_print_time()
 {
@@ -170,8 +172,33 @@ void calypso_framework_app_sdl_print_time()
 }
 
 /**
- * Enable app system
- * @param system void function with no paramaters
+* \brief Gets app's time fps as char*
+* \return void
+*/
+char* calypso_framework_app_sdl_get_time_fps_as_string()
+{
+    int len = snprintf(NULL, 0, "%i", (int)_calypso_framework_app_sdl_time_frame_rate);
+    char* result = malloc(len + 1);
+    snprintf(result, len + 1, "%i", (int)_calypso_framework_app_sdl_time_frame_rate);
+    return result;
+}
+
+/**
+* \brief Gets app's time fps as char*
+* \return void
+*/
+char* calypso_framework_app_sdl_get_time_delta_time_as_string()
+{
+    int len = snprintf(NULL, 0, "%f", _calypso_framework_app_sdl_time_delta_time);
+    char* result = malloc(len + 1);
+    snprintf(result, len + 1, "%f", _calypso_framework_app_sdl_time_delta_time);
+    return result;
+}
+
+
+/**
+* \brief Enable app system
+* \param system void function with no paramaters
 */
 void calypso_framework_app_sdl_enable_system(calypso_framework_app_sdl_system system)
 {
@@ -184,8 +211,8 @@ void calypso_framework_app_sdl_enable_system(calypso_framework_app_sdl_system sy
 }
 
 /**
- * Disable app system
- * @param system void function with no paramaters
+* \brief Disable app system
+* \param system void function with no paramaters
 */
 void calypso_framework_app_sdl_disable_system(calypso_framework_app_sdl_system system)
 {
@@ -198,8 +225,8 @@ void calypso_framework_app_sdl_disable_system(calypso_framework_app_sdl_system s
 }
 
 /**
- * Oneshot app system
- * @param system void function with no paramaters
+* \brief Oneshot app system
+* \param system void function with no paramaters
 */
 void calypso_framework_app_sdl_one_shot_system(calypso_framework_app_sdl_system system)
 {
@@ -212,19 +239,18 @@ void calypso_framework_app_sdl_one_shot_system(calypso_framework_app_sdl_system 
 }
 
 /**
- * Add app system
- * 
- * @param system void function with no paramaters
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
- * @param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
- * @return void
+* \brief Add app system
+* \param system void function with no paramaters
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \return void
 */
 void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system system, int app_stage)
 {
@@ -251,9 +277,9 @@ void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system syste
 
     // Add System
     _calypso_framework_app_sdl_system_count++;
-    _calypso_framework_app_sdl_systems = realloc(_calypso_framework_app_sdl_systems,_calypso_framework_app_sdl_system_count * sizeof(calypso_framework_app_sdl_system));
-    _calypso_framework_app_sdl_systems_states = realloc(_calypso_framework_app_sdl_systems_states,_calypso_framework_app_sdl_system_count * sizeof(int));
-    _calypso_framework_app_sdl_systems_app_stages = realloc(_calypso_framework_app_sdl_systems_app_stages,_calypso_framework_app_sdl_system_count * sizeof(int));
+    _calypso_framework_app_sdl_systems = realloc(_calypso_framework_app_sdl_systems,_calypso_framework_app_sdl_system_count* sizeof(calypso_framework_app_sdl_system));
+    _calypso_framework_app_sdl_systems_states = realloc(_calypso_framework_app_sdl_systems_states,_calypso_framework_app_sdl_system_count* sizeof(int));
+    _calypso_framework_app_sdl_systems_app_stages = realloc(_calypso_framework_app_sdl_systems_app_stages,_calypso_framework_app_sdl_system_count* sizeof(int));
     _calypso_framework_app_sdl_systems[_calypso_framework_app_sdl_system_count - 1] = system;
     _calypso_framework_app_sdl_systems_states[_calypso_framework_app_sdl_system_count - 1] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ENABLED;
     _calypso_framework_app_sdl_systems_app_stages[_calypso_framework_app_sdl_system_count - 1] = app_stage;
@@ -261,19 +287,18 @@ void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system syste
 }
 
 /**
- * Add app system that is disabled
- * 
- * @param system void function with no paramaters
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
- * @param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
- * @return void
+* \brief Add app system that is disabled
+* \param system void function with no paramaters
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \return void
 */
 void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_system system, int app_stage)
 {
@@ -282,19 +307,18 @@ void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_sys
 }
 
 /**
- * Add app system that is to play once and than disable
- * 
- * @param system void function with no paramaters
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
- * @param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
- * @param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
- * @return void
+* \brief Add app system that is to play once and than disable
+* \param system void function with no paramaters
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
+* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \return void
 */
 void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_system system, int app_stage)
 {
@@ -302,9 +326,9 @@ void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_sys
     calypso_framework_app_sdl_one_shot_system(system);
 }
 
-/**`
- * Initializes app
- * @return void
+/**
+* \brief Initializes app
+* \return void
 */
 void calypso_framework_app_sdl_init()
 {
@@ -338,8 +362,18 @@ void calypso_framework_app_sdl_init()
 }
 
 /**
- * Runs app, will halt code below call until app is no longer running
- * @return void
+* \brief Runs app, will halt code below call until app is no longer running
+* \return void
+*/
+void calypso_framework_app_sdl_shutdown()
+{
+     _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN;
+}
+
+/**
+ \brief Runs app
+ \warning app, will halt code below call until app is no longer running
+ \return void
 */
 void calypso_framework_app_sdl_run()
 {
@@ -399,7 +433,7 @@ void calypso_framework_app_sdl_run()
             }
 
              // Get Delta Time (As Seconds) | Set Time Last To Time Current
-            _calypso_framework_app_sdl_time_delta_time = (SDL_GetTicks() - time_time_last) * 0.001f;;
+            _calypso_framework_app_sdl_time_delta_time = (SDL_GetTicks() - time_time_last)* 0.001f;;
             time_time_last = SDL_GetTicks();
         }
 
@@ -416,7 +450,7 @@ void calypso_framework_app_sdl_run()
             }
 
             // Get Delta Time (As Seconds) | Set Time Last To Time Current
-            _calypso_framework_app_sdl_time_delta_time = (SDL_GetTicks() - time_time_last) * 0.001f;
+            _calypso_framework_app_sdl_time_delta_time = (SDL_GetTicks() - time_time_last)* 0.001f;
             time_time_last = SDL_GetTicks();
         }
 
@@ -427,7 +461,7 @@ void calypso_framework_app_sdl_run()
             {
                 switch(event.type)
                 {
-                    case SDL_QUIT: _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_EXIT; break;
+                    case SDL_QUIT: _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN; break;
                     default: break;
                 }
             }
