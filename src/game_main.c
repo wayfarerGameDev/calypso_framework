@@ -7,6 +7,9 @@
 float _game_delta_time;
 char* _game_fps_char;
 
+float y = 200;
+float x = 200;
+
 void start(void)
 {
     // Setup Renderer
@@ -44,10 +47,15 @@ void update(void)
     // Update Input
     calypso_framework_input_sdl_update();
 
+    // Move Lines
     if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_W))
-    {
-        printf("W Held\n");
-    }
+        y -= 100 * _game_delta_time;
+    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_S))
+        y += 100 * _game_delta_time;
+    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_A))
+        x -= 100 * _game_delta_time;
+    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_D))
+        x += 100 * _game_delta_time;
 }
 
 void render_start(void)
@@ -66,7 +74,7 @@ void render_entities(void)
     calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
     for (int i = 0; i < 1000; i++)
     {
-        calypso_framework_renderer_sdl_draw_line(300 + i,200,500,700);
+        calypso_framework_renderer_sdl_draw_line(x + 300 + i,200 + y,x + 500,700 + y);
     }
 }
 
