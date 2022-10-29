@@ -316,6 +316,28 @@ int calypso_framework_renderer_sdl_draw_line(const int x1, const int y1, const i
 }
 
 /**
+* \brief Draw a line.
+* \param x1 The x coordinate of the start point.
+* \param y1 The y coordinate of the start point.
+* \param x2 The x coordinate of the end point.
+* \param y2 The y coordinate of the end point.
+* \return 0 on success, or -1 on error
+*/
+int calypso_framework_renderer_sdl_draw_lines(const int x1, const int y1, const int x2, const int y2)
+{
+     // Not Valid State
+    if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Renderer Error: can't draw line (renderer is not init)\n");
+        printf("\033[0;00m"); // White
+        return -1;
+    }
+
+    return SDL_RenderDrawLine(_calypso_framework_renderer_sdl_renderer,x1,y1,x2,y2);
+}
+
+/**
 * \brief Draw a line (floats).
 * \param x1 The x coordinate of the start point.
 * \param y1 The y coordinate of the start point.

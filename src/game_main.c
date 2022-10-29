@@ -4,7 +4,6 @@
 
 // Game Data
 float _game_delta_time;
-char* _game_delta_time_char;
 char* _game_fps_char;
 
 void start(void)
@@ -17,7 +16,7 @@ void start(void)
 
 void load_content(void)
 {
-    calypso_framework_renderer_sdl_render_add_font_ttf("content/Acme.ttf",24);
+    calypso_framework_renderer_sdl_render_add_font_ttf("content/Acme.ttf",20);
 }
 
 void end(void)
@@ -27,7 +26,6 @@ void end(void)
 
     // Free Game data
     free (_game_fps_char);
-    free(_game_delta_time_char);
 
     printf("\033[0;31m"); // Red
     printf("Goodbye cruel world :(\n");
@@ -65,9 +63,7 @@ void render_gui(void)
     calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_white);
 
     _game_fps_char = calypso_framework_app_sdl_get_time_fps_as_string();
-    _game_delta_time_char = calypso_framework_app_sdl_get_time_delta_time_as_string();
     calypso_framework_renderer_sdl_render_draw_text_ttf( _game_fps_char,10,10);
-    calypso_framework_renderer_sdl_render_draw_text_ttf( _game_delta_time_char,10,30);
 }
 
 int main(int argc, char** argv)
