@@ -50,7 +50,7 @@ void update(void)
     _game_mouse_y = calypso_framework_input_sdl_get_mouse_cursor_y();
 
     // Move Lines
-    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_MOUSE_LEFT))
+    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_UP))
         y -= 100 * _game_delta_time;
     if (calypso_framework_input_sdl_get_key_pressed(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_DOWN))
         y += 100;
