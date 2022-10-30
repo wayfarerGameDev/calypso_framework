@@ -14,28 +14,80 @@
 unsigned int _calypso_framework_input_sdl_state                        = CALYPSO_FRAMEWORK_INPUT_SDL_STATE_NULL;
 
 // Input States
-#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UNPRESSED               0
-#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED                 1
-#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_HELD                    2
+#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP                      0
+#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN                    1
+#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED                 2
+#define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED                3
 
-// Input Keys
-#define CALYPSO_FRAMEWORK_INPUT_SDL_KEY_W                               SDL_SCANCODE_W
-#define CALYPSO_FRAMEWORK_INPUT_SDL_KEY_A                               SDL_SCANCODE_A
-#define CALYPSO_FRAMEWORK_INPUT_SDL_KEY_D                               SDL_SCANCODE_D
-#define CALYPSO_FRAMEWORK_INPUT_SDL_KEY_S                               SDL_SCANCODE_S
+// Input Keys (Keyboard)(Arrows)
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_LEFT                        SDL_SCANCODE_LEFT
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_RIGHT                       SDL_SCANCODE_RIGHT
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_UP                          SDL_SCANCODE_UP
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_DOWN                        SDL_SCANCODE_DOWN
+
+// Input Keys (Keyboard)(Numbers)
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_0                           SDL_SCANCODE_0
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_1                           SDL_SCANCODE_1
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_2                           SDL_SCANCODE_2
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_3                           SDL_SCANCODE_3
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_4                           SDL_SCANCODE_4
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_5                           SDL_SCANCODE_5  
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_6                           SDL_SCANCODE_6
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_7                           SDL_SCANCODE_7
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_8                           SDL_SCANCODE_8
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_9                           SDL_SCANCODE_9
+
+// Input Keys (Keyboard)(Keypad Numbers)
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_0                     SDL_SCANCODE_KP_0
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_00                    SDL_SCANCODE_KP_00
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_000                   SDL_SCANCODE_KP_000
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_1                     SDL_SCANCODE_KP_1
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_2                     SDL_SCANCODE_KP_2
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_3                     SDL_SCANCODE_KP_3
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_4                     SDL_SCANCODE_KP_4
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_5                     SDL_SCANCODE_KP_5  
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_6                     SDL_SCANCODE_KP_6
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_7                     SDL_SCANCODE_KP_7
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_8                     SDL_SCANCODE_KP_8
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_KEYPAD_9                     SDL_SCANCODE_KP_9
+
+// Input Keys (Keyboard)(Alphabet)
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_A                           SDL_SCANCODE_A
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_B                           SDL_SCANCODE_B
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_C                           SDL_SCANCODE_C
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_D                           SDL_SCANCODE_D
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_E                           SDL_SCANCODE_E  
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_F                           SDL_SCANCODE_F
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_G                           SDL_SCANCODE_G
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_H                           SDL_SCANCODE_H
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_I                           SDL_SCANCODE_I
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_J                           SDL_SCANCODE_J
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_K                           SDL_SCANCODE_K
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_L                           SDL_SCANCODE_L
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_M                           SDL_SCANCODE_M
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_N                           SDL_SCANCODE_N
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_O                           SDL_SCANCODE_O
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_P                           SDL_SCANCODE_P
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_Q                           SDL_SCANCODE_Q
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_R                           SDL_SCANCODE_R
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_S                           SDL_SCANCODE_S
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_T                           SDL_SCANCODE_T
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_U                           SDL_SCANCODE_U
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_V                           SDL_SCANCODE_V
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_W                           SDL_SCANCODE_W
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_X                           SDL_SCANCODE_X
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_Y                           SDL_SCANCODE_Y
+#define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_Z                           SDL_SCANCODE_Z
 
 // State
-Uint8* _calypso_framework_input_sdl_key_states;
-
-// Window
-SDL_Window* _calypso_framework_input_sdl_window;
+Uint8 _calypso_framework_input_sdl_keycode_states[255]; // SDL HAS 255 KEYS
 
 /**
 * \brief Initializes input
 * \param sdl_window SDL_Window*
 * \return void
 */
-void calypso_framework_input_sdl_init(SDL_Window* sdl_window)
+void calypso_framework_input_sdl_init()
 {
     // Only Init Once
     if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_NULL)
@@ -46,20 +98,8 @@ void calypso_framework_input_sdl_init(SDL_Window* sdl_window)
         return;
     }
 
-    // Validate SDL Window
-    if (sdl_window == NULL)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: sdl_window is NULL\n");
-        printf("\033[0;00m"); // White
-        _calypso_framework_input_sdl_state = CALYPSO_FRAMEWORK_INPUT_SDL_STATE_ERROR;
-        return;
-    }
-
-    // Set State Init | Set Window | Alloc Key States
+    // Set State Init | Alloc Key States
     _calypso_framework_input_sdl_state = CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT;
-    _calypso_framework_input_sdl_window = sdl_window;
-    _calypso_framework_input_sdl_key_states = realloc(_calypso_framework_input_sdl_key_states,255 * sizeof(Uint8));
 }
 
 /**
@@ -68,6 +108,15 @@ void calypso_framework_input_sdl_init(SDL_Window* sdl_window)
 */
 void calypso_framework_input_sdl_show_mouse_cursor(void) 
 {
+     // Not Init
+    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Input Error: input not init\n");
+        printf("\033[0;00m"); // White
+        return;
+    }
+
     SDL_ShowCursor(SDL_ENABLE);
 }
 
@@ -77,6 +126,15 @@ void calypso_framework_input_sdl_show_mouse_cursor(void)
 */
 void calypso_framework_input_sdl_hide_mouse_cursor(void) 
 {
+    // Not Init
+    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Input Error: input not init\n");
+        printf("\033[0;00m"); // White
+        return;
+    }
+
     SDL_ShowCursor(SDL_DISABLE);
 }
 
@@ -95,7 +153,63 @@ void calypso_framework_input_sdl_update()
         return;
     }
 
-    //const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);
+    const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);
+
+    for (int i = 0; i < 255; i++)
+    {
+        if (keyboard_state[i])
+        {
+            if (_calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP)
+                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
+            else 
+                 _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
+        }
+        else
+        {
+            if (_calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN && _calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED)
+                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
+            else
+                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
+        }
+    }
+}
+
+/**
+* \brief Get key up
+* \param key Uint8
+* \return bool
+*/
+bool calypso_framework_input_sdl_get_key_up(const Uint8 key) 
+{
+    // Not Init
+    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Input Error: input not init\n");
+        printf("\033[0;00m"); // White
+        return false;
+    }
+
+    return _calypso_framework_input_sdl_keycode_states[key] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
+}
+
+/**
+* \brief Get key down
+* \param key Uint8
+* \return bool
+*/
+bool calypso_framework_input_sdl_get_key_down(const Uint8 key) 
+{
+    // Not Init
+    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Input Error: input not init\n");
+        printf("\033[0;00m"); // White
+        return false;
+    }
+
+    return _calypso_framework_input_sdl_keycode_states[key] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
 }
 
 /**
@@ -105,27 +219,7 @@ void calypso_framework_input_sdl_update()
 */
 bool calypso_framework_input_sdl_get_key_pressed(const Uint8 key) 
 {
-    return false;
-}
-
-/**
-* \brief Get key unpressed
-* \param key Uint8
-* \return bool
-*/
-bool calypso_framework_input_sdl_get_key_unpressed(const Uint8 key) 
-{
-    return false;
-}
-
-/**
-* \brief Get key held
-* \param key Uint8
-* \return bool
-*/
-bool calypso_framework_input_sdl_get_key_held(const Uint8 key) 
-{
-      // Not Init
+    // Not Init
     if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
     {
         printf("\033[0;31m"); // Red
@@ -134,10 +228,24 @@ bool calypso_framework_input_sdl_get_key_held(const Uint8 key)
         return false;
     }
 
-    const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);
-    //calypso_framework_input_sdl_update_key_state(keyboard_state,calypso_framework_input_sdl_key_state_w);
+    return _calypso_framework_input_sdl_keycode_states[key] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
+}
 
-    if (keyboard_state[key])
-        return true;
-    return false;
+/**
+* \brief Get key released
+* \param key Uint8
+* \return bool
+*/
+bool calypso_framework_input_sdl_get_key_released(const Uint8 key) 
+{
+    // Not Init
+    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
+    {
+        printf("\033[0;31m"); // Red
+        printf("Input Error: input not init\n");
+        printf("\033[0;00m"); // White
+        return false;
+    }
+
+    return _calypso_framework_input_sdl_keycode_states[key] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
 }

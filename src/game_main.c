@@ -18,7 +18,7 @@ void start(void)
     calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
 
     // Setup Input
-    calypso_framework_input_sdl_init(calypso_framework_app_sdl_get_sdl_window());
+    calypso_framework_input_sdl_init();
 }
 
 void load_content(void)
@@ -48,13 +48,13 @@ void update(void)
     calypso_framework_input_sdl_update();
 
     // Move Lines
-    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_W))
+    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_UP))
         y -= 100 * _game_delta_time;
-    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_S))
-        y += 100 * _game_delta_time;
-    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_A))
-        x -= 100 * _game_delta_time;
-    if (calypso_framework_input_sdl_get_key_held(CALYPSO_FRAMEWORK_INPUT_SDL_KEY_D))
+    if (calypso_framework_input_sdl_get_key_pressed(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_DOWN))
+        y += 100;
+    if (calypso_framework_input_sdl_get_key_released(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_LEFT))
+        x -= 100;
+    if (calypso_framework_input_sdl_get_key_down(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_RIGHT))
         x += 100 * _game_delta_time;
 }
 
