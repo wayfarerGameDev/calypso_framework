@@ -6,6 +6,8 @@
 // Game Data
 float _game_delta_time;
 char* _game_fps_char;
+int _game_mouse_x;
+int _game_mouse_y;
 
 float y = 200;
 float x = 200;
@@ -44,8 +46,11 @@ void update(void)
     // Update Input
     calypso_framework_input_sdl_update();
 
+    _game_mouse_x = calypso_framework_input_sdl_get_mouse_cursor_x();
+    _game_mouse_y = calypso_framework_input_sdl_get_mouse_cursor_y();
+
     // Move Lines
-    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_UP))
+    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_MOUSE_LEFT))
         y -= 100 * _game_delta_time;
     if (calypso_framework_input_sdl_get_key_pressed(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_DOWN))
         y += 100;

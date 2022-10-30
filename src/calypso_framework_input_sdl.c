@@ -95,6 +95,28 @@ void calypso_framework_input_sdl_hide_mouse_cursor(void)
 }
 
 /**
+* \brief Get mouse cursor x
+* \return int
+*/
+int calypso_framework_input_sdl_get_mouse_cursor_x() 
+{
+    int x;
+    SDL_GetMouseState(&x,NULL);
+    return x;
+}
+
+/**
+* \brief Get mouse cursor y
+* \return int
+*/
+int calypso_framework_input_sdl_get_mouse_cursor_y() 
+{
+    int y;
+    SDL_GetMouseState(NULL,&y);
+    return y;
+}
+
+/**
 * \brief Updates input
 * \return void
 */
