@@ -7,12 +7,6 @@
 // Includes
 #include <SDL2/SDL.h>
 
-// State
-#define CALYPSO_FRAMEWORK_INPUT_SDL_STATE_NULL                          0
-#define CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT                          1
-#define CALYPSO_FRAMEWORK_INPUT_SDL_STATE_ERROR                         2
-unsigned int _calypso_framework_input_sdl_state                         = CALYPSO_FRAMEWORK_INPUT_SDL_STATE_NULL;
-
 // Input States
 #define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP                      0
 #define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN                    1
@@ -83,40 +77,11 @@ unsigned int _calypso_framework_input_sdl_state                         = CALYPS
 Uint8 _calypso_framework_input_sdl_keycode_states[255]; // SDL HAS 255 KEYS
 
 /**
-* \brief Initializes input
-* \param sdl_window SDL_Window*
-* \return void
-*/
-void calypso_framework_input_sdl_init()
-{
-    // Only Init Once
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_NULL)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input already init\n");
-        printf("\033[0;00m"); // White
-        return;
-    }
-
-    // Set State Init | Alloc Key States
-    _calypso_framework_input_sdl_state = CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT;
-}
-
-/**
 * \brief Show mouse cursor
 * \return void
 */
 void calypso_framework_input_sdl_show_mouse_cursor(void) 
 {
-     // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return;
-    }
-
     SDL_ShowCursor(SDL_ENABLE);
 }
 
@@ -126,15 +91,6 @@ void calypso_framework_input_sdl_show_mouse_cursor(void)
 */
 void calypso_framework_input_sdl_hide_mouse_cursor(void) 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return;
-    }
-
     SDL_ShowCursor(SDL_DISABLE);
 }
 
@@ -144,15 +100,6 @@ void calypso_framework_input_sdl_hide_mouse_cursor(void)
 */
 void calypso_framework_input_sdl_update() 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return;
-    }
-
     const Uint8* keyboard_state = SDL_GetKeyboardState(NULL);
 
     for (int i = 0; i < 255; i++)
@@ -181,15 +128,6 @@ void calypso_framework_input_sdl_update()
 */
 bool calypso_framework_input_sdl_get_key_up(const Uint8 key_code) 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return false;
-    }
-
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
 }
 
@@ -200,15 +138,6 @@ bool calypso_framework_input_sdl_get_key_up(const Uint8 key_code)
 */
 bool calypso_framework_input_sdl_get_key_down(const Uint8 key_code) 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return false;
-    }
-
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
 }
 
@@ -219,15 +148,6 @@ bool calypso_framework_input_sdl_get_key_down(const Uint8 key_code)
 */
 bool calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code) 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return false;
-    }
-
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
 }
 
@@ -238,14 +158,5 @@ bool calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code)
 */
 bool calypso_framework_input_sdl_get_key_released(const Uint8 key_code) 
 {
-    // Not Init
-    if (_calypso_framework_input_sdl_state != CALYPSO_FRAMEWORK_INPUT_SDL_STATE_INIT)
-    {
-        printf("\033[0;31m"); // Red
-        printf("Input Error: input not init\n");
-        printf("\033[0;00m"); // White
-        return false;
-    }
-
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
 }

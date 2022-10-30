@@ -16,9 +16,6 @@ void start(void)
     calypso_framework_renderer_sdl_init(calypso_framework_app_sdl_get_sdl_window());
     calypso_framework_renderer_set_clear_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_black);
     calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
-
-    // Setup Input
-    calypso_framework_input_sdl_init();
 }
 
 void load_content(void)
