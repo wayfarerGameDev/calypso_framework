@@ -18,6 +18,7 @@ unsigned int _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_
 
 // Logging Callback
 typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, const Uint8 log_type);
+calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback;
 
 // Window
 #define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT  1280 
@@ -52,6 +53,27 @@ int* _calypso_framework_app_sdl_systems_app_stages;
 unsigned int _calypso_framework_app_sdl_system_count = 0;
 
 /**
+* \brief Set app's log callback
+* \return void
+*/
+void calypso_framework_app_sdl_set_log_callback(calypso_framework_app_sdl_log_callback_t log_callback)
+{
+    _calypso_framework_app_sdl_log_callback = log_callback;
+}
+
+/**
+* \brief Do app's log callback
+* \return void
+*/
+void calypso_framework_app_sdl_do_log_callback(const char* log_msg, const Uint8 log_type)
+{
+    if (_calypso_framework_app_sdl_log_callback == NULL)
+        return;
+
+    _calypso_framework_app_sdl_log_callback(log_msg,log_type);
+}
+
+/**
 * \brief Gets app's sdl window
 * \return SDL_Window*
 */
@@ -65,12 +87,12 @@ SDL_Window* calypso_framework_app_sdl_get_sdl_window(void)
 * \param icon SDL_Surface*
 * \return void
 */
-void calypso_framework_app_sdl_set_window_icon(SDL_Surface* icon, calypso_framework_app_sdl_log_callback_t log_callback)
+void calypso_framework_app_sdl_set_window_icon(SDL_Surface* icon)
 {
     // Return If Icon Is NULL
     if (icon == NULL)
     {
-        log_callback("App: Failed To Set Window Icon",3);
+        calypso_framework_app_sdl_do_log_callback("App: Failed To Set Window Icon",3);
         return;
     }
 
@@ -193,6 +215,8 @@ void calypso_framework_app_sdl_enable_system(calypso_framework_app_sdl_system_t 
             _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ENABLED;
             return;
         }
+
+    calypso_framework_app_sdl_do_log_callback("App: System not enabled (no such system)",2);
 }
 
 /**
@@ -207,6 +231,8 @@ void calypso_framework_app_sdl_disable_system(calypso_framework_app_sdl_system_t
             _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
             return;
         }
+
+    calypso_framework_app_sdl_do_log_callback("App: System not disabled (no such system)",2);
 }
 
 /**
@@ -237,12 +263,12 @@ void calypso_framework_app_sdl_one_shot_system(calypso_framework_app_sdl_system_
 * \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
 * \return void
 */
-void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system_t system, int app_stage, calypso_framework_app_sdl_log_callback_t log_callback)
+void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system_t system, int app_stage)
 {
     // Not Valid Group
     if (app_stage < 0 || app_stage > 8)
     {
-        log_callback("App: Failed to add system (invalid app_stage)\n",3);
+        calypso_framework_app_sdl_do_log_callback("App: Failed to add system (invalid app_stage)\n",3);
         return;
     }
 
@@ -251,7 +277,7 @@ void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system_t sys
     {
         if (_calypso_framework_app_sdl_systems[i] == system)
         {
-            log_callback("App: Failed to add system (system already added)\n",2);
+            calypso_framework_app_sdl_do_log_callback("App: Failed to add system (system already added)\n",2);
             return;
         }
     }
@@ -281,9 +307,9 @@ void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system_t sys
 * \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
 * \return void
 */
-void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_system_t system, int app_stage, calypso_framework_app_sdl_log_callback_t log_callback)
+void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_system_t system, int app_stage)
 {
-    calypso_framework_app_sdl_add_system(system,app_stage, log_callback);
+    calypso_framework_app_sdl_add_system(system,app_stage);
     calypso_framework_app_sdl_disable_system(system);
 }
 
@@ -301,9 +327,9 @@ void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_sys
 * \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
 * \return void
 */
-void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_system_t system, int app_stage,  calypso_framework_app_sdl_log_callback_t log_callback)
+void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_system_t system, int app_stage)
 {
-    calypso_framework_app_sdl_add_system(system,app_stage, log_callback);
+    calypso_framework_app_sdl_add_system(system,app_stage);
     calypso_framework_app_sdl_one_shot_system(system);
 }
 
@@ -311,12 +337,12 @@ void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_sys
 * \brief Initializes app
 * \return void
 */
-void calypso_framework_app_sdl_init(calypso_framework_app_sdl_log_callback_t log_callback)
+void calypso_framework_app_sdl_init(void)
 {
     // Only Init Once
     if (_calypso_framework_app_sdl_state != CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL)
     {
-        log_callback("App : app already init\n",2);
+        calypso_framework_app_sdl_do_log_callback("App: App already init\n",2);
         return;
     }
 
@@ -326,7 +352,7 @@ void calypso_framework_app_sdl_init(calypso_framework_app_sdl_log_callback_t log
     // Init SDL (Everything)
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        log_callback("App : SDL failed to initialize\n",3);
+        calypso_framework_app_sdl_do_log_callback("App: SDL failed to initialize\n",3);
         _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR;
         return;
     }
@@ -335,7 +361,7 @@ void calypso_framework_app_sdl_init(calypso_framework_app_sdl_log_callback_t log
     _calypso_framework_app_sdl_window = SDL_CreateWindow("App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_HEIGHT_DEFAULT, 0);
     if(!_calypso_framework_app_sdl_window)
     {
-        log_callback("App : SDL failed to create window\n",3);
+        calypso_framework_app_sdl_do_log_callback("App: SDL failed to create window\n",3);
         _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR;
         return;
     }
