@@ -4,11 +4,6 @@
 
 #pragma once
 
-// Includes
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
 // State
 #define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL  0
 #define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_INIT  1

@@ -6,7 +6,6 @@
 #pragma once
 
 // Includes
-#include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -15,6 +14,9 @@
 #define CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT        1
 #define CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_ERROR       4
 unsigned int _calypso_framework_renderer_sdl_state = CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_NULL;
+
+// Logging Callback
+typedef void (*calypso_framework_renderer_sdl_log_callback_t)(const char* log_msg, const Uint8 log_type);
 
 // Clear Color
 Uint8 _calypso_framework_renderer_sdl_clear_color_r = 0;
@@ -62,23 +64,19 @@ TTF_Font* _calypso_framework_renderer_sdl_font_current_ttf;
 * \param sdl_window SDL_Window*
 * \return void
 */
-void calypso_framework_renderer_sdl_init(SDL_Window* sdl_window)
+void calypso_framework_renderer_sdl_init(SDL_Window* sdl_window, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
     // Only Init Once
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_NULL)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: renderer already init");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer : renderer is already init\n",2);
         return;
     }
 
     // Validate SDL Window
     if (sdl_window == NULL)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: sdl_window is NULL");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer : sdl_window is NULL\n",3);
         _calypso_framework_renderer_sdl_state = CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_ERROR;
         return;
     }
@@ -90,9 +88,7 @@ void calypso_framework_renderer_sdl_init(SDL_Window* sdl_window)
     _calypso_framework_renderer_sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (_calypso_framework_renderer_sdl_renderer == NULL) 
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: SDL failed to initialize\nSDL Error: '%s'\n", SDL_GetError());
-        printf("\033[0;00m"); // White
+        log_callback("Renderer : SDL failed to initialize\n",3);
         _calypso_framework_renderer_sdl_state = CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_ERROR;
         return;
     }
@@ -180,14 +176,12 @@ void calypso_framework_renderer_set_render_color_from_color_array(const Uint8 co
 * \brief Clear renderer.
 * \return void
 */
-void calypso_framework_renderer_clear(void)
+void calypso_framework_renderer_clear(calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
     // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: sdl_renderer can't clear\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: sdl_renderer can't clear, renderer not init\n",3);
         return;
     }
 
@@ -201,14 +195,12 @@ void calypso_framework_renderer_clear(void)
 * \brief Render present frame.
 * \return void
 */
-void calypso_framework_renderer_render_present(void)
+void calypso_framework_renderer_render_present(calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
      // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: sdl_renderer can't render present\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: sdl_renderer can't render present (renderer not init)\n",3);
         return;
     }
 
@@ -220,15 +212,13 @@ void calypso_framework_renderer_render_present(void)
 * \param font_name A font loaded with that name
 * \return font_index (int)
 */
-int calypso_framework_renderer_sdl_render_add_font_ttf(const char* font_file_path, const unsigned int font_size)
+int calypso_framework_renderer_sdl_render_add_font_ttf(const char* font_file_path, const unsigned int font_size, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
     // Load Font
     _calypso_framework_renderer_sdl_font_current_ttf = TTF_OpenFont(font_file_path,font_size);
     if (_calypso_framework_renderer_sdl_font_current_ttf == NULL)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: font not added (file path is not valid)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: font not added (file path is not valid)\n",2);
         return -1;
     }
 
@@ -252,23 +242,19 @@ void calypso_framework_renderer_sdl_render_set_current_font_by_index_ttf(const i
 * \param y2 The y coordinate of the end point.
 * \return 0 on success, or -1 on error
 */
-void calypso_framework_renderer_sdl_render_draw_text_ttf(const char* text, const int x, const int y)
+void calypso_framework_renderer_sdl_render_draw_text_ttf(const char* text, const int x, const int y, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
     // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: can't draw font (renderer not init)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: can't draw font (renderer not init)\n",3);
         return;
     }
 
     // Not Valid Current Font
     if (_calypso_framework_renderer_sdl_font_current_ttf == NULL)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: can't draw font (current font is NULL)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: can't draw font (current font is NULL)\n",3);
         return;
     }
 
@@ -306,14 +292,12 @@ void calypso_framework_renderer_sdl_render_draw_text_ttf(const char* text, const
 * \param y2 The y coordinate of the end point.
 * \return 0 on success, or -1 on error
 */
-int calypso_framework_renderer_sdl_draw_line(const int x1, const int y1, const int x2, const int y2)
+int calypso_framework_renderer_sdl_draw_line(const int x1, const int y1, const int x2, const int y2, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
      // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: can't draw line (renderer is not init)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: can't draw line (renderer is not init)\n",3);
         return -1;
     }
 
@@ -328,14 +312,12 @@ int calypso_framework_renderer_sdl_draw_line(const int x1, const int y1, const i
 * \param y2 The y coordinate of the end point.
 * \return 0 on success, or -1 on error
 */
-int calypso_framework_renderer_sdl_draw_lines(const int x1, const int y1, const int x2, const int y2)
+int calypso_framework_renderer_sdl_draw_lines(const int x1, const int y1, const int x2, const int y2, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
      // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: can't draw line (renderer is not init)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: can't draw line (renderer is not init)\n",3);
         return -1;
     }
 
@@ -350,14 +332,12 @@ int calypso_framework_renderer_sdl_draw_lines(const int x1, const int y1, const 
 * \param y2 The y coordinate of the end point.
 * \return 0 on success, or -1 on error
 */
-int calypso_framework_renderer_sdl_draw_line_f(const float x1, const float y1, const float x2, const float y2)
+int calypso_framework_renderer_sdl_draw_line_f(const float x1, const float y1, const float x2, const float y2, calypso_framework_renderer_sdl_log_callback_t log_callback)
 {
      // Not Valid State
     if (_calypso_framework_renderer_sdl_state != CALYPSO_FRAMEWORK_RENDERER_SDL_STATE_INIT)
     {
-        printf("\033[0;31m"); // Red
-        printf("Renderer Error: can't draw line (renderer not init)\n");
-        printf("\033[0;00m"); // White
+        log_callback("Renderer: can't draw line (renderer is not init)\n",3);
         return -1;
     }
 

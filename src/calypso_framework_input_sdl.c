@@ -146,9 +146,9 @@ void calypso_framework_input_sdl_update()
 /**
 * \brief Get key up
 * \param key_code Uint8
-* \return bool
+* \return int
 */
-bool calypso_framework_input_sdl_get_key_up(const Uint8 key_code) 
+int calypso_framework_input_sdl_get_key_up(const Uint8 key_code) 
 {
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
 }
@@ -156,9 +156,9 @@ bool calypso_framework_input_sdl_get_key_up(const Uint8 key_code)
 /**
 * \brief Get key down
 * \param key_code Uint8
-* \return bool
+* \return int
 */
-bool calypso_framework_input_sdl_get_key_down(const Uint8 key_code) 
+int calypso_framework_input_sdl_get_key_down(const Uint8 key_code) 
 {
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
 }
@@ -166,9 +166,9 @@ bool calypso_framework_input_sdl_get_key_down(const Uint8 key_code)
 /**
 * \brief Get key pressed
 * \param key_code Uint8
-* \return bool
+* \return int
 */
-bool calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code) 
+int calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code) 
 {
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
 }
@@ -176,9 +176,9 @@ bool calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code)
 /**
 * \brief Get key released
 * \param key_code Uint8
-* \return bool
+* \return int
 */
-bool calypso_framework_input_sdl_get_key_released(const Uint8 key_code) 
+int calypso_framework_input_sdl_get_key_released(const Uint8 key_code) 
 {
     return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
 }
