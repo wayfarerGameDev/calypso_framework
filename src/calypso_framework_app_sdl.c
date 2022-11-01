@@ -39,24 +39,11 @@ float _calypso_framework_app_sdl_time_frame_rate = 0;
 float _calypso_framework_app_sdl_time_frame_time_target = 0;
 float _calypso_framework_app_sdl_time_delta_time = 0;
 
-// Systems
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED                 0
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ENABLED                  1
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT                  2
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP        0
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP         1
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP              2
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN       3
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN        4
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN             5
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE         6
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE          7
-#define CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE               8
-typedef void (*calypso_framework_app_sdl_system_t)(void);
-calypso_framework_app_sdl_system_t* _calypso_framework_app_sdl_systems;
-int* _calypso_framework_app_sdl_systems_states;
-int* _calypso_framework_app_sdl_systems_app_stages;
-unsigned int _calypso_framework_app_sdl_system_count = 0;
+// Events
+typedef void (*calypso_framework_app_sdl_event_t)(void);
+calypso_framework_app_sdl_event_t _calypso_framework_app_sdl_event_on_startup;
+calypso_framework_app_sdl_event_t _calypso_framework_app_sdl_event_on_shutdown;
+calypso_framework_app_sdl_event_t _calypso_framework_app_sdl_event_on_update;
 
 /**
 * \brief Set app's log callback
@@ -251,135 +238,11 @@ char* calypso_framework_app_sdl_get_time_delta_time_as_string(void)
     return result;
 }
 
-
-/**
-* \brief Enable app system
-* \param system void function with no paramaters
-*/
-void calypso_framework_app_sdl_enable_system(calypso_framework_app_sdl_system_t system)
+void calypso_framework_app_sdl_set_events(calypso_framework_app_sdl_event_t event_on_startup, calypso_framework_app_sdl_event_t event_on_shutdown, calypso_framework_app_sdl_event_t event_on_update)
 {
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems[i] == system)
-        {
-            _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ENABLED;
-            return;
-        }
-
-    calypso_framework_app_sdl_do_log_callback("App: System not enabled (no such system)",2);
-}
-
-/**
-* \brief Disable app system
-* \param system void function with no paramaters
-*/
-void calypso_framework_app_sdl_disable_system(calypso_framework_app_sdl_system_t system)
-{
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems[i] == system)
-        {
-            _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
-            return;
-        }
-
-    calypso_framework_app_sdl_do_log_callback("App: System not disabled (no such system)",2);
-}
-
-/**
-* \brief Oneshot app system
-* \param system void function with no paramaters
-*/
-void calypso_framework_app_sdl_one_shot_system(calypso_framework_app_sdl_system_t system)
-{
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems[i] == system)
-        {
-            _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT;
-            return;
-        }
-}
-
-/**
-* \brief Add app system
-* \param system void function with no paramaters
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
-* \return void
-*/
-void calypso_framework_app_sdl_add_system(calypso_framework_app_sdl_system_t system, int app_stage)
-{
-    // Not Valid Group
-    if (app_stage < 0 || app_stage > 8)
-    {
-        calypso_framework_app_sdl_do_log_callback("App: Failed to add system (invalid app_stage)\n",3);
-        return;
-    }
-
-    // Already Added
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-    {
-        if (_calypso_framework_app_sdl_systems[i] == system)
-        {
-            calypso_framework_app_sdl_do_log_callback("App: Failed to add system (system already added)\n",2);
-            return;
-        }
-    }
-
-    // Add System
-    _calypso_framework_app_sdl_system_count++;
-    _calypso_framework_app_sdl_systems = realloc(_calypso_framework_app_sdl_systems,_calypso_framework_app_sdl_system_count* sizeof(calypso_framework_app_sdl_system_t));
-    _calypso_framework_app_sdl_systems_states = realloc(_calypso_framework_app_sdl_systems_states,_calypso_framework_app_sdl_system_count* sizeof(int));
-    _calypso_framework_app_sdl_systems_app_stages = realloc(_calypso_framework_app_sdl_systems_app_stages,_calypso_framework_app_sdl_system_count* sizeof(int));
-    _calypso_framework_app_sdl_systems[_calypso_framework_app_sdl_system_count - 1] = system;
-    _calypso_framework_app_sdl_systems_states[_calypso_framework_app_sdl_system_count - 1] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ENABLED;
-    _calypso_framework_app_sdl_systems_app_stages[_calypso_framework_app_sdl_system_count - 1] = app_stage;
-    
-}
-
-/**
-* \brief Add app system that is disabled
-* \param system void function with no paramaters
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
-* \return void
-*/
-void calypso_framework_app_sdl_add_system_disabled(calypso_framework_app_sdl_system_t system, int app_stage)
-{
-    calypso_framework_app_sdl_add_system(system,app_stage);
-    calypso_framework_app_sdl_disable_system(system);
-}
-
-/**
-* \brief Add app system that is to play once and than disable
-* \param system void function with no paramaters
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param app_stage CALYPSO_FclsRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param app_stage CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE || 8 : update
-* \return void
-*/
-void calypso_framework_app_sdl_add_system_one_shot(calypso_framework_app_sdl_system_t system, int app_stage)
-{
-    calypso_framework_app_sdl_add_system(system,app_stage);
-    calypso_framework_app_sdl_one_shot_system(system);
+    _calypso_framework_app_sdl_event_on_startup = event_on_startup;
+    _calypso_framework_app_sdl_event_on_shutdown = event_on_shutdown;
+    _calypso_framework_app_sdl_event_on_update = event_on_update;
 }
 
 /**
@@ -476,23 +339,9 @@ void calypso_framework_app_sdl_run(void)
     if (_calypso_framework_app_sdl_state != CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT)
         return;
 
-    // Run Early Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_STARTUP)
-                _calypso_framework_app_sdl_systems[i]();
-            
-    // Run Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP)
-                _calypso_framework_app_sdl_systems[i]();
-
-    // Run Late Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_STARTUP)
-                _calypso_framework_app_sdl_systems[i]();
+    // On Event Startup
+    if (_calypso_framework_app_sdl_event_on_startup != NULL)
+        _calypso_framework_app_sdl_event_on_startup();
 
     // Set State To Running
     _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING;
@@ -562,63 +411,18 @@ void calypso_framework_app_sdl_run(void)
             }
         }
 
-        // Run Early Update App Stage Systems
-        for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-            if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE)
-                {
-                    if (_calypso_framework_app_sdl_systems_states[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT)
-                        _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
-                    _calypso_framework_app_sdl_systems[i]();
-                }
-
-        // Run Update App Stage Systems
-        for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-            if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE)
-                {
-                    if (_calypso_framework_app_sdl_systems_states[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT)
-                        _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
-                    _calypso_framework_app_sdl_systems[i]();
-                }
-
-        // Run Late Update App Stage Systems
-        for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-            if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-                if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE)
-                {
-                    if (_calypso_framework_app_sdl_systems_states[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_ONESHOT)
-                        _calypso_framework_app_sdl_systems_states[i] = CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED;
-                    _calypso_framework_app_sdl_systems[i]();
-                }
+         // On Event Update
+         if (_calypso_framework_app_sdl_event_on_update != NULL)
+            _calypso_framework_app_sdl_event_on_update();
 
         // Swap Window (Open GL Is Using 2 Buffers)
         if (_calypso_framework_app_sdl_gl_context)
             SDL_GL_SwapWindow(_calypso_framework_app_sdl_window);
     }
 
-    // Run Early Shutdown App Stage Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_SHUTDOWN)
-                _calypso_framework_app_sdl_systems[i]();
-            
-    // Run Shutdown App Stage Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN)
-                _calypso_framework_app_sdl_systems[i]();
-
-    // Run Late Shutdown App Stage  Systems
-    for (int i = 0; i < _calypso_framework_app_sdl_system_count; i++)
-        if (_calypso_framework_app_sdl_systems_states[i] != CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_app_sdl_systems_app_stages[i] == CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_SHUTDOWN)
-                _calypso_framework_app_sdl_systems[i]();
-
-    // Clear Systems
-    free(_calypso_framework_app_sdl_systems);
-    free(_calypso_framework_app_sdl_systems_app_stages);
-    _calypso_framework_app_sdl_system_count = 0;
+    // On Event Shutdown
+    if (_calypso_framework_app_sdl_event_on_shutdown != NULL)
+        _calypso_framework_app_sdl_event_on_shutdown();
 
     // Quit OpenGL
     if (_calypso_framework_app_sdl_gl_context)
