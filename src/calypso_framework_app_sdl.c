@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <dependencies/SDL2/SDL.h>
 
+// Logging Callback
+typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, const Uint8 log_type);
+calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback;
+
 // State
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL        0
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT        1
@@ -15,10 +19,6 @@
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN    3
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR       4
 unsigned int _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
-
-// Logging Callback
-typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, const Uint8 log_type);
-calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback;
 
 // Flags
 int _calypso_framework_app_sdl_flags = 0;
