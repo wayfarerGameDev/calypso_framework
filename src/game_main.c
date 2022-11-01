@@ -84,7 +84,7 @@ void render(void)
     const int h = calypso_framework_app_sdl_get_window_width();
 
     // Start
-    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_pink); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_cornflower_blue); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_set_viewport(0,0,w,h); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_clear();
 
@@ -92,8 +92,6 @@ void render(void)
     //calypso_framework_renderer_2d_draw_line();
 
     // GUI Here
-
-    
 }
 
 int main(int argc, char** argv)
@@ -109,6 +107,6 @@ int main(int argc, char** argv)
     calypso_framework_app_sdl_add_system(update,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE);
     calypso_framework_app_sdl_add_system(render,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE);
     calypso_framework_app_sdl_run();
-
+    
     return 0;
 }

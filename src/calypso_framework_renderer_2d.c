@@ -20,10 +20,6 @@ unsigned int _calypso_framework_renderer_2d_state                   = CALYPSO_FR
 #define CALYPSO_FRAMEWORK_RENDERER_GL_MINOR_VERSION                 3
 #define CALYPSO_FRAMEWORK_RENDERER_GL_CONTEXT_PROFILE               3
 
-// Clear Color
-float _calypso_framework_renderer_2d_clear_color[4]                  = {0,0,0,1};
-float _calypso_framework_renderer_2d_render_color[4]                 = {1,1,1,1};
-
 // Primitive assembly draw modes
 #define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_NONE        0x0000 // GL_NONE
 #define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_LINES       0x0001 // GL_LINES
@@ -93,23 +89,17 @@ void calypso_framework_renderer_2d_set_viewport(const int x, const int y, const 
 */
 void calypso_framework_renderer_2d_set_clear_color(const float r, const float g, const float b, const float a)
 {
-    _calypso_framework_renderer_2d_clear_color[0] = r;
-    _calypso_framework_renderer_2d_clear_color[1] = g;
-    _calypso_framework_renderer_2d_clear_color[2] = b;
-    _calypso_framework_renderer_2d_clear_color[3] = a;
+    glClearColor(r,g,b,a);
 }
 
 /**
-* \brief Set renderer's clear color
+* \brief Set renderer's clear color by byte color array
 * \param color_array Uint8[4]
 * \return void
 */
 void calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(const Uint8 color_array[4])
 {
-    _calypso_framework_renderer_2d_clear_color[0] = color_array[0] / 255.0f;
-    _calypso_framework_renderer_2d_clear_color[1] = color_array[1] / 255.0f;
-    _calypso_framework_renderer_2d_clear_color[2] = color_array[2] / 255.0f;
-    _calypso_framework_renderer_2d_clear_color[3] = color_array[3] / 255.0f;
+    glClearColor(color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
 }
 
 /**
@@ -124,8 +114,7 @@ void calypso_framework_renderer_2d_clear()
         _calypso_framework_renderer_2d_log_callback("Renderer GL 2D: Not init\n",3);
         return;
     }
-
-    glClearColor(_calypso_framework_renderer_2d_clear_color[0],_calypso_framework_renderer_2d_clear_color[1],_calypso_framework_renderer_2d_clear_color[2],_calypso_framework_renderer_2d_clear_color[3]);
+    
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
