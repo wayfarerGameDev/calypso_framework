@@ -78,7 +78,7 @@ void update(void)
         x += 100 * _game_delta_time;
 
     // Start
-    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_cornflower_blue); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_set_viewport(0,0,w,h); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_clear();
 

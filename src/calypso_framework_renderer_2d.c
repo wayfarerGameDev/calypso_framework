@@ -57,8 +57,8 @@ void calypso_framework_renderer_2d_init(void* open_gl_proc_address)
     gladLoadGLLoader(open_gl_proc_address);
     _calypso_framework_renderer_2d_state = CALYPSO_FRAMEWORK_RENDERER_2D_STATE_INIT;
 
-    // Start Clear Color
-    glClearColor(1,1,1,1);
+    // Start Clear Color (Cornflower blue)
+    glClearColor(0.392f,0.584f,0.929f,1);
 }
 
 /**
