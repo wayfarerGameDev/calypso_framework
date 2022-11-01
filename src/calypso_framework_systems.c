@@ -97,15 +97,15 @@ void calypso_framework_systems_one_shot_system(calypso_framework_systems_system_
 /**
 * \brief Add system
 * \param system void function with no paramaters
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param system_stage CALYPSO_FclsRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP || 0 : late startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP || 1 : early startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP || 2 : start
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN || 5 : shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE || 6 : early update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE || 7 : late update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE || 8 : update
 * \return void
 */
 void calypso_framework_systems_add_system(calypso_framework_systems_system_t system, int system_stage)
@@ -141,15 +141,15 @@ void calypso_framework_systems_add_system(calypso_framework_systems_system_t sys
 /**
 * \brief Add app system that is disabled
 * \param system void function with no paramaters
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param system_stage CALYPSO_FclsRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP || 0 : late startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP || 1 : early startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP || 2 : start
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN || 5 : shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE || 6 : early update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE || 7 : late update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE || 8 : update
 * \return void
 */
 void calypso_framework_systems_add_system_disabled(calypso_framework_systems_system_t system, int system_stage)
@@ -161,15 +161,15 @@ void calypso_framework_systems_add_system_disabled(calypso_framework_systems_sys
 /**
 * \brief Add app system that is to play once and than disable
 * \param system void function with no paramaters
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_STARTUP || 0 : late startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_STARTUP || 1 : early startup
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_STARTUP || 2 : start
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_SHUTDOWN || 4 : early shutdown
-* \param system_stage CALYPSO_FclsRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_SHUTDOWN || 5 : shutdown
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_EARLY_UPDATE || 6 : early update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_LATE_UPDATE || 7 : late update
-* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_APP_STAGE_UPDATE || 8 : update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP || 0 : late startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP || 1 : early startup
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP || 2 : start
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN || 3 : late shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN || 4 : early shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN || 5 : shutdown
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE || 6 : early update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE || 7 : late update
+* \param system_stage CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE || 8 : update
 * \return void
 */
 void calypso_framework_systems_add_system_one_shot(calypso_framework_systems_system_t system, int system_stage)
@@ -178,6 +178,10 @@ void calypso_framework_systems_add_system_one_shot(calypso_framework_systems_sys
     calypso_framework_systems_one_shot_system(system);
 }
 
+/**
+* \brief Do startup statge systems
+* \return void
+*/
 void calypso_framework_systems_do_startup_stage_systems()
 {
      // Run Early Startup App Stage Systems
@@ -214,6 +218,10 @@ void calypso_framework_systems_do_startup_stage_systems()
             }
 }
 
+/**
+* \brief Do startup shutdown systems
+* \return void
+*/
 void calypso_framework_systems_do_shutdown_stage_systems()
 {
      // Run Early Startup App Stage Systems
@@ -250,6 +258,10 @@ void calypso_framework_systems_do_shutdown_stage_systems()
             }
 }
 
+/**
+* \brief Do update statge systems
+* \return void
+*/
 void calypso_framework_systems_do_update_stage_systems()
 {
      // Run Early Startup App Stage Systems
