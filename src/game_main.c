@@ -1,7 +1,8 @@
 // Includes
 #include "calypso_framework_app_sdl.c"
+#include "calypso_framework_colors.c"
 #include "calypso_framework_input_sdl.c"
-#include "calypso_framework_renderer_sdl.c"
+#include "calypso_framework_renderer_2d.c"
 
 // Game Data
 float _game_delta_time;
@@ -34,21 +35,18 @@ void log_printf(const char* log_msg, const Uint8 log_type)
 void start(void)
 {
     // Setup Renderer
-    calypso_framework_renderer_sdl_set_log_callback(log_printf);
-    calypso_framework_renderer_sdl_init(calypso_framework_app_sdl_get_sdl_window());
-    calypso_framework_renderer_set_clear_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_black);
-    calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
+    calypso_framework_renderer_2d_set_log_callback(log_printf);
+    calypso_framework_renderer_2d_init(calypso_framework_app_sdl_get_open_gl_proc_address());
 }
 
 void load_content(void)
 {
-    calypso_framework_renderer_sdl_render_add_font_ttf("content/Acme.ttf",20);
 }
 
 void end(void)
 {
     // Stop Renderer
-    calypso_framework_renderer_sdl_deinit();
+    calypso_framework_renderer_2d_deinit();
 
     // Free Game data
     free(_game_fps_char);
@@ -79,48 +77,37 @@ void update(void)
         x += 100 * _game_delta_time;
 }
 
-void render_start(void)
+void render(void)
 {
-    calypso_framework_renderer_clear();
-}
+    // Data
+    const int w = calypso_framework_app_sdl_get_window_width();
+    const int h = calypso_framework_app_sdl_get_window_width();
 
-void render_present(void)
-{
-    calypso_framework_renderer_render_present();
-}
+    // Start
+    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_viewport(0,0,w,h); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_clear();
 
-void render_entities(void)
-{
-    // Render Line
-    calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_green);
-    for (int i = 0; i < 1000; i++)
-    {
-        calypso_framework_renderer_sdl_draw_line(x + 300 + i,200 + y,x + 500,700 + y);
-    }
-}
+    // Entities Here
+    //calypso_framework_renderer_2d_draw_line();
 
-void render_gui(void)
-{
-    calypso_framework_renderer_set_render_color_from_color_array(_c_calypso_framework_renderer_sdl_color_array_white);
+    // GUI Here
 
-    _game_fps_char = calypso_framework_app_sdl_get_time_fps_as_string();
-    calypso_framework_renderer_sdl_render_draw_text_ttf( _game_fps_char,10,10);
+    
 }
 
 int main(int argc, char** argv)
 {
     // Setup And Run App
     calypso_framework_app_sdl_set_log_callback(log_printf);
-    calypso_framework_app_sdl_init();
+    calypso_framework_app_sdl_pre_init_opengl_context(CALYPSO_FRAMEWORK_RENDERER_GL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_CONTEXT_PROFILE);
+    calypso_framework_app_sdl_init_window();
     calypso_framework_app_sdl_set_window_title("Game");
     calypso_framework_app_sdl_add_system(start,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP);
     calypso_framework_app_sdl_add_system(load_content,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_STARTUP);
     calypso_framework_app_sdl_add_system(end,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_SHUTDOWN);
     calypso_framework_app_sdl_add_system(update,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE);
-    calypso_framework_app_sdl_add_system(render_start,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_EARLY_UPDATE);
-    calypso_framework_app_sdl_add_system(render_present,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE);
-    calypso_framework_app_sdl_add_system(render_entities,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE);
-    calypso_framework_app_sdl_add_system(render_gui,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_UPDATE);
+    calypso_framework_app_sdl_add_system(render,CALYPSO_FRAMEWORK_APP_SDL_SYSTEM_APP_STAGE_LATE_UPDATE);
     calypso_framework_app_sdl_run();
 
     return 0;
