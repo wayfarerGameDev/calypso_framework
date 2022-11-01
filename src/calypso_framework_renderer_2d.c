@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "glad/glad.h"
+#include "dependencies/glad/glad.h"
 
 // Logging Callback
 typedef void (*calypso_framework_renderer_2d_log_callback_t)(const char* log_msg, const Uint8 log_type);

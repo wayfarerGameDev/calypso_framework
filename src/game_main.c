@@ -84,7 +84,7 @@ void render(void)
     const int h = calypso_framework_app_sdl_get_window_width();
 
     // Start
-    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_pink); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_set_viewport(0,0,w,h); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_clear();
 

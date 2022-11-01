@@ -5,7 +5,7 @@
 #pragma once
 
 // Includes
-#include <SDL2/SDL.h>
+#include <dependencies/SDL2/SDL.h>
 
 // Input States
 #define CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP                      0

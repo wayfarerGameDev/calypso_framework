@@ -6,7 +6,7 @@
 
 // Includes
 #include <stdio.h>
-#include <SDL2/SDL.h>
+#include <dependencies/SDL2/SDL.h>
 
 // State
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL        0
