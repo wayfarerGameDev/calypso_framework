@@ -5,15 +5,6 @@
 #include "calypso_framework_renderer_2d.c"
 #include "calypso_framework_systems.c"
 
-// Game Data
-float _game_delta_time;
-char* _game_fps_char;
-int _game_mouse_x;
-int _game_mouse_y;
-
-float y = 200;
-float x = 200;
-
 void log_printf(const char* log_msg, const Uint8 log_type)
 {
     // Color Log
@@ -45,9 +36,6 @@ void end(void)
     // Stop Renderer
     calypso_framework_renderer_2d_deinit();
 
-    // Free Game data
-    free(_game_fps_char);
-
     // :(
     log_printf("Goodbye cruel world :(\n",3);
 }
@@ -55,37 +43,24 @@ void end(void)
 void update(void)
 {
     // Data
-    const int w = calypso_framework_app_sdl_get_window_width();
-    const int h = calypso_framework_app_sdl_get_window_width();
-
-    // Get Game Delta Time From App
-    _game_delta_time = calypso_framework_app_sdl_get_time_delta_time();
+    const int viewport_width = calypso_framework_app_sdl_get_window_width();
+    const int viewport_height = calypso_framework_app_sdl_get_window_width();
+    const int game_mouse_x = calypso_framework_input_sdl_get_mouse_cursor_x();
+    const int game_mouse_y = calypso_framework_input_sdl_get_mouse_cursor_y();
+    const int game_delta_time = calypso_framework_app_sdl_get_time_delta_time();
 
     // Update Input
     calypso_framework_input_sdl_update();
 
-    _game_mouse_x = calypso_framework_input_sdl_get_mouse_cursor_x();
-    _game_mouse_y = calypso_framework_input_sdl_get_mouse_cursor_y();
-
-    // Move Lines
-    if (calypso_framework_input_sdl_get_key_up(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_UP))
-        y -= 100 * _game_delta_time;
-    if (calypso_framework_input_sdl_get_key_pressed(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_DOWN))
-        y += 100;
-    if (calypso_framework_input_sdl_get_key_released(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_LEFT))
-        x -= 100;
-    if (calypso_framework_input_sdl_get_key_down(CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_RIGHT))
-        x += 100 * _game_delta_time;
-
-    // Start
+    // Render Start
     calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to do this every frame but why not
-    calypso_framework_renderer_2d_set_viewport(0,0,w,h); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_viewport(0,0,viewport_width,viewport_height); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_clear();
 
-    // Entities Here
-    //calypso_framework_renderer_2d_draw_line();
+    // Render Entities
+    render_quad(0,0,0,0);
 
-    // GUI Here
+    // Render GUI Here
 }
 
 int main(int argc, char** argv)

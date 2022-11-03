@@ -6,6 +6,7 @@
 
 #include "dependencies/glad/glad.h"
 
+
 // Logging Callback
 typedef void (*calypso_framework_renderer_2d_log_callback_t)(const char* log_msg, const Uint8 log_type);
 calypso_framework_renderer_2d_log_callback_t _calypso_framework_renderer_2d_log_callback;
@@ -21,11 +22,11 @@ unsigned int _calypso_framework_renderer_2d_state                   = CALYPSO_FR
 #define CALYPSO_FRAMEWORK_RENDERER_GL_CONTEXT_PROFILE               3
 
 // Primitive assembly draw modes
-#define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_NONE        0x0000 // GL_NONE
-#define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_LINES       0x0001 // GL_LINES
-#define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_TRIANGLES   0x0004 // GL_TRIANGLES
-#define CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_QUADS       0x0007 // GL_QUADS
-int _calypso_framework_renderer_draw_mode                              = CALYPSO_FRAMEWORK_RENDERER_2D_PRIMITIVE_DRAW_MODE_NONE;
+int _calypso_framework_renderer_draw_mode                           = 0;
+
+unsigned int vao_quad;
+unsigned int vbo_quad;
+unsigned int ebo_quad;
 
 /**
 * \brief Set renderer's log callback
@@ -54,11 +55,52 @@ void calypso_framework_renderer_2d_do_log_callback(const char* log_msg, const Ui
 */
 void calypso_framework_renderer_2d_init(void* open_gl_proc_address)
 {
-    gladLoadGLLoader(open_gl_proc_address);
     _calypso_framework_renderer_2d_state = CALYPSO_FRAMEWORK_RENDERER_2D_STATE_INIT;
 
-    // Start Clear Color (Cornflower blue)
-    glClearColor(0.392f,0.584f,0.929f,1);
+    // OpenGL (Glad | Clear Color)
+    {
+        gladLoadGLLoader(open_gl_proc_address);
+
+        // Start Clear Color (Cornflower blue)
+        glClearColor(0.392f,0.584f,0.929f,1);
+    }
+
+    // OpenGL (Quad)
+    {
+       float vertices[] = {
+		 0.5,  0.5, 0, 0, 0,
+		 0.5, -0.5, 0, 0, 1,
+		-0.5, -0.5, 0, 1, 1,
+		-0.5,  0.5, 0, 1, 0
+	    };
+
+	    unsigned int indices[] = {
+	    	0, 1, 3,
+	    	1, 2, 3
+	    };
+
+	    glGenVertexArrays(1, &vao_quad);
+	    glGenBuffers(1, &vbo_quad);
+	    glGenBuffers(1, &ebo_quad);
+
+	    glBindVertexArray(vao_quad);
+
+	    glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
+	    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_quad);
+	    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	    // xyz
+	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), NULL);
+	    glEnableVertexAttribArray(0);
+
+	    // uv
+	    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	    glEnableVertexAttribArray(1);
+
+        glBindVertexArray(0);
+    }
 }
 
 /**
@@ -125,15 +167,10 @@ void calypso_framework_renderer_2d_clear()
 * \brief Begin drawing a primitive
 * \return void
 */
-void calypso_framework_renderer_2d_draw_primitive_begin(int draw_mode)
+void render_quad(float posX, float posY, float sizeX, float sizeY) 
 {
-     // Only Init Once
-    if (_calypso_framework_renderer_2d_state != CALYPSO_FRAMEWORK_RENDERER_2D_STATE_INIT)
-    {
-        _calypso_framework_renderer_2d_log_callback("Renderer GL 2D: Not init\n",3);
-        return;
-    }
-
-    // Set Current Draw Mode
-    _calypso_framework_renderer_draw_mode = draw_mode;
+	glBindVertexArray(vao_quad);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,NULL);
+    glBindVertexArray(0);
 }
