@@ -246,7 +246,7 @@ void calypso_framework_app_sdl_set_events(calypso_framework_app_sdl_event_t even
 * \brief Initializes app window
 * \return void
 */
-void calypso_framework_app_sdl_init_window_with_opengl(const int major_version, const int minor_version, const int context_profile)
+void calypso_framework_app_sdl_init_with_opengl(const int major_version, const int minor_version, const int context_profile)
 {
     // Setup OpenGL Attributes
     {
