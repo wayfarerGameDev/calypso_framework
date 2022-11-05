@@ -60,7 +60,7 @@ void calypso_framework_renderer_2d_init(void* open_gl_proc_address)
     _calypso_framework_renderer_2d_state = CALYPSO_FRAMEWORK_RENDERER_2D_STATE_INIT;
 
     // OpenGL (Glad | Clear Color)
-    { 
+    {  
         gladLoadGLLoader(open_gl_proc_address);
 
         // Start Clear Color (Cornflower blue)
@@ -69,12 +69,12 @@ void calypso_framework_renderer_2d_init(void* open_gl_proc_address)
 
     // OpenGL (Quad)
     {
-         // Vertices (Counter Clock)
+         // Vertices (XYZ UV)
         float vertices[] = {
-            0.5f,  0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f 
+             0.5,  0.5, 0, 0, 0,
+             0.5, -0.5, 0, 0, 1,
+            -0.5, -0.5, 0, 1, 1,
+            -0.5,  0.5, 0, 1, 0
         };
 
         // Indicies
@@ -97,23 +97,29 @@ void calypso_framework_renderer_2d_init(void* open_gl_proc_address)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_2d_gl_ibo_quad);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),indices, GL_STATIC_DRAW);
 
-        // Vertex Attributes
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        // Vertex Attributes (XYZ)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
+
+        // Vertex Attributes (UV)
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        glBindVertexArray(0);
     }
 
     // OpenGL (Triangle)
     {
         // Vertices (Counter Clock Wise)    
         float vertices[] = {
-            0.5f,  0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f 
+             0.5,  0.5, 0,
+            -0.5,  0.5, 0,
+             0.5, -0.5, 0
         };
 
         // // Indicies
         unsigned int indices[] = {
-            0, 1, 3
+            0, 1, 2
         };
 
         // VAO
@@ -211,9 +217,10 @@ void calypso_framework_renderer_2d_render_box(float posX, float posY, float size
 
     // OpenGL
     {
-        glColor3f(0,0,1);
+        glColor3f(0.1,0.1,0.1);
 
         glBindVertexArray(_calypso_framework_renderer_2d_gl_vao_quad);
+        glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
@@ -239,6 +246,7 @@ void calypso_framework_renderer_2d_render_triangle(float posX, float posY, float
         glColor3f(1,0,0);
 
         glBindVertexArray(_calypso_framework_renderer_2d_gl_vao_triangle);
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
