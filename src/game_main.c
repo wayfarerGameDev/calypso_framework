@@ -68,8 +68,7 @@ int main(int argc, char** argv)
 {
     // Setup | Run App
     calypso_framework_app_sdl_set_log_callback(log_printf);
-    calypso_framework_app_sdl_pre_init_opengl_context(CALYPSO_FRAMEWORK_RENDERER_GL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_CONTEXT_PROFILE);
-    calypso_framework_app_sdl_init_window();
+    calypso_framework_app_sdl_init_window_with_opengl(CALYPSO_FRAMEWORK_RENDERER_GL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_GL_CONTEXT_PROFILE);
     calypso_framework_app_sdl_set_window_title("Game");
     calypso_framework_app_sdl_set_events(start,end,update);
     calypso_framework_app_sdl_run();

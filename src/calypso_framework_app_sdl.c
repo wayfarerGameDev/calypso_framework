@@ -18,10 +18,7 @@ calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING     2
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN    3
 #define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR       4
-unsigned int _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
-
-// Flags
-int _calypso_framework_app_sdl_flags = 0;
+unsigned int _calypso_framework_app_sdl_state       = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
 
 // Window
 #define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT  1280 
@@ -246,33 +243,26 @@ void calypso_framework_app_sdl_set_events(calypso_framework_app_sdl_event_t even
 }
 
 /**
-* \brief Pre initializes app opengl context
-* \return void
-*/
-void calypso_framework_app_sdl_pre_init_opengl_context(const int major_version, const int minor_version, const int context_profile)
-{
-    // Setup OpenGL Attributes
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,major_version);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,minor_version);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,context_profile); //MAY NEED TO CHANGE HOW THIS IS DONE
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
-
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
-
-    _calypso_framework_app_sdl_flags = SDL_WINDOW_OPENGL;
-}
-
-/**
 * \brief Initializes app window
 * \return void
 */
-void calypso_framework_app_sdl_init_window(void)
+void calypso_framework_app_sdl_init_window_with_opengl(const int major_version, const int minor_version, const int context_profile)
 {
+    // Setup OpenGL Attributes
+    {
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,major_version);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,minor_version);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,context_profile); //MAY NEED TO CHANGE HOW THIS IS DONE
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
+
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+    }
+
     // Only Init Once
     if (_calypso_framework_app_sdl_state != CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL)
     {
@@ -294,7 +284,7 @@ void calypso_framework_app_sdl_init_window(void)
     }
 
     // Create SDL Window
-    _calypso_framework_app_sdl_window = SDL_CreateWindow("App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_HEIGHT_DEFAULT,_calypso_framework_app_sdl_flags);
+    _calypso_framework_app_sdl_window = SDL_CreateWindow("App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_APP_SDL_SCREEN_HEIGHT_DEFAULT,SDL_WINDOW_OPENGL);
     if(!_calypso_framework_app_sdl_window)
     {
         calypso_framework_app_sdl_do_log_callback("App: SDL failed to create window\n",3);
@@ -305,7 +295,6 @@ void calypso_framework_app_sdl_init_window(void)
     }
 
     //Open GL Context
-    if (_calypso_framework_app_sdl_flags == SDL_WINDOW_OPENGL)
     {
         _calypso_framework_app_sdl_gl_context = SDL_GL_CreateContext(_calypso_framework_app_sdl_window);
         if (!_calypso_framework_app_sdl_gl_context)
