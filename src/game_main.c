@@ -53,12 +53,13 @@ void update(void)
     calypso_framework_input_sdl_update();
 
     // Render Start
-    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to do this every frame but why not
-    calypso_framework_renderer_2d_set_viewport(0,0,viewport_width,viewport_height); // Don't need to do this every frame but why not
+    calypso_framework_renderer_2d_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to  do this every frame but why not
+    calypso_framework_renderer_2d_set_viewport(0,-300,viewport_width,viewport_height); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_clear();
 
     // Render Entities
-    render_quad(0,0,0,0);
+    calypso_framework_renderer_2d_render_box(0,0,0,0);
+    calypso_framework_renderer_2d_render_triangle(0,0,0,0);
 
     // Render GUI Here
 }
