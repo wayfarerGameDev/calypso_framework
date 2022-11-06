@@ -6,7 +6,6 @@
 
 #include "dependencies/glad/glad.h"
 
-
 // Logging Callback
 typedef void (*calypso_framework_renderer_2d_opengl_log_callback_t)(const char* log_msg, const Uint8 log_type);
 calypso_framework_renderer_2d_opengl_log_callback_t _calypso_framework_renderer_2d_opengl_log_callback;
@@ -52,9 +51,116 @@ void calypso_framework_renderer_2d_opengl_do_log_callback(const char* log_msg, c
 }
 
 /**
-* \brief Initializes renderer
+* \brief Compiles shader
+* \return unsigned int
+*/
+unsigned int calypso_framework_renderer_2d_opengl_compile_shader(const char* shader_source, unsigned int shader_type)
+{
+    // Create And Compile Shader
+    unsigned int shader_id = glCreateShader(shader_type);
+    glShaderSource(shader_id,1,&shader_source,NULL);
+    glCompileShader(shader_id);
+
+    // Error Logging
+    int shader_compile_result;
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &shader_compile_result);   
+    if (shader_compile_result == 0)
+    {
+        // Get Log Length
+        int log_length;
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH,&log_length);
+
+        // Get Log Message
+        char* log_message = (char*)alloca(log_length * sizeof(char));    
+        glGetShaderInfoLog(shader_id,GL_INFO_LOG_LENGTH,&log_length,log_message);
+
+        // log
+        if (shader_type == GL_VERTEX_SHADER)
+            calypso_framework_renderer_2d_opengl_do_log_callback("Vertex Shader (ERROR)\n",3);
+        if (shader_type == GL_FRAGMENT_SHADER)
+            calypso_framework_renderer_2d_opengl_do_log_callback("Fragment Shader (ERROR)\n",3);
+        calypso_framework_renderer_2d_opengl_do_log_callback(log_message,3);
+        calypso_framework_renderer_2d_opengl_do_log_callback("\n",0);
+    }
+
+    // Return Shader ID
+    return shader_id;
+}
+
+/**
+* \brief Creates shader program
+* \return unsigned int
+*/
+unsigned int calypso_framework_renderer_2d_opengl_create_shader_program(const char* vertex_shader_source, const char* fragment_shader_source)
+{
+    // Compile Shaders (Intermidete Data For Shaders)
+    unsigned int vertex_shader = calypso_framework_renderer_2d_opengl_compile_shader(vertex_shader_source, GL_VERTEX_SHADER);
+    unsigned int fragment_shader = calypso_framework_renderer_2d_opengl_compile_shader(fragment_shader_source, GL_FRAGMENT_SHADER);
+
+    // Create Shader Program From Compiled Shader
+    unsigned int shader_program = glCreateProgram();
+    glAttachShader(shader_program,vertex_shader);
+    glAttachShader(shader_program,fragment_shader);
+    glLinkProgram(shader_program);
+    glValidateProgram(shader_program);
+
+    // Destroy Shaders (No Longer Needed As Shader Program Is Created)
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);    
+
+    // Detach Shader (We Comment Out So We Can Have Debbuging Info, Only SMall Overhead To Keep Around)
+    //glDetachShader(vertex_shader);
+    //glDetachShader(fragment_shader);
+
+    // Return Shader Program
+    return shader_program;
+}
+
+/**
+* \brief Creates shader program
+* \return unsigned int
+*/
+unsigned int calypso_framework_renderer_2d_opengl_create_default_shader_program()
+{
+    // Vertex Shader Source
+    const char* vertex_shader_source = 
+    "#version 330 core\n"
+    "\n"
+    "layout(location = 0) in vec4 position;\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = position;\n"
+    "}\n";
+
+    // Fragment Shader Source
+    const char* fragment_shader_source = 
+    "#version 330 core\n"
+    "\n"
+    "layout(location = 0) out vec4 color;\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "   color = vec4(1,1,1,1);\n"
+    "}\n"; 
+
+    // Create Shader
+    return calypso_framework_renderer_2d_opengl_create_shader_program(vertex_shader_source,fragment_shader_source);
+}
+
+/**
+* \brief Set current shader program
 * \return void
 */
+void calypso_framework_renderer_2d_opengl_set_current_shader_program(const unsigned shader_program)
+{
+    glUseProgram(shader_program);
+}
+
+/**
+* \brief Initializes renderer
+* \return void
+*/  
 void calypso_framework_renderer_2d_opengl_init(void* opengl_proc_address)
 {
     _calypso_framework_renderer_2d_opengl_state = CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT;
@@ -217,14 +323,10 @@ void calypso_framework_renderer_2d_opengl_render_box(float posX, float posY, flo
 
     // OpenGL
     {
-        glColor3f(0.1,0.1,0.1);
-
         glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_quad);
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-
-        glColor3f(1,1,1);
     }
 }
 
@@ -243,13 +345,9 @@ void calypso_framework_renderer_2d_opengl_render_triangle(float posX, float posY
 
     // OpenGL
     {
-        glColor3f(1,0,0);
-
         glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_triangle);
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-
-        glColor3f(1,1,1);
     }
 }

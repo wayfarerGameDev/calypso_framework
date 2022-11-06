@@ -5,6 +5,8 @@
 #include "calypso_framework_renderer_2d_opengl.c"
 #include "calypso_framework_systems.c"
 
+unsigned int game_default_shader_program;
+
 void log_printf(const char* log_msg, const Uint8 log_type)
 {
     // Color Log
@@ -26,9 +28,12 @@ void log_printf(const char* log_msg, const Uint8 log_type)
 
 void start(void)
 {   
-    // Setup Renderer
+    // Setup Renderer | Create Default Shader Program | Set Current Shader Program
     calypso_framework_renderer_2d_opengl_set_log_callback(log_printf);
     calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
+    game_default_shader_program = calypso_framework_renderer_2d_opengl_create_default_shader_program();
+    calypso_framework_renderer_2d_opengl_set_current_shader_program(game_default_shader_program);
+    // Create 
 }
 
 void end(void)
