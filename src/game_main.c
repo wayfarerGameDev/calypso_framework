@@ -2,10 +2,12 @@
 #include "calypso_framework_app_sdl.c"
 #include "calypso_framework_colors.c"
 #include "calypso_framework_input_sdl.c"
+#include "calypso_framework_io.c"
 #include "calypso_framework_renderer_2d_opengl.c"
 #include "calypso_framework_systems.c"
 
 unsigned int game_default_shader_program;
+unsigned int game_yellow_shader_program;
 
 void log_printf(const char* log_msg, const Uint8 log_type)
 {
@@ -28,12 +30,25 @@ void log_printf(const char* log_msg, const Uint8 log_type)
 
 void start(void)
 {   
-    // Setup Renderer | Create Default Shader Program | Set Current Shader Program
-    calypso_framework_renderer_2d_opengl_set_log_callback(log_printf);
-    calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
-    game_default_shader_program = calypso_framework_renderer_2d_opengl_create_default_shader_program();
-    calypso_framework_renderer_2d_opengl_set_current_shader_program(game_default_shader_program);
-    // Create 
+    // Setup IO
+    calypso_framework_io_set_log_callback(log_printf);
+
+    // Renderer
+    {
+        //Set Renderer Log Callback | Init Renderer
+        calypso_framework_renderer_2d_opengl_set_log_callback(log_printf);
+        calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
+        
+        // Create Default Shader Program
+        game_default_shader_program = calypso_framework_renderer_2d_opengl_create_default_shader_program();
+        calypso_framework_renderer_2d_opengl_set_current_shader_program(game_default_shader_program);
+
+        // Load | Create Shader
+        char* vert_file_data = calypso_framework_io_file_read_char_array("content/shaders/default_shader_vert.glsl");
+        calypso_framework_io_file_t frag_file = calypso_framework_io_file_read("content/shaders/default_shader_frag.glsl");
+        game_yellow_shader_program = calypso_framework_renderer_2d_opengl_create_shader_program(vert_file_data,frag_file.data);
+        calypso_framework_renderer_2d_opengl_set_current_shader_program(game_yellow_shader_program);
+    }
 }
 
 void end(void)
