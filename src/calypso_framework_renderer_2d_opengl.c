@@ -25,9 +25,6 @@ unsigned int _calypso_framework_renderer_2d_opengl_state            = CALYPSO_FR
 unsigned int _calypso_framework_renderer_2d_opengl_vbo_quad;        // Quad
 unsigned int _calypso_framework_renderer_2d_opengl_vao_quad;
 unsigned int _calypso_framework_renderer_2d_opengl_ibo_quad;
-unsigned int _calypso_framework_renderer_2d_opengl_vbo_triangle;    // Triangle
-unsigned int _calypso_framework_renderer_2d_opengl_vao_triangle;
-unsigned int _calypso_framework_renderer_2d_opengl_ibo_triangle;
 
 // Current Shader Program
 unsigned int calypso_framework_renderer_2d_opengl_current_program;
@@ -316,40 +313,7 @@ void calypso_framework_renderer_2d_opengl_init(void* opengl_proc_address)
         glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
-    }
-
-    // OpenGL (Triangle)
-    {
-        // Vertices (Counter Clock Wise)    
-        float vertices[] = {
-             0.5,  0.5, 0,
-            -0.5,  0.5, 0,
-             0.5, -0.5, 0
-        };
-
-        // // Indicies
-        unsigned int indices[] = {
-            0, 1, 2
-        };
-
-        // VAO
-        glGenVertexArrays(1, &_calypso_framework_renderer_2d_opengl_vao_triangle);
-        glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_triangle);
-
-        // VBO
-        glGenBuffers(1, &_calypso_framework_renderer_2d_opengl_vbo_triangle);
-        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_2d_opengl_vbo_triangle);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),vertices, GL_STATIC_DRAW);
-
-        // IBO
-        glGenBuffers(1, &_calypso_framework_renderer_2d_opengl_ibo_triangle);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_2d_opengl_ibo_triangle);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),indices, GL_STATIC_DRAW);
-
-        // Vertex Attributes
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-    }
+    }    
 }
 
 /**
@@ -416,27 +380,6 @@ void calypso_framework_renderer_2d_opengl_render_box(float posX, float posY, flo
     {
         glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-    }
-}
-
-/**
-* \brief Render a triangle
-* \return void
-*/
-void calypso_framework_renderer_2d_opengl_render_triangle(float posX, float posY, float sizeX, float sizeY) 
-{
-    // Check If We Are Init
-    if (_calypso_framework_renderer_2d_opengl_state != CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT)
-    {
-        _calypso_framework_renderer_2d_opengl_log_callback("Renderer GL 2D: Not init\n",3);
-        return;
-    }
-
-    // OpenGL
-    {
-        glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_triangle);
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
 }

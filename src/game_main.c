@@ -33,10 +33,6 @@ void log_printf(const char* log_msg, const Uint8 log_type)
 
 void start(void)
 {   
-    //
-    const float viewport_width = calypso_framework_app_sdl_get_window_width();
-    const float viewport_height = calypso_framework_app_sdl_get_window_height();
-
     // Setup IO
     calypso_framework_io_set_log_callback(log_printf);
 
