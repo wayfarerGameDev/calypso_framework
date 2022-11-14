@@ -6,6 +6,7 @@
 #include "calypso_framework_renderer_2d_opengl.c"
 #include "calypso_framework_systems.c"
 
+calypso_framework_renderer_2d_opengl_mat4f_t game_camera_projection_matrix;
 unsigned int game_default_shader_program_red;
 unsigned int game_default_shader_program_yellow;
 
@@ -30,26 +31,32 @@ void log_printf(const char* log_msg, const Uint8 log_type)
 
 void start(void)
 {   
+    //
+    const float viewport_width = calypso_framework_app_sdl_get_window_width();
+    const float viewport_height = calypso_framework_app_sdl_get_window_height();
+
     // Setup IO
     calypso_framework_io_set_log_callback(log_printf);
 
     // Renderer
-    {
+    {   
         //Set Renderer Log Callback | Init Renderer
         calypso_framework_renderer_2d_opengl_set_log_callback(log_printf);
         calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
+
+        //Camera
+        calypso_framework_renderer_2d_opengl_calculate_matrix4f_ortho(game_camera_projection_matrix,-8,8,-4.5f,4.5f,-1,1);
         
         // Create Default Shader Program Red
         game_default_shader_program_red = calypso_framework_renderer_2d_opengl_create_default_shader_program();
         calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_red);
         calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("color_in",1,0,0,1);
-        //calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4("position_offset",0,0,0,1);
-         // Create Default Shader Program Yellow
+        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f("mvp_in",game_camera_projection_matrix); // Apply Camera
+        // Create Default Shader Program Yellow
 
-        game_default_shader_program_yellow = calypso_framework_renderer_2d_opengl_create_default_shader_program();
-        calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
-        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("color_in",1,1,0,1);
-        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("position_offset",-0.05,-0.05,0,0);
+        //game_default_shader_program_yellow = calypso_framework_renderer_2d_opengl_create_default_shader_program();
+        //calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
+        //calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("color_in",1,1,0,1);
     }
 }
 
@@ -65,8 +72,6 @@ void end(void)
 void update(void)
 {
     // Data
-    const int viewport_width = calypso_framework_app_sdl_get_window_width();
-    const int viewport_height = calypso_framework_app_sdl_get_window_width();
     const int game_mouse_x = calypso_framework_input_sdl_get_mouse_cursor_x();
     const int game_mouse_y = calypso_framework_input_sdl_get_mouse_cursor_y();
     const int game_delta_time = calypso_framework_app_sdl_get_time_delta_time();
@@ -76,14 +81,14 @@ void update(void)
 
     // Render Start
     calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to  do this every frame but why not
-    calypso_framework_renderer_2d_opengl_set_viewport(0,-300,viewport_width,viewport_height); // Don't need to do this every frame but why not
     calypso_framework_renderer_2d_opengl_clear();
 
     // Render Entities
     calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_red);
     calypso_framework_renderer_2d_opengl_render_box(0,0,0,0);
-    calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
-    calypso_framework_renderer_2d_opengl_render_triangle(0,0,0,0);
+
+    //calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
+    //calypso_framework_renderer_2d_opengl_render_triangle(0,0,0,0);
 
     // Render GUI Here
 }
