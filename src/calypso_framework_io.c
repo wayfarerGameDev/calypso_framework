@@ -22,7 +22,7 @@ typedef struct calypso_framework_io_file_t_s
 
 
 /**
-* \brief Set app's log callback
+* \brief Set io's log callback
 * \return void
 */
 void calypso_framework_io_set_log_callback(calypso_framework_io_log_callback_t log_callback)
@@ -31,7 +31,7 @@ void calypso_framework_io_set_log_callback(calypso_framework_io_log_callback_t l
 }
 
 /**
-* \brief Do app's log callback
+* \brief Do io's log callback
 * \return void
 */
 void calypso_framework_io_do_log_callback(const char* log_msg, const Uint8 log_type)
@@ -42,7 +42,7 @@ void calypso_framework_io_do_log_callback(const char* log_msg, const Uint8 log_t
     _calypso_framework_io_log_callback(log_msg,log_type);
 }
 
-// Adapted from https://stackoverflow.com/a/44894946 (not the chosen answer) by Nominal Animal
+// Based On https://stackoverflow.com/a/44894946 (not the chosen answer) by Nominal Animal
 /**
 * \brief Read file
 * \param char* file_path

@@ -6,8 +6,8 @@
 #include "calypso_framework_renderer_2d_opengl.c"
 #include "calypso_framework_systems.c"
 
-unsigned int game_default_shader_program;
-unsigned int game_yellow_shader_program;
+unsigned int game_default_shader_program_red;
+unsigned int game_default_shader_program_yellow;
 
 void log_printf(const char* log_msg, const Uint8 log_type)
 {
@@ -39,15 +39,17 @@ void start(void)
         calypso_framework_renderer_2d_opengl_set_log_callback(log_printf);
         calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
         
-        // Create Default Shader Program
-        game_default_shader_program = calypso_framework_renderer_2d_opengl_create_default_shader_program();
-        calypso_framework_renderer_2d_opengl_set_current_shader_program(game_default_shader_program);
+        // Create Default Shader Program Red
+        game_default_shader_program_red = calypso_framework_renderer_2d_opengl_create_default_shader_program();
+        calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_red);
+        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("color_in",1,0,0,1);
+        //calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4("position_offset",0,0,0,1);
+         // Create Default Shader Program Yellow
 
-        // Load | Create Shader
-        char* vert_file_data = calypso_framework_io_file_read_char_array("content/shaders/default_shader_vert.glsl");
-        calypso_framework_io_file_t frag_file = calypso_framework_io_file_read("content/shaders/default_shader_frag.glsl");
-        game_yellow_shader_program = calypso_framework_renderer_2d_opengl_create_shader_program(vert_file_data,frag_file.data);
-        calypso_framework_renderer_2d_opengl_set_current_shader_program(game_yellow_shader_program);
+        game_default_shader_program_yellow = calypso_framework_renderer_2d_opengl_create_default_shader_program();
+        calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
+        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("color_in",1,1,0,1);
+        calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f("position_offset",-0.05,-0.05,0,0);
     }
 }
 
@@ -78,7 +80,9 @@ void update(void)
     calypso_framework_renderer_2d_opengl_clear();
 
     // Render Entities
+    calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_red);
     calypso_framework_renderer_2d_opengl_render_box(0,0,0,0);
+    calypso_framework_renderer_2d_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
     calypso_framework_renderer_2d_opengl_render_triangle(0,0,0,0);
 
     // Render GUI Here

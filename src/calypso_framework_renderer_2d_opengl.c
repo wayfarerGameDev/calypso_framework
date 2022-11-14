@@ -29,6 +29,10 @@ unsigned int _calypso_framework_renderer_2d_opengl_vbo_triangle;    // Triangle
 unsigned int _calypso_framework_renderer_2d_opengl_vao_triangle;
 unsigned int _calypso_framework_renderer_2d_opengl_ibo_triangle;
 
+// Current Shader Program
+unsigned int calypso_framework_renderer_2d_opengl_current_program;
+
+
 /**
 * \brief Set renderer's log callback
 * \return void
@@ -76,9 +80,9 @@ unsigned int calypso_framework_renderer_2d_opengl_compile_shader(const char* sha
 
         // log
         if (shader_type == GL_VERTEX_SHADER)
-            calypso_framework_renderer_2d_opengl_do_log_callback("Vertex Shader (ERROR)\n",3);
+            calypso_framework_renderer_2d_opengl_do_log_callback("Render: Vertex Shader (ERROR)\n",3);
         if (shader_type == GL_FRAGMENT_SHADER)
-            calypso_framework_renderer_2d_opengl_do_log_callback("Fragment Shader (ERROR)\n",3);
+            calypso_framework_renderer_2d_opengl_do_log_callback("Render: Fragment Shader (ERROR)\n",3);
         calypso_framework_renderer_2d_opengl_do_log_callback(log_message,3);
         calypso_framework_renderer_2d_opengl_do_log_callback("\n",0);
     }
@@ -91,7 +95,7 @@ unsigned int calypso_framework_renderer_2d_opengl_compile_shader(const char* sha
 * \brief Creates shader program
 * \return unsigned int
 */
-unsigned int calypso_framework_renderer_2d_opengl_create_shader_program(const char* vertex_shader_source, const char* fragment_shader_source)
+unsigned int calypso_framework_renderer_2d_opengl_create_shader_program_from_source(const char* vertex_shader_source, const char* fragment_shader_source)
 {
     // Compile Shaders (Intermidete Data For Shaders)
     unsigned int vertex_shader = calypso_framework_renderer_2d_opengl_compile_shader(vertex_shader_source, GL_VERTEX_SHADER);
@@ -128,33 +132,110 @@ unsigned int calypso_framework_renderer_2d_opengl_create_default_shader_program(
     "\n"
     "layout(location = 0) in vec4 position;\n"
     "\n"
+    "uniform vec4 position_offset;"
+    "\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = position;\n"
+    "   gl_Position = position + position_offset;\n"
     "}\n";
 
     // Fragment Shader Source
     const char* fragment_shader_source = 
     "#version 330 core\n"
     "\n"
-    "layout(location = 0) out vec4 color;\n"
+    "layout(location = 0) out vec4 color_out;\n"
+    "\n"
+    "uniform vec4 color_in;"
     "\n"
     "void main()\n"
     "{\n"
-    "   color = vec4(1,1,1,1);\n"
+    "   color_out = color_in;\n"
     "}\n"; 
 
     // Create Shader
-    return calypso_framework_renderer_2d_opengl_create_shader_program(vertex_shader_source,fragment_shader_source);
+    return calypso_framework_renderer_2d_opengl_create_shader_program_from_source(vertex_shader_source,fragment_shader_source);
 }
 
 /**
 * \brief Set current shader program
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_set_current_shader_program(const unsigned shader_program)
+void calypso_framework_renderer_2d_opengl_set_current_render_shader_program(const unsigned shader_program)
 {
     glUseProgram(shader_program);
+    calypso_framework_renderer_2d_opengl_current_program = shader_program;
+}
+
+/**
+* \brief Set current shader float parameter
+* \return void
+*/
+void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_float(char* paramter_name, const float v0)
+{
+    int location = glGetUniformLocation(calypso_framework_renderer_2d_opengl_current_program,paramter_name);
+    if (location == -1)
+    {
+        calypso_framework_renderer_2d_opengl_do_log_callback("Renderer: Can't set shader program paramater vec3(",2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(paramter_name,2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(")\n",2);
+        return;
+    }
+
+    glUniform1f(location,v0);
+}
+
+/**
+* \brief Set current shader vec2 parameter
+* \return void
+*/
+void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec2f(char* paramter_name, const float v0, const float v1)
+{
+    int location = glGetUniformLocation(calypso_framework_renderer_2d_opengl_current_program,paramter_name);
+    if (location == -1)
+    {
+        calypso_framework_renderer_2d_opengl_do_log_callback("Renderer: Can't set shader program paramater vec3(",2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(paramter_name,2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(")\n",2);
+        return;
+    }
+
+    glUniform2f(location,v0,v1);
+}
+
+/**
+* \brief Set current shader vec3 parameter
+* \return void
+*/
+void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec3f(char* paramter_name, const float v0, const float v1, const float v2)
+{
+    int location = glGetUniformLocation(calypso_framework_renderer_2d_opengl_current_program,paramter_name);
+    if (location == -1)
+    {
+        calypso_framework_renderer_2d_opengl_do_log_callback("Renderer: Can't set shader program paramater vec3(",2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(paramter_name,2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(")\n",2);
+        return;
+    }
+
+    glUniform3f(location,v0,v1,v2);
+}
+
+/**
+* \brief Set current shader vec4 parameter
+* \return void
+*/
+void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f(char* paramter_name, const float v0, const float v1, const float v2, const float v3)
+{
+    int location = glGetUniformLocation(calypso_framework_renderer_2d_opengl_current_program,paramter_name);
+    if (location == -1)
+    {
+        calypso_framework_renderer_2d_opengl_do_log_callback("Renderer: Can't set shader program paramater vec4(",2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(paramter_name,2);
+        calypso_framework_renderer_2d_opengl_do_log_callback(")\n",2);
+        return;
+    }
+
+    glUniform4f(location,v0,v1,v2,v3);
 }
 
 /**
@@ -324,7 +405,6 @@ void calypso_framework_renderer_2d_opengl_render_box(float posX, float posY, flo
     // OpenGL
     {
         glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_quad);
-        glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
@@ -346,7 +426,6 @@ void calypso_framework_renderer_2d_opengl_render_triangle(float posX, float posY
     // OpenGL
     {
         glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_triangle);
-        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
