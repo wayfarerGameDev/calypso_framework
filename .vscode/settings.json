@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
         "conio.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "calypso_framework_math_matrix4": "c"
     }
 }

@@ -32,9 +32,6 @@ unsigned int _calypso_framework_renderer_2d_opengl_ibo_triangle;
 // Current Shader Program
 unsigned int calypso_framework_renderer_2d_opengl_current_program;
 
-typedef float calypso_framework_renderer_2d_opengl_mat4f_t[4][4];
-calypso_framework_renderer_2d_opengl_mat4f_t _calypso_framework_renderer_2d_opengl_projection_matrix;
-
 /**
 * \brief Set renderer's log callback
 * \return void
@@ -54,24 +51,6 @@ void calypso_framework_renderer_2d_opengl_do_log_callback(const char* log_msg, c
         return;
 
     _calypso_framework_renderer_2d_opengl_log_callback(log_msg,log_type);
-}
-
-/**
-* \brief Caculate Ortho matrx4f
-* \return void
-*/
-void calypso_framework_renderer_2d_opengl_calculate_matrix4f_ortho(calypso_framework_renderer_2d_opengl_mat4f_t matrix4f, float left, float right, float bottom, float top, float near, float far)
-{
-	matrix4f[0][0] = 2.f/(right-left);
-	matrix4f[0][1] = matrix4f[0][2] = matrix4f[0][3] = 0.f;
-	matrix4f[1][1] = 2.f/(top-bottom);
-	matrix4f[1][0] = matrix4f[1][2] = matrix4f[1][3] = 0.f;
-	matrix4f[2][2] = -2.f/(far-near);
-	matrix4f[2][0] = matrix4f[2][1] = matrix4f[2][3] = 0.f;
-	matrix4f[3][0] = -(right+left)/(right-left);
-	matrix4f[3][1] = -(top+bottom)/(top-bottom);
-	matrix4f[3][2] = -(far+near)/(far-near);
-	matrix4f[3][3] = 1.f;   
 }
 
 /**
@@ -268,7 +247,7 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_v
 * \brief Set current shader vec4 parameter
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f(char* paramter_name, calypso_framework_renderer_2d_opengl_mat4f_t matrix4f)
+void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f(char* paramter_name, float matrix4f[4][4])
 {
     int location = glGetUniformLocation(calypso_framework_renderer_2d_opengl_current_program,paramter_name);
     if (location == -1)
