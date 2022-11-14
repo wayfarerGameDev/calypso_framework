@@ -43,7 +43,7 @@ void start(void)
         calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
 
         //Camera
-        calypso_framework_math_matrix_matrix4f_ortho(game_camera_projection_matrix,-8,8,-4.5f,4.5f,-1,1);
+        calypso_framework_math_matrix_ortho_matrix4f(game_camera_projection_matrix,-8,8,-4.5f,4.5f,-1,1);
         
         // Create Default Shader Program Red
         game_default_shader_program_red = calypso_framework_renderer_2d_opengl_create_default_shader_program();

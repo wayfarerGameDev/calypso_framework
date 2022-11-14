@@ -4,13 +4,11 @@
 
 #pragma once
 
-typedef float calypso_framework_math_matrix_mat4f_t[4][4];
-
 /**
 * \brief Caculate Ortho matrx4f
 * \return void
 */
-void calypso_framework_math_matrix_matrix4f_ortho(float matrix4f[4][4], float left, float right, float bottom, float top, float near, float far)
+void calypso_framework_math_matrix_ortho_matrix4f(float matrix4f[4][4], float left, float right, float bottom, float top, float near, float far)
 {
 	matrix4f[0][0] = 2.f/(right-left);
 	matrix4f[0][1] = matrix4f[0][2] = matrix4f[0][3] = 0.f;
