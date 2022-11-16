@@ -11,4 +11,5 @@
 #include "game_app.c"
 #include "game_logger.c"
 #include "game_renderer.c"
+#include "game_entities.c"
 #include "game_systems.c"
