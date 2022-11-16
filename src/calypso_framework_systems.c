@@ -8,7 +8,7 @@
 typedef void (*calypso_framework_systems_log_callback_t)(const char* log_msg, const Uint8 log_type);
 calypso_framework_systems_log_callback_t _calypso_framework_systems_log_callback;
 
-// Systems
+// System Stages
 #define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED             0
 #define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED              1
 #define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT              2

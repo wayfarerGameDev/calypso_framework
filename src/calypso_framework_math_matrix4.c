@@ -77,8 +77,6 @@ void calypso_framework_math_matrix_modify_set_scale_unified(const float scale, f
 
 void calypso_framework_math_matrix_modify_mult(const float matrix4f_a[4][4], const float matrix4f_b[4][4], float matrix4f_out[4][4])
 {
-	//calypso_framework_math_matrix_build_identity_matrix4f(matrix4f_out[4][4]);
-
 	int k, r, c;
 	for(c=0; c < 4; ++c) 
 		for(r=0; r<4; ++r) 

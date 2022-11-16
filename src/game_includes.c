@@ -8,5 +8,7 @@
 #include "calypso_framework_renderer_pixel_opengl.c"
 #include "calypso_framework_systems.c"
 
+#include "game_app.c"
 #include "game_logger.c"
 #include "game_renderer.c"
+#include "game_systems.c"

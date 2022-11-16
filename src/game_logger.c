@@ -1,3 +1,4 @@
+#pragma once
 
 void game_logger_log_printf(const char* log_msg, const Uint8 log_type)
 {
