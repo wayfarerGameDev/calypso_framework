@@ -137,7 +137,7 @@ unsigned int calypso_framework_renderer_pixel_opengl_create_default_shader_progr
     "\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = projectionView_in * position;\n"
+    "   gl_Position = projectionView_in * model_in * position;\n"
     "}\n";
 
     // Fragment Shader Source
@@ -374,7 +374,9 @@ void calypso_framework_renderer_pixel_opengl_deinit(void)
 }
 
 /**
-* \brief Set current screen space
+* \brief Set renderer's screen space coordinates
+* \param screen_space 0 : Vector Space Coordinates
+* \param system_stage 1 : Pixel Space Coordinates
 * \return void
 */
 void calypso_framework_renderer_pixel_opengl_set_screen_space_coordinates(const unsigned int screen_space)
