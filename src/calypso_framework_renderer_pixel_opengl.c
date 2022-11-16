@@ -430,7 +430,7 @@ void calypso_framework_renderer_pixel_opengl_clear()
 * \brief Render a Box
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_render_box(float posX, float posY, float sizeX, float sizeY) 
+void calypso_framework_renderer_pixel_opengl_render_box() 
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)

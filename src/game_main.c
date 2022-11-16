@@ -97,21 +97,21 @@ void update(void)
         calypso_framework_math_matrix_modify_mult(game_camera_projection_matrix,game_camera_view_matrix,game_camera_projection_view_matrix);
     }
 
-    // Model View
-    {
-        calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
-        calypso_framework_math_matrix_modify_set_position(0,0,0,game_model_matrix);
-    }
-
     // Update Shaders
     {
         // Red Shader
+        calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
+        calypso_framework_math_matrix_modify_set_position(0,0,0,game_model_matrix);
+
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
         calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_vec4f("color_in",1,0,0,1);
         calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_matrix4f("model_in",game_model_matrix); // Apply Transform
         calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_matrix4f("projectionView_in",game_camera_projection_view_matrix); // Apply Camera Projection And View
        
         // Yellow Shader
+        calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
+        calypso_framework_math_matrix_modify_set_position(50,50,-1,game_model_matrix);
+
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
         calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_vec4f("color_in",1,1,0,1);
         calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_matrix4f("model_in",game_model_matrix); // Transform
@@ -124,9 +124,9 @@ void update(void)
 
     // Render Entities
     calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
-    calypso_framework_renderer_pixel_opengl_render_box(0,0,0,0);
+    calypso_framework_renderer_pixel_opengl_render_box();
     calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
-    calypso_framework_renderer_pixel_opengl_render_box(0,0,0,0);
+    calypso_framework_renderer_pixel_opengl_render_box();
 }
 
 int main(int argc, char** argv)
