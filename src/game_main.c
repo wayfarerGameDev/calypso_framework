@@ -53,7 +53,6 @@ void start(void)
         //Set Renderer Log Callback | Init Renderer
         calypso_framework_renderer_pixel_opengl_set_log_callback(log_printf);
         calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
-        calypso_framework_renderer_pixel_opengl_set_screen_space_coordinates(1);
     }
 
     // Identity Matrix
@@ -107,6 +106,7 @@ void update(void)
     {
         // Red Shader
         calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
+        calypso_framework_math_matrix_modify_set_scale(100,100,1,game_model_matrix);
         calypso_framework_math_matrix_modify_set_position(0,0,0,game_model_matrix);
 
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
@@ -116,7 +116,7 @@ void update(void)
        
         // Yellow Shader
         calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
-        calypso_framework_math_matrix_modify_set_scale(0.5f,0.25f,1,game_model_matrix);
+        calypso_framework_math_matrix_modify_set_scale(32,32,1,game_model_matrix);
         calypso_framework_math_matrix_modify_set_position(50,50,-1,game_model_matrix);
 
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
@@ -132,10 +132,10 @@ void update(void)
     // Render Entities
     {
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
-        calypso_framework_renderer_pixel_opengl_render_box();
+        calypso_framework_renderer_pixel_opengl_render_quad();
             
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
-        calypso_framework_renderer_pixel_opengl_render_box();
+        calypso_framework_renderer_pixel_opengl_render_quad();
     }
 }
 

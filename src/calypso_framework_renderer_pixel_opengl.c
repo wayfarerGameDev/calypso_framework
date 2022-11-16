@@ -22,13 +22,9 @@ unsigned int _calypso_framework_renderer_pixel_opengl_state                   = 
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_CONTEXT_PROFILE               3
 
 // Open GL Mesh Render Data
-unsigned int _calypso_framework_renderer_pixel_opengl_vao_quad_vector_screen_space_coordinates;  // Quad (Vector Screen Space)
-unsigned int _calypso_framework_renderer_pixel_opengl_vbo_quad_vector_screen_space_coordinates;
-unsigned int _calypso_framework_renderer_pixel_opengl_ibo_quad_vector_screen_space_coordinates;
-unsigned int _calypso_framework_renderer_pixel_opengl_vao_quad_pixel_screen_space_coordinates;   // Quad (Pixel Screen Space)
-unsigned int _calypso_framework_renderer_pixel_opengl_vbo_quad_pixel_screen_space_coordinates;
-unsigned int _calypso_framework_renderer_pixel_opengl_ibo_quad_pixel_screen_space_coordinates;
-unsigned int _calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates; // Quad (Current Space)
+unsigned int _calypso_framework_renderer_pixel_opengl_vao_quad;  // Quad
+unsigned int _calypso_framework_renderer_pixel_opengl_vbo_quad;
+unsigned int _calypso_framework_renderer_pixel_opengl_ibo_quad;
 
 // Current Shader Program
 unsigned int calypso_framework_renderer_pixel_opengl_current_program;
@@ -288,14 +284,14 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address)
         glClearColor(0.392f,0.584f,0.929f,1);
     }
 
-    // Quad Vector Space
+    // Quad
     {
          // Vertices (XYZ UV)
         float vertices[] = {
-             0.5,  0.5, 0, 0, 0,
-             0.5, -0.5, 0, 0, 1,
-            -0.5, -0.5, 0, 1, 1,
-            -0.5,  0.5, 0, 1, 0
+             1,  1, 0, 0, 0,
+             1, -1, 0, 0, 1,
+            -1, -1, 0, 1, 1,
+            -1,  1, 0, 1, 0
         };
 
         // Indicies
@@ -305,17 +301,17 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address)
         };
 
         // VAO
-        glGenVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_vao_quad_vector_screen_space_coordinates);
-        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad_vector_screen_space_coordinates);
+        glGenVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_vao_quad);
+        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad);
 
         // VBO
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_vbo_quad_vector_screen_space_coordinates);
-        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_vbo_quad_vector_screen_space_coordinates);
+        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_vbo_quad);
+        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_vbo_quad);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),vertices, GL_STATIC_DRAW);
 
         // IBO
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo_quad_vector_screen_space_coordinates);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_ibo_quad_vector_screen_space_coordinates);
+        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo_quad);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_ibo_quad);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),indices, GL_STATIC_DRAW);
 
         // Vertex Attributes (XYZ)
@@ -328,50 +324,6 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address)
 
         glBindVertexArray(0);
     }
-
-    // Quad Pixel Space
-    {
-         // Vertices (XYZ UV)
-        float vertices[] = {
-             100,  100, 0, 0, 0,
-             100, -100, 0, 0, 1,
-            -100, -100, 0, 1, 1,
-            -100,  100, 0, 1, 0
-        };
-
-        // Indicies
-        unsigned int indices[] = {
-            0, 1, 3,
-            1, 2, 3
-        };
-
-        // VAO
-        glGenVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_vao_quad_pixel_screen_space_coordinates);
-        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad_pixel_screen_space_coordinates);
-
-        // VBO
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_vbo_quad_pixel_screen_space_coordinates);
-        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_vbo_quad_pixel_screen_space_coordinates);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),vertices, GL_STATIC_DRAW);
-
-        // IBO
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo_quad_pixel_screen_space_coordinates);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_ibo_quad_pixel_screen_space_coordinates);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),indices, GL_STATIC_DRAW);
-
-        // Vertex Attributes (XYZ)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        // Vertex Attributes (UV)
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-        glBindVertexArray(0);
-    }    
-
-    // Set Current Space To Pixel Space By Default
-    _calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates = _calypso_framework_renderer_pixel_opengl_vao_quad_vector_screen_space_coordinates;
 }
 
 /**
@@ -380,20 +332,6 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address)
 */
 void calypso_framework_renderer_pixel_opengl_deinit(void)
 {
-}
-
-/**
-* \brief Set renderer's screen space coordinates
-* \param screen_space 0 : Vector Space Coordinates
-* \param system_stage 1 : Pixel Space Coordinates
-* \return void
-*/
-void calypso_framework_renderer_pixel_opengl_set_screen_space_coordinates(const unsigned int screen_space)
-{
-    if (screen_space == 0)
-        _calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates = _calypso_framework_renderer_pixel_opengl_vao_quad_vector_screen_space_coordinates;
-    else 
-        _calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates = _calypso_framework_renderer_pixel_opengl_vao_quad_pixel_screen_space_coordinates;
 }
 
 /**
@@ -439,9 +377,9 @@ void calypso_framework_renderer_pixel_opengl_clear()
 * \brief Render a Box
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_render_box() 
+void calypso_framework_renderer_pixel_opengl_render_quad() 
 {
     // OpenGL
-    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates);
+    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
