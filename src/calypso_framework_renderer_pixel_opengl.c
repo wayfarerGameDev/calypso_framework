@@ -267,6 +267,15 @@ void calypso_framework_renderer_pixel_opengl_set_current_shader_program_paramete
 * \brief Initializes renderer
 * \return void
 */  
+bool calypso_framework_renderer_pixel_opengl_is_init()
+{
+    return _calypso_framework_renderer_pixel_opengl_state == CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT;
+}
+
+/**
+* \brief Initializes renderer
+* \return void
+*/  
 void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address)
 {
     _calypso_framework_renderer_pixel_opengl_state = CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT;
@@ -432,17 +441,7 @@ void calypso_framework_renderer_pixel_opengl_clear()
 */
 void calypso_framework_renderer_pixel_opengl_render_box() 
 {
-    // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
-    {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer GL 2D: Not init\n",3);
-        return;
-    }
-
     // OpenGL
-    {
-        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-    }
+    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao_quad_current_screen_space_coordinates);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

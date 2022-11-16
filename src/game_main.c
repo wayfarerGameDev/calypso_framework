@@ -11,6 +11,9 @@
 typedef float game_matrix4f_t[4][4];
 typedef float game_vec3f_t[3];
 
+// Identity Matrix
+game_matrix4f_t game_identity_matrix;
+
 // Camera
 game_matrix4f_t game_camera_projection_matrix;
 game_matrix4f_t game_camera_view_matrix;
@@ -52,6 +55,9 @@ void start(void)
         calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
         calypso_framework_renderer_pixel_opengl_set_screen_space_coordinates(1);
     }
+
+    // Identity Matrix
+    calypso_framework_math_matrix_build_identity_matrix4f(game_identity_matrix);
 
     // Shader Programs
     {
@@ -110,6 +116,7 @@ void update(void)
        
         // Yellow Shader
         calypso_framework_math_matrix_build_identity_matrix4f(game_model_matrix);
+        calypso_framework_math_matrix_modify_set_scale(0.5f,0.25f,1,game_model_matrix);
         calypso_framework_math_matrix_modify_set_position(50,50,-1,game_model_matrix);
 
         calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
@@ -123,10 +130,13 @@ void update(void)
     calypso_framework_renderer_pixel_opengl_clear();
 
     // Render Entities
-    calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
-    calypso_framework_renderer_pixel_opengl_render_box();
-    calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
-    calypso_framework_renderer_pixel_opengl_render_box();
+    {
+        calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_red);
+        calypso_framework_renderer_pixel_opengl_render_box();
+            
+        calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(game_default_shader_program_yellow);
+        calypso_framework_renderer_pixel_opengl_render_box();
+    }
 }
 
 int main(int argc, char** argv)

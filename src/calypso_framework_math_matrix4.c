@@ -49,6 +49,28 @@ void calypso_framework_math_matrix_modify_set_position(const float x, const floa
 }
 
 /**
+* \brief Set scale of matrix (unified) (Column Row Major Order)
+* \return void
+*/
+void calypso_framework_math_matrix_modify_set_scale(const float scale_x, const float scale_y, const float scale_z, float matrix4f_out[4][4])
+{
+	matrix4f_out[0][0] = scale_x;
+	matrix4f_out[1][1] = scale_y;
+	matrix4f_out[2][2] = scale_z;
+}
+
+/**
+* \brief Set scale of matrix (unified) (Column Row Major Order)
+* \return void
+*/
+void calypso_framework_math_matrix_modify_set_scale_unified(const float scale, float matrix4f_out[4][4])
+{
+	matrix4f_out[0][0] = scale;
+	matrix4f_out[1][1] = scale;
+	matrix4f_out[2][2] = scale;
+}
+
+/**
 * \brief Multiply two matrixes (Column Row Major Order)
 * \return void
 */
