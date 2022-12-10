@@ -6,9 +6,6 @@
 // Logging Callback
 typedef void (*game_renderer_log_callback_t)(const char* log_msg, const Uint8 log_type);
 
-// Identity Matrix
-float _game_renderer_identity_matrix[4][4];
-
 // Viewport
 float _game_renderer_viewport_projection_matrix[4][4];
 float _game_renderer_viewport_view_matrix[4][4];
@@ -53,9 +50,6 @@ void game_renderer_start()
 {
     // Init Renderer
     calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
-
-    // Identity Matrix
-    calypso_framework_math_matrix_build_identity_matrix4f(_game_renderer_identity_matrix);
 
     // Default Shader Program
     _game_renderer_default_shader_program = calypso_framework_renderer_pixel_opengl_create_default_shader_program();

@@ -1,7 +1,7 @@
 # Shared
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g
-CC_FLAGS_RELEASE = -std=c99 -O0
+CC_FLAGS_RELEASE = -std=c99 -O3 -Wall -DNDEBUG
 LIBRARY_PATH_32 = -Idependencies/sdl2_32/Include -Ldependencies/sdl2_32/lib -Idependencies/glad/include
 LINKER_FLAGS_32 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 LIBRARY_PATH_64 = -Idependencies/sdl2_64/Include -Ldependencies/sdl2_64/lib -Idependencies/glad/include
