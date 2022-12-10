@@ -7,6 +7,7 @@
 #include "calypso_framework_math_matrix4.c"
 #include "calypso_framework_renderer_pixel_opengl.c"
 #include "calypso_framework_systems.c"
+#include "calypso_framework_benchmark_time.c"
 
 #include "game_app.c"
 #include "game_logger.c"

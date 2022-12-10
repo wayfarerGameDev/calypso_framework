@@ -2,6 +2,9 @@
 
 #include "game_includes.c"
 
+// Benchmark
+int _game_entities_benchmark_index = -1;
+
 // Max Entities
 #define GAME_ENTITIES_MAX            1000      
 
@@ -25,12 +28,28 @@ void game_entities_player_input()
 
 void game_entities_render()
 {
-    game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_red);
-    game_renderer_render_sprite(0,0, 100, 100);
+    // Create Benchmark
+    if (_game_entities_benchmark_index == -1)
+        _game_entities_benchmark_index = calypso_framework_benchmark_time_add_benchmark();
 
-    game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_blue);
-    game_renderer_render_sprite(100,100, 50, 50);
+    // Start Benchmark
+    calypso_framework_benchmark_time_start_benchmark(_game_entities_benchmark_index);
+
+    for (int i = 0; i < 10000; i++)
+    {
+        // Red Entity
+        game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_red);
+        game_renderer_render_sprite(i,0, 100, 100);
+
+        // Blue Entity
+        game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_blue);
+        game_renderer_render_sprite(100,100 + i, 50, 50);
+    }
 
     // White
     game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_white);
+
+    // End Benchmark
+    calypso_framework_benchmark_time_end_benchmark(_game_entities_benchmark_index);
+    calypso_framework_benchmark_time_print_benchmark_in_ms(_game_entities_benchmark_index);   
 }

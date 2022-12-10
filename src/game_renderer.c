@@ -51,6 +51,7 @@ void game_renderer_set_current_shader_program_color(const Uint8 color[4])
 
 void game_renderer_start()
 {
+    // Init Renderer
     calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
 
     // Identity Matrix
