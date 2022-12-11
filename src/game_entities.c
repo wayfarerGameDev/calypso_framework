@@ -9,12 +9,12 @@ int _game_entities_benchmark_index = -1;
 #define GAME_ENTITIES_MAX            1000      
 
 // Transform Entities Data
-float game_entities_position_xs[GAME_ENTITIES_MAX];
-float game_entities_position_ys[GAME_ENTITIES_MAX];
-float game_entities_angles[GAME_ENTITIES_MAX];
+float _game_entities_position_xs[GAME_ENTITIES_MAX];
+float _game_entities_position_ys[GAME_ENTITIES_MAX];
+float _game_entities_angles[GAME_ENTITIES_MAX];
 
 // Render Entities Data
-unsigned int game_entities_render_shader_programs[GAME_ENTITIES_MAX];
+unsigned int _game_entities_render_shader_programs[GAME_ENTITIES_MAX];
 
 void game_entities_create_entity()
 {
@@ -51,5 +51,5 @@ void game_entities_render()
 
     // End Benchmark
     calypso_framework_benchmark_time_end_benchmark(_game_entities_benchmark_index);
-    calypso_framework_benchmark_time_print_benchmark_in_ms(_game_entities_benchmark_index);   
+    //calypso_framework_benchmark_time_print_benchmark_in_ms(_game_entities_benchmark_index);   
 }

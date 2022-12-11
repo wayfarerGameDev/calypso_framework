@@ -5,6 +5,10 @@
 
 #pragma once
 
+/**
+* \brief Build a copy of another matrix
+* \return void
+*/
 void calypso_framework_math_matrix_build_copy(float matrix4f_to_copy[4][4],float matrix4f_out[4][4])
 {
 	matrix4f_out[0][0] = matrix4f_to_copy[0][0];	matrix4f_out[1][0] = matrix4f_to_copy[1][0];	matrix4f_out[2][0] = matrix4f_to_copy[2][0];	matrix4f_out[3][0] = matrix4f_to_copy[3][0];

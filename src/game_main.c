@@ -9,6 +9,14 @@ void end(void)
 
 int main(int argc, char** argv)
 {
+    calypso_framework_math_random_rand_set_seed(50);
+    int r = calypso_framework_math_random_rand_xorshift_int();
+    printf("%d\n", r);
+    
+    calypso_framework_math_random_rand_set_seed(51);
+    float f = calypso_framework_math_random_rand_xorshift_float();
+    printf("%f\n", f);
+
     // Logging
     game_systems_set_log_callback(game_logger_log_printf);
     game_renderer_set_log_callback(game_logger_log_printf);
