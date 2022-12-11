@@ -22,10 +22,10 @@ calypso_framework_systems_log_callback_t _calypso_framework_systems_log_callback
 #define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE          7
 #define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE               8
 typedef void (*calypso_framework_systems_system_t)(void);
-calypso_framework_systems_system_t* _calypso_framework_systems_systems;
-int* _calypso_framework_systems_system_states;
-int* _calypso_framework_systems_system_stages;
-unsigned int _calypso_framework_systems_system_count = 0;
+calypso_framework_systems_system_t* _calypso_framework_systems_system_array;
+int* _calypso_framework_systems_system_state_array;
+int* _calypso_framework_systems_system_stage_array;
+unsigned int _calypso_framework_systems_system_array_count = 0;
 
 /**
 * \brief Set system's log callback
@@ -54,10 +54,10 @@ void calypso_framework_systems_do_log_callback(const char* log_msg, const Uint8 
 */
 void calypso_framework_systems_enable_system(calypso_framework_systems_system_t system)
 {
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_systems[i] == system)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_array[i] == system)
         {
-            _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED;
+            _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED;
             return;
         }
 
@@ -70,10 +70,10 @@ void calypso_framework_systems_enable_system(calypso_framework_systems_system_t 
 */
 void calypso_framework_systems_disable_system(calypso_framework_systems_system_t system)
 {
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_systems[i] == system)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_array[i] == system)
         {
-            _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+            _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
             return;
         }
 
@@ -86,10 +86,10 @@ void calypso_framework_systems_disable_system(calypso_framework_systems_system_t
 */
 void calypso_framework_systems_one_shot_system(calypso_framework_systems_system_t system)
 {
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_systems[i] == system)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_array[i] == system)
         {
-            _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT;
+            _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT;
             return;
         }
 }
@@ -118,9 +118,9 @@ void calypso_framework_systems_add_system(calypso_framework_systems_system_t sys
     }
 
     // Already Added
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
     {
-        if (_calypso_framework_systems_systems[i] == system)
+        if (_calypso_framework_systems_system_array[i] == system)
         {
             calypso_framework_systems_do_log_callback("App: Failed to add system (system already added)\n",2);
             return;
@@ -128,13 +128,13 @@ void calypso_framework_systems_add_system(calypso_framework_systems_system_t sys
     }
 
     // Add System
-    _calypso_framework_systems_system_count++;
-    _calypso_framework_systems_systems = realloc(_calypso_framework_systems_systems,_calypso_framework_systems_system_count* sizeof(calypso_framework_systems_system_t));
-    _calypso_framework_systems_system_states = realloc(_calypso_framework_systems_system_states,_calypso_framework_systems_system_count* sizeof(int));
-    _calypso_framework_systems_system_stages = realloc(_calypso_framework_systems_system_stages,_calypso_framework_systems_system_count* sizeof(int));
-    _calypso_framework_systems_systems[_calypso_framework_systems_system_count - 1] = system;
-    _calypso_framework_systems_system_states[_calypso_framework_systems_system_count - 1] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED;
-    _calypso_framework_systems_system_stages[_calypso_framework_systems_system_count - 1] = system_stage;
+    _calypso_framework_systems_system_array_count++;
+    _calypso_framework_systems_system_array = realloc(_calypso_framework_systems_system_array,_calypso_framework_systems_system_array_count* sizeof(calypso_framework_systems_system_t));
+    _calypso_framework_systems_system_state_array = realloc(_calypso_framework_systems_system_state_array,_calypso_framework_systems_system_array_count* sizeof(int));
+    _calypso_framework_systems_system_stage_array = realloc(_calypso_framework_systems_system_stage_array,_calypso_framework_systems_system_array_count* sizeof(int));
+    _calypso_framework_systems_system_array[_calypso_framework_systems_system_array_count - 1] = system;
+    _calypso_framework_systems_system_state_array[_calypso_framework_systems_system_array_count - 1] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED;
+    _calypso_framework_systems_system_stage_array[_calypso_framework_systems_system_array_count - 1] = system_stage;
     
 }
 
@@ -185,36 +185,36 @@ void calypso_framework_systems_add_system_one_shot(calypso_framework_systems_sys
 void calypso_framework_systems_do_startup_stage_systems()
 {
      // Run Early Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
             
     // Run Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 
     // Run Late Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 }
 
@@ -225,36 +225,36 @@ void calypso_framework_systems_do_startup_stage_systems()
 void calypso_framework_systems_do_shutdown_stage_systems()
 {
      // Run Early Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
             
     // Run Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 
     // Run Late Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 }
 
@@ -265,35 +265,35 @@ void calypso_framework_systems_do_shutdown_stage_systems()
 void calypso_framework_systems_do_update_stage_systems()
 {
      // Run Early Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
             
     // Run Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 
     // Run Late Startup App Stage Systems
-    for (int i = 0; i < _calypso_framework_systems_system_count; i++)
-        if (_calypso_framework_systems_system_states[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
-            if (_calypso_framework_systems_system_stages[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE)
+    for (int i = 0; i < _calypso_framework_systems_system_array_count; i++)
+        if (_calypso_framework_systems_system_state_array[i] != CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED)
+            if (_calypso_framework_systems_system_stage_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE)
             {
-                if (_calypso_framework_systems_system_states[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
-                    _calypso_framework_systems_system_states[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
+                if (_calypso_framework_systems_system_state_array[i] == CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT)
+                    _calypso_framework_systems_system_state_array[i] = CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED;
 
-                _calypso_framework_systems_systems[i]();
+                _calypso_framework_systems_system_array[i]();
             }
 }

@@ -74,7 +74,7 @@
 #define CALYPSO_FRAMEWORK_INPUT_SDL_KEYCODE_Z                           SDL_SCANCODE_Z
 
 // State
-Uint8 _calypso_framework_input_sdl_keycode_states[255]; // SDL HAS 255 KEYS
+Uint8 _calypso_framework_input_sdl_keycode_state_array[255]; // SDL HAS 255 KEYS
 
 /**
 * \brief Show mouse cursor
@@ -128,17 +128,17 @@ void calypso_framework_input_sdl_update()
     {
         if (keyboard_state[i])
         {
-            if (_calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP)
-                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
+            if (_calypso_framework_input_sdl_keycode_state_array[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP)
+                _calypso_framework_input_sdl_keycode_state_array[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
             else 
-                 _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
+                 _calypso_framework_input_sdl_keycode_state_array[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
         }
         else
         {
-            if (_calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN && _calypso_framework_input_sdl_keycode_states[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED)
-                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
+            if (_calypso_framework_input_sdl_keycode_state_array[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN && _calypso_framework_input_sdl_keycode_state_array[i] != CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED)
+                _calypso_framework_input_sdl_keycode_state_array[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
             else
-                _calypso_framework_input_sdl_keycode_states[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
+                _calypso_framework_input_sdl_keycode_state_array[i] = CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
         }
     }
 }
@@ -150,7 +150,7 @@ void calypso_framework_input_sdl_update()
 */
 int calypso_framework_input_sdl_get_key_up(const Uint8 key_code) 
 {
-    return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
+    return _calypso_framework_input_sdl_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_UP;
 }
 
 /**
@@ -160,7 +160,7 @@ int calypso_framework_input_sdl_get_key_up(const Uint8 key_code)
 */
 int calypso_framework_input_sdl_get_key_down(const Uint8 key_code) 
 {
-    return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
+    return _calypso_framework_input_sdl_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_DOWN;
 }
 
 /**
@@ -170,7 +170,7 @@ int calypso_framework_input_sdl_get_key_down(const Uint8 key_code)
 */
 int calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code) 
 {
-    return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
+    return _calypso_framework_input_sdl_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_PRESSED;
 }
 
 /**
@@ -180,5 +180,5 @@ int calypso_framework_input_sdl_get_key_pressed(const Uint8 key_code)
 */
 int calypso_framework_input_sdl_get_key_released(const Uint8 key_code) 
 {
-    return _calypso_framework_input_sdl_keycode_states[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
+    return _calypso_framework_input_sdl_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_INPUT_SDL_INPUT_STATE_RELEASED;
 }

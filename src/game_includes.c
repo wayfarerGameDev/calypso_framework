@@ -6,6 +6,7 @@
 #include "calypso_framework_io.c"
 #include "calypso_framework_math_matrix4.c"
 #include "calypso_framework_math_random.c"
+#include "calypso_framework_physics_verlet_2d.c"
 #include "calypso_framework_renderer_pixel_opengl.c"
 #include "calypso_framework_systems.c"
 #include "calypso_framework_benchmark_time.c"

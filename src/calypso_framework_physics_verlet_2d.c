@@ -12,14 +12,14 @@ unsigned int _calypso_framework_physics_verlet_2d_state = CALYPSO_FRAMEWORK_PHYS
 // Bodies
 unsigned int _calypso_framework_physics_verlet_2d_bodies_max_count = 0;
 unsigned int _calypso_framework_physics_verlet_2d_bodies_current_count = 0;
-float* _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs;
-float* _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys;
-float* _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs;
-float* _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys;
-float* _calypso_framework_physics_verlet_2d_bodies_accelerations_xs;
-float* _calypso_framework_physics_verlet_2d_bodies_accelerations_ys;
-float* _calypso_framework_physics_verlet_2d_bodies_accelerations_ys;
-bool* _calypso_framework_physics_verlet_2d_bodies_createds;
+float* _calypso_framework_physics_verlet_2d_bodies_position_x_current_array;
+float* _calypso_framework_physics_verlet_2d_bodies_position_y_current_array;
+float* _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array;
+float* _calypso_framework_physics_verlet_2d_bodies_position_y_previous_array;
+float* _calypso_framework_physics_verlet_2d_bodies_accelersation_x_array;
+float* _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array;
+float* _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array;
+bool* _calypso_framework_physics_verlet_2d_bodies_created_array;
 
 /**
  * Initializes physics
@@ -39,13 +39,13 @@ void calypso_framework_physics_verlet_2d_init(const unsigned int bodies_max_coun
     _calypso_framework_physics_verlet_2d_bodies_max_count = bodies_max_count;
 
     // Allocate Body Data
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_xs = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_ys = malloc(bodies_max_count * sizeof(float));
-    _calypso_framework_physics_verlet_2d_bodies_createds = malloc(bodies_max_count * sizeof(bool));
+    _calypso_framework_physics_verlet_2d_bodies_position_x_current_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_position_y_current_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array = malloc(bodies_max_count * sizeof(float));
+    _calypso_framework_physics_verlet_2d_bodies_created_array = malloc(bodies_max_count * sizeof(bool));
 }
 
 /**
@@ -62,10 +62,10 @@ void calypso_framework_physics_verlet_2d_set_body_position(const unsigned int bo
         return;
 
     // Set Body Position Data
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[body_index] = position_x;
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys[body_index] = position_y;
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs[body_index] = position_x;
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys[body_index] = position_y;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[body_index] = position_x;
+    _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[body_index] = position_y;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[body_index] = position_x;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[body_index] = position_y;
 }
 
 /**
@@ -78,10 +78,10 @@ void calypso_framework_physics_verlet_2d_set_body_position(const unsigned int bo
 void calypso_framework_physics_verlet_2d_set_body_position_unsafe(const unsigned int body_index, const float position_x, const float position_y)
 {
     // Set Body Position Data
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[body_index] = position_x;
-    _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys[body_index] = position_y;
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs[body_index] = position_x;
-    _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys[body_index] = position_y;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[body_index] = position_x;
+    _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[body_index] = position_y;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[body_index] = position_x;
+    _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[body_index] = position_y;
 }
 
 /**
@@ -98,8 +98,8 @@ void calypso_framework_physics_verlet_2d_set_body_acceleration(const unsigned in
         return;
 
     // Set Body acceleration Data
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_xs[body_index] = acceleration_x;
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_ys[body_index] = acceleration_y;
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array[body_index] = acceleration_x;
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array[body_index] = acceleration_y;
 }
 
 /**
@@ -112,8 +112,8 @@ void calypso_framework_physics_verlet_2d_set_body_acceleration(const unsigned in
 void calypso_framework_physics_verlet_2d_set_body_acceleration_unsafe(const unsigned int body_index, const float acceleration_x, const float acceleration_y)
 {
     // Set Body acceleration Data
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_xs[body_index] = acceleration_x;
-    _calypso_framework_physics_verlet_2d_bodies_accelerations_ys[body_index] = acceleration_y;
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array[body_index] = acceleration_x;
+    _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array[body_index] = acceleration_y;
 }
 
 void calypso_framework_physics_verlet_2d_update(const float delta_time)
@@ -130,24 +130,24 @@ void calypso_framework_physics_verlet_2d_update(const float delta_time)
     for (int i = 0; i < _calypso_framework_physics_verlet_2d_bodies_max_count; i++)
     {
         //Continue Since Body Is Not Created
-        if (!_calypso_framework_physics_verlet_2d_bodies_createds[i])
+        if (!_calypso_framework_physics_verlet_2d_bodies_created_array[i])
             continue;
 
         // Get Velocity
-        velocity_x = _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[i] - _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs[i];
-        velocity_y = _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys[i] - _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys[i];
+        velocity_x = _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[i] - _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[i];
+        velocity_y = _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[i] - _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[i];
 
         // Set Previous Location
-        _calypso_framework_physics_verlet_2d_bodies_positions_previouses_xs[i] = _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[i];
-        _calypso_framework_physics_verlet_2d_bodies_positions_previouses_ys[i] = _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys[i];
+        _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array[i] = _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[i];
+        _calypso_framework_physics_verlet_2d_bodies_position_y_previous_array[i] = _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[i];
 
         // Move
-        _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[i] = _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[i] + velocity_x + _calypso_framework_physics_verlet_2d_bodies_accelerations_xs[i] * delta_time * delta_time;
-        _calypso_framework_physics_verlet_2d_bodies_positions_currents_xs[i] = _calypso_framework_physics_verlet_2d_bodies_positions_currents_ys[i] + velocity_y + _calypso_framework_physics_verlet_2d_bodies_accelerations_ys[i] * delta_time * delta_time;
+        _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[i] = _calypso_framework_physics_verlet_2d_bodies_position_x_current_array[i] + velocity_x + _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array[i] * delta_time * delta_time;
+        _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[i] = _calypso_framework_physics_verlet_2d_bodies_position_y_current_array[i] + velocity_y + _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array[i] * delta_time * delta_time;
     
         // Reset Acceleration
-        _calypso_framework_physics_verlet_2d_bodies_accelerations_xs[i] = 0;
-        _calypso_framework_physics_verlet_2d_bodies_accelerations_ys[i] = 0;
+        _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array[i] = 0;
+        _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array[i] = 0;
     }
 
      

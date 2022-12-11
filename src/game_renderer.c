@@ -23,8 +23,8 @@ float _game_renderer_model_matrix[4][4];
 
 // Shader Programs
 unsigned int _game_renderer_default_shader_program;
-unsigned int* _game_renderer_shader_programs;
-unsigned int _game_renderer_shader_programs_count;
+unsigned int* _game_renderer_shader_program_array;
+unsigned int _game_renderer_shader_program_array_count;
 
 void game_renderer_set_log_callback(game_renderer_log_callback_t log_callback)
 {
@@ -53,9 +53,9 @@ void game_renderer_start()
 
     // Default Shader Program
     _game_renderer_default_shader_program = calypso_framework_renderer_pixel_opengl_create_default_shader_program();
-    _game_renderer_shader_programs_count++;
-    _game_renderer_shader_programs = realloc(_game_renderer_shader_programs,_game_renderer_shader_programs_count * sizeof(unsigned int));
-    _game_renderer_shader_programs[_game_renderer_shader_programs_count - 1] = _game_renderer_default_shader_program;
+    _game_renderer_shader_program_array_count++;
+    _game_renderer_shader_program_array = realloc(_game_renderer_shader_program_array,_game_renderer_shader_program_array_count * sizeof(unsigned int));
+    _game_renderer_shader_program_array[_game_renderer_shader_program_array_count - 1] = _game_renderer_default_shader_program;
     game_renderer_set_render_shader_program(_game_renderer_default_shader_program);
     game_renderer_set_current_shader_program_color(_c_calypso_framework_colors_color_byte_array_white);
 
@@ -108,9 +108,9 @@ void game_renderer_update_shaders()
 {
     if (_game_renderer_is_dirty)
     {
-        for (int i = 0; i < _game_renderer_shader_programs_count; i++)
+        for (int i = 0; i < _game_renderer_shader_program_array_count; i++)
         {
-            unsigned int shader_program = _game_renderer_shader_programs[i];
+            unsigned int shader_program = _game_renderer_shader_program_array[i];
             calypso_framework_renderer_pixel_opengl_set_current_render_shader_program(shader_program);
             calypso_framework_renderer_pixel_opengl_set_current_shader_program_parameter_matrix4f("projectionView_in",_game_renderer_viewport_projection_view_matrix); // Apply Viewport Projection And View
         }
