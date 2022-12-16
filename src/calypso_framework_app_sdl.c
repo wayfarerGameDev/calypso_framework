@@ -13,28 +13,28 @@ typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, co
 calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback;
 
 // State
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL        0
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT        1
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING     2
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN    3
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR       4
-unsigned int _calypso_framework_app_sdl_state       = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL                 0
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT                 1
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING              2
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN             3
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR                4
+unsigned int _calypso_framework_app_sdl_state =              CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
 
 // Window
-#define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT  1280 
-#define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_HEIGHT_DEFAULT 720
+#define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_WIDTH_DEFAULT       1280 
+#define CALYPSO_FRAMEWORK_APP_SDL_SCREEN_HEIGHT_DEFAULT      720
 SDL_Window* _calypso_framework_app_sdl_window;
 
 // Open GL Context
 SDL_GLContext _calypso_framework_app_sdl_gl_context;
 
 // Time
-#define CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_UNCAPPED -1
-#define CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_DEFAULT CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_UNCAPPED
-float _calypso_framework_app_sdl_time_frame_rate_target = CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_DEFAULT;
-float _calypso_framework_app_sdl_time_frame_rate = 0;
-float _calypso_framework_app_sdl_time_frame_time_target = 0;
-float _calypso_framework_app_sdl_time_delta_time = 0;
+#define CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_UNCAPPED          -1
+#define CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_DEFAULT            CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_UNCAPPED
+float _calypso_framework_app_sdl_time_frame_rate_target =     CALYPSO_FRAMEWORK_APP_SDL_TIME_FPS_DEFAULT;
+float _calypso_framework_app_sdl_time_frame_rate =            0;
+float _calypso_framework_app_sdl_time_frame_time_target =     0;
+float _calypso_framework_app_sdl_time_delta_time =            0;
 
 // Events
 typedef void (*calypso_framework_app_sdl_event_t)(void);

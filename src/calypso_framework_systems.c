@@ -25,7 +25,7 @@ typedef void (*calypso_framework_systems_system_t)(void);
 calypso_framework_systems_system_t* _calypso_framework_systems_system_array;
 int* _calypso_framework_systems_system_state_array;
 int* _calypso_framework_systems_system_stage_array;
-unsigned int _calypso_framework_systems_system_array_count = 0;
+unsigned int _calypso_framework_systems_system_array_count =        0;
 
 /**
 * \brief Set system's log callback

@@ -1,12 +1,12 @@
 # Shared
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g
-CC_FLAGS_RELEASE = -std=c99 -O3 -Wall -DNDEBUG
+CC_FLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 LIBRARY_PATH_32 = -Idependencies/sdl2_32/Include -Ldependencies/sdl2_32/lib -Idependencies/glad/include
 LINKER_FLAGS_32 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 LIBRARY_PATH_64 = -Idependencies/sdl2_64/Include -Ldependencies/sdl2_64/lib -Idependencies/glad/include
 LINKER_FLAGS_64 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
-SOURCE_FILES =  src/game_main.c dependencies/glad/src/glad.c
+SOURCE_FILES =  src/testbed_spatial_partitioning_grid_2d.c dependencies/glad/src/glad.c
 
 # Shared Win
 clear_console_win:

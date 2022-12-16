@@ -5,13 +5,11 @@
 #pragma once
 
 // State
-#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL  0
-#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_INIT  1
-unsigned int _calypso_framework_physics_verlet_2d_state = CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL;
+#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL                          0
+#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_INIT                          1
+unsigned int _calypso_framework_physics_verlet_2d_state =                       CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL;
 
 // Bodies
-unsigned int _calypso_framework_physics_verlet_2d_bodies_max_count = 0;
-unsigned int _calypso_framework_physics_verlet_2d_bodies_current_count = 0;
 float* _calypso_framework_physics_verlet_2d_bodies_position_x_current_array;
 float* _calypso_framework_physics_verlet_2d_bodies_position_y_current_array;
 float* _calypso_framework_physics_verlet_2d_bodies_position_x_previous_array;
@@ -20,6 +18,8 @@ float* _calypso_framework_physics_verlet_2d_bodies_accelersation_x_array;
 float* _calypso_framework_physics_verlet_2d_bodies_acceleration_x_array;
 float* _calypso_framework_physics_verlet_2d_bodies_acceleration_y_array;
 bool* _calypso_framework_physics_verlet_2d_bodies_created_array;
+unsigned int _calypso_framework_physics_verlet_2d_bodies_max_count =            0;
+unsigned int _calypso_framework_physics_verlet_2d_bodies_current_count =        0;
 
 /**
  * Initializes physics

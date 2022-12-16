@@ -95,25 +95,29 @@ void calypso_framework_input_sdl_hide_mouse_cursor(void)
 }
 
 /**
-* \brief Get mouse cursor x
-* \return int
+* \brief Get mouse cursor xy as float
+* \return void
 */
-int calypso_framework_input_sdl_get_mouse_cursor_x() 
+void calypso_framework_input_sdl_get_mouse_cursor_xy_f(float* x, float* y) 
 {
-    int x;
-    SDL_GetMouseState(&x,NULL);
-    return x;
+    int x_i;
+    int y_i;
+    SDL_GetMouseState(&x_i,&y_i);
+    *x = x_i;
+    *y = y_i;
 }
 
 /**
-* \brief Get mouse cursor y
-* \return int
+* \brief Get mouse cursor xy as double
+* \return void
 */
-int calypso_framework_input_sdl_get_mouse_cursor_y() 
+void calypso_framework_input_sdl_get_mouse_cursor_xy_d(double* x, double* y) 
 {
-    int y;
-    SDL_GetMouseState(NULL,&y);
-    return y;
+    int x_i;
+    int y_i;
+    SDL_GetMouseState(&x_i,&y_i);
+    *x = (double)x_i;
+    *y = (double)y_i;
 }
 
 /**

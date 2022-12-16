@@ -14,7 +14,7 @@ calypso_framework_renderer_pixel_opengl_log_callback_t _calypso_framework_render
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_NULL                    0
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT                    1
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_ERROR                   4
-unsigned int _calypso_framework_renderer_pixel_opengl_state                   = CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_NULL;
+unsigned int _calypso_framework_renderer_pixel_opengl_state =                 CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_NULL;
 
 // OPen GL Version
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MAJOR_VERSION                 3

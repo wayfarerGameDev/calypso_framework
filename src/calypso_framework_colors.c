@@ -4,6 +4,11 @@
 
 #pragma once
 
+// Color Struct
+typedef struct {
+    Uint8 r,g,b,a;
+} CalypsoFrameworkColorsColorRGBA;
+
 // Color Arrays (Main)
 const Uint8 _c_calypso_framework_colors_color_byte_array_black[4]              = {0,0,0,255};
 const Uint8 _c_calypso_framework_colors_color_byte_array_white[4]              = {255,255,255,255};
@@ -26,3 +31,10 @@ const Uint8 _c_calypso_framework_colors_color_byte_array_teal[4]               =
 const Uint8 _c_calypso_framework_colors_color_byte_array_navy[4]               = {0,0,128,255};
 const Uint8 _c_calypso_framework_colors_color_byte_array_olive[4]              = {128,128,255};
 const Uint8 _c_calypso_framework_colors_color_byte_array_turquoise[4]          = {64,224,208,255};
+
+// Colors (Struct Color RGBA)
+CalypsoFrameworkColorsColorRGBA calypso_framework_colors_build_color_rgba_from_color_array(Uint8 color_array[4])
+{
+    CalypsoFrameworkColorsColorRGBA color = {.r = color_array[0], .g = color_array[1], .b = color_array[2], .a = color_array[3]};
+    return color;
+}
