@@ -12,22 +12,13 @@ calypso_framework_entities_simple_log_callback_t _calypso_framework_entities_sim
 #define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_INIT         1
 unsigned int _calypso_framework_entities_simple_state =      CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_NULL;
 
-// Entities (Data)
-unsigned int* _calypso_framework_entities_simple_entity_count_max;
-unsigned int* _calypso_framework_entities_simple_entity_count_current;
+// Entities (Count)
+unsigned int* _calypso_framework_entities_simple_entity_count_max_ptr;
+unsigned int* _calypso_framework_entities_simple_entity_count_current_ptr;
 
 // Entities (Pool)
 unsigned int* _calypso_framework_entities_simple_entity_pool_array;
 unsigned int* _calypso_framework_entities_simple_entity_pool_array_count_current;
-
-// Macro : Entities Component Initialize Macro
-#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(TYPE,ID,ARRAY,DEFAULT_VALUE) do\
-{\
-    unsigned int count = *_calypso_framework_entities_simple_entity_count_max;\
-    ARRAY = (TYPE*)malloc(count * sizeof(TYPE));\
-    for (int i = 0; i < count; i++)\
-        ARRAY[i] = DEFAULT_VALUE;\
-} while (0)
 
 /**
 * \brief Set enties simple log callback
@@ -56,13 +47,13 @@ void calypso_framework_entities_simple_init(const unsigned int entity_count_max)
 {
     // Count Max
     void *memory = malloc(sizeof(int));
-    _calypso_framework_entities_simple_entity_count_max =  (unsigned int*)memory;
-    *_calypso_framework_entities_simple_entity_count_max = entity_count_max;
+    _calypso_framework_entities_simple_entity_count_max_ptr =  (unsigned int*)memory;
+    *_calypso_framework_entities_simple_entity_count_max_ptr = entity_count_max;
 
     // Count Current
      void *memory_b = malloc(sizeof(int));
-    _calypso_framework_entities_simple_entity_count_current =  (unsigned int*)memory_b;
-    *_calypso_framework_entities_simple_entity_count_current = 0;
+    _calypso_framework_entities_simple_entity_count_current_ptr =  (unsigned int*)memory_b;
+    *_calypso_framework_entities_simple_entity_count_current_ptr = 0;
 
     _calypso_framework_entities_simple_entity_pool_array = malloc(entity_count_max * sizeof(int));
     void *memory_c = malloc(sizeof(int));
@@ -76,7 +67,7 @@ void calypso_framework_entities_simple_init(const unsigned int entity_count_max)
 */
 unsigned int* calypso_framework_entities_simple_get_entity_count_current_ptr()
 {
-    return _calypso_framework_entities_simple_entity_count_current;
+    return _calypso_framework_entities_simple_entity_count_current_ptr;
 }
 
 /**
@@ -85,7 +76,7 @@ unsigned int* calypso_framework_entities_simple_get_entity_count_current_ptr()
 */
 unsigned int* calypso_framework_entities_simple_get_entity_count_max_ptr()
 {
-    return _calypso_framework_entities_simple_entity_count_max;
+    return _calypso_framework_entities_simple_entity_count_max_ptr;
 }
 
 /**
@@ -94,7 +85,7 @@ unsigned int* calypso_framework_entities_simple_get_entity_count_max_ptr()
 */
 unsigned int calypso_framework_entities_simple_get_entity_count_max()
 {
-    return *_calypso_framework_entities_simple_entity_count_max;
+    return *_calypso_framework_entities_simple_entity_count_max_ptr;
 }
 
 /**
@@ -103,7 +94,7 @@ unsigned int calypso_framework_entities_simple_get_entity_count_max()
 */
 unsigned int calypso_framework_entities_simple_get_entity_count_current()
 {
-    return *_calypso_framework_entities_simple_entity_count_current;
+    return *_calypso_framework_entities_simple_entity_count_current_ptr;
 }
 
 /**
@@ -112,7 +103,7 @@ unsigned int calypso_framework_entities_simple_get_entity_count_current()
 */
 bool* calypso_framework_entities_simple_register_component_bool(bool* array, const bool default_value)
 {
-    const int count = *_calypso_framework_entities_simple_entity_count_max;
+    const int count = *_calypso_framework_entities_simple_entity_count_max_ptr;
     array = malloc(count * sizeof(bool));
     for (int i = 0; i < count; i++)
         array[i] = default_value;
@@ -125,7 +116,7 @@ bool* calypso_framework_entities_simple_register_component_bool(bool* array, con
 */
 int* calypso_framework_entities_simple_register_component_int(int* array, const int default_value)
 {
-    const int count = *_calypso_framework_entities_simple_entity_count_max;
+    const int count = *_calypso_framework_entities_simple_entity_count_max_ptr;
     array = malloc(count * sizeof(int));
     for (int i = 0; i < count; i++)
         array[i] = default_value;  
@@ -138,9 +129,18 @@ int* calypso_framework_entities_simple_register_component_int(int* array, const 
 */
 float* calypso_framework_entities_simple_register_component_float(float* array, const float default_value)
 {
-    const int count = *_calypso_framework_entities_simple_entity_count_max;
+    const int count = *_calypso_framework_entities_simple_entity_count_max_ptr;
     array = malloc(count * sizeof(float));
     for (int i = 0; i < count; i++)
         array[i] = default_value;
     return array;
 }
+
+// Macro : Entities Component Initialize Macro
+#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(TYPE,UID,ARRAY,DEFAULT_VALUE) do\
+{\
+    unsigned int entity_count = *_calypso_framework_entities_simple_entity_count_max_ptr;\
+    ARRAY = (TYPE*)malloc(entity_count * sizeof(TYPE));\
+    for (int i = 0; i < entity_count; i++)\
+        ARRAY[i] = DEFAULT_VALUE;\
+} while (0)

@@ -95,6 +95,7 @@ void start(void)
     _entity_count_max_ptr = calypso_framework_entities_simple_get_entity_count_max_ptr();
     CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(CalypsoFrameworkColorsColorRGBA,"color",_entity_color_array,color_white_color_rgba);
     CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(float,"position_x",_entity_position_x_array,0);
+    CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(float,"position_x",_entity_position_x_array,0);
     CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(float,"position_y",_entity_position_y_array,0);
     CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(float,"bounds_x",_entity_bounds_x_array,30);
     CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_REGISTER_COMPONENT(float,"bounds_y",_entity_bounds_y_array,30);
@@ -121,10 +122,6 @@ void start(void)
         {
             _entity_position_x_array[i] = (rand() % (max_width - min_width + 1)) + min_width;
             _entity_position_y_array[i] = (rand() % (max_height - min_height + 1)) + min_height;
-            _entity_color_array[i].r = (rand() % (max_color - min_color + 1)) + min_color;
-            _entity_color_array[i].g = (rand() % (max_color - min_color + 1)) + min_color;
-            _entity_color_array[i].b = (rand() % (max_color - min_color + 1)) + min_color;
-            _entity_color_array[i].a = 255;
         }
     }
 
