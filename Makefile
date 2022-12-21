@@ -13,31 +13,31 @@ clear_console_win:
 	cls
 
 # Win 32
-BUILD_DIR_DEBUG_32_WIN = build/debug_32_win/app
-RUN_DIR_DEBUG_32_WIN = ./build/debug_32_win/app
-RUN_DIR_RELEASE_32_WIN = ./build/release_32_win/app
-BUILD_DIR_RELEASE_32_WIN = build/release_32_win/app
+BUILD_DIR_DEBUG_WIN_32 = build/debug_win_32/app
+RUN_DIR_DEBUG_WIN_32 = ./build/debug_win_32/app
+RUN_DIR_RELEASE_WIN_32 = ./build/release_win_32/app
+BUILD_DIR_RELEASE_WIN_32 = build/release_win_32/app
 
-build_debug_32_win: clear_console_win
-	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_32) -o $(BUILD_DIR_DEBUG_32_WIN) $(SOURCE_FILES) $(LINKER_FLAGS_32)
-build_release_32_win: clear_console_win
-	$(CC) $(CC_FLAGS_RELEASE) $(LIBRARY_PATH_32) -o $(BUILD_DIR_RELEASE_32_WIN) $(SOURCE_FILES) $(LINKER_FLAGS_32)
-run_debug_32_win: clear_console_win
-	$(RUN_DIR_DEBUG_32_WIN)
-run_release_32_win: clear_console_win
-	$(RUN_DIR_RELEASE_32_WIN)
+build_debug_win_32: clear_console_win
+	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_32) -o $(BUILD_DIR_DEBUG_WIN_32) $(SOURCE_FILES) $(LINKER_FLAGS_32)
+build_release_win_32: clear_console_win
+	$(CC) $(CC_FLAGS_RELEASE) $(LIBRARY_PATH_32) -o $(BUILD_DIR_RELEASE_WIN_32) $(SOURCE_FILES) $(LINKER_FLAGS_32)
+run_debug_win_32: clear_console_win
+	$(RUN_DIR_DEBUG_WIN_32)
+run_release_win_32: clear_console_win
+	$(RUN_DIR_RELEASE_WIN_32)
 
 # Win 64
-BUILD_DIR_DEBUG_64_WIN = build/debug_64_win/app
-RUN_DIR_DEBUG_64_WIN = ./build/debug_64_win/app
-RUN_DIR_RELEASE_64_WIN = ./build/release_64_win/app
-BUILD_DIR_RELEASE_64_WIN = build/release_64_win/app
+BUILD_DIR_DEBUG_WIN_64 = build/debug_win_64/app
+RUN_DIR_DEBUG_WIN_64 = ./build/debug_win_64/app
+RUN_DIR_RELEASE_WIN_64 = ./build/release_win_64/app
+BUILD_DIR_RELEASE_WIN_64 = build/release_win_64/app
 
-build_debug_64_win: clear_console_win
-	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_64) -o $(BUILD_DIR_DEBUG_64_WIN) $(SOURCE_FILES) $(LINKER_FLAGS_64)
-build_release_64_win: clear_console_win
-	$(CC) $(CC_FLAGS_RELEASE) $(LIBRARY_PATH_64) -o $(BUILD_DIR_RELEASE_64_WIN) $(SOURCE_FILES) $(LINKER_FLAGS_64)
-run_debug_64_win: clear_console_win
-	$(RUN_DIR_DEBUG_64_WIN)
-run_release_64_win: clear_console_win
-	$(RUN_DIR_RELEASE_64_WIN)
+build_debug_win_64: clear_console_win
+	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_64) -o $(BUILD_DIR_DEBUG_WIN_64) $(SOURCE_FILES) $(LINKER_FLAGS_64)
+build_release_win_64: clear_console_win
+	$(CC) $(CC_FLAGS_RELEASE) $(LIBRARY_PATH_64) -o $(BUILD_DIR_RELEASE_WIN_64) $(SOURCE_FILES) $(LINKER_FLAGS_64)
+run_debug_win_64: clear_console_win
+	$(RUN_DIR_DEBUG_WIN_64)
+run_release_win_64: clear_console_win
+	$(RUN_DIR_RELEASE_WIN_64)
