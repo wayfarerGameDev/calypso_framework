@@ -1,15 +1,17 @@
 #pragma once
 
 // Inclues
-#include <stdbool.h> // bool
+#include <stdio.h>
+#include <stdint.h>     // uint8_t
+#include <stdbool.h>    // bool
 
 // Logging Callback
-typedef void (*calypso_framework_entities_simple_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_entities_simple_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_entities_simple_log_callback_t _calypso_framework_entities_simple_log_callback;
 
 // State
-#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_NULL         0
-#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_INIT         1
+#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_NULL         0b00000000
+#define CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_INIT         0b00000001
 unsigned int _calypso_framework_entities_simple_state =      CALYPSO_FRAMEWORK_ENTITIES_SIMPLE_STATE_NULL;
 
 // Entities (Count)
@@ -33,7 +35,7 @@ void calypso_framework_entities_simple_set_log_callback(calypso_framework_entiti
 * \brief Do app's log callback
 * \return void
 */
-void calypso_framework_entities_simple_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_entities_simple_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_entities_simple_log_callback != NULL)
         _calypso_framework_app_sdl_log_callback(log_msg,log_type);

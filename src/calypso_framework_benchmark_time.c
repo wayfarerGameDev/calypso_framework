@@ -6,10 +6,11 @@
 
 // Includes
 #include <stdio.h>
+#include <stdint.h>     // uint8_t
 #include <time.h>       // clock_t | clock() | CLOCKS_PER_SEC
 
 // Logging Callback
-typedef void (*calypso_framework_benchmark_time_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_benchmark_time_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_benchmark_time_log_callback_t _calypso_framework_benchmark_time_log_callback;
 
 // Benchmark
@@ -32,7 +33,7 @@ void calypso_framework_benchmark_time_set_log_callback(calypso_framework_benchma
 * \brief Do Benchmark's log callback
 * \return void
 */
-void calypso_framework_benchmark_time_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_benchmark_time_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_benchmark_time_log_callback == NULL)
         return;

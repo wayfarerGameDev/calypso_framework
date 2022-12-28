@@ -78,7 +78,6 @@ void calypso_framework_math_matrix_modify_set_scale_unified(const float scale, f
 * \brief Multiply two matrixes (Column Row Major Order)
 * \return void
 */
-
 void calypso_framework_math_matrix_modify_mult(const float matrix4f_a[4][4], const float matrix4f_b[4][4], float matrix4f_out[4][4])
 {
 	int k, r, c;

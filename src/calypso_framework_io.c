@@ -5,11 +5,12 @@
 #pragma once
 
 // Includes
-#include <stdlib.h>
-#include <stdbool.h>
+#include <stdio.h>
+#include <stdbool.h>	// bool
+#include <stdint.h>     // uint8_t
 
 // Logging Callback
-typedef void (*calypso_framework_io_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_io_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_io_log_callback_t _calypso_framework_io_log_callback;
 
 // File
@@ -34,7 +35,7 @@ void calypso_framework_io_set_log_callback(calypso_framework_io_log_callback_t l
 * \brief Do io's log callback
 * \return void
 */
-void calypso_framework_io_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_io_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_io_log_callback == NULL)
         return;

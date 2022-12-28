@@ -4,15 +4,18 @@
 /// </summary>
 
 // Includes
-#include <math.h> // trunc
+#include <stdint.h>     // uint8_t
+#include <stdbool.h>    // bool
+#include <math.h>       // trunc
+
 
 // Logging Callback
-typedef void (*calypso_framework_spatial_partitioning_grid_2d_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_spatial_partitioning_grid_2d_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_spatial_partitioning_grid_2d_log_callback_t _calypso_framework_spatial_partitioning_grid_2d_log_callback;
 
 // State
-#define CALYPSO_FRAMEWORK_SPATIAL_PARTIONING_GRID_2D_STATE_NULL                          0
-#define CALYPSO_FRAMEWORK_SPATIAL_PARTIONING_GRID_2D_STATE_INIT                          1
+#define CALYPSO_FRAMEWORK_SPATIAL_PARTIONING_GRID_2D_STATE_NULL                          0b00000000
+#define CALYPSO_FRAMEWORK_SPATIAL_PARTIONING_GRID_2D_STATE_INIT                          0b00000001
 unsigned int _calypso_framework_spatial_partitioning_grid_2d_state =                     CALYPSO_FRAMEWORK_SPATIAL_PARTIONING_GRID_2D_STATE_NULL;
 
 // Grid
@@ -47,7 +50,7 @@ void calypso_framework_spatial_partitioning_grid_2d_set_log_callback(calypso_fra
 * \brief Do app's log callback
 * \return void
 */
-void calypso_framework_spatial_partitioning_grid_2d_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_spatial_partitioning_grid_2d_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_spatial_partitioning_grid_2d_log_callback == NULL)
         return;

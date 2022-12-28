@@ -3,24 +3,25 @@
 /// </summary>
 
 #pragma once
+#include <stdint.h>     // uint8_t
 
 // Logging Callback
-typedef void (*calypso_framework_systems_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_systems_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_systems_log_callback_t _calypso_framework_systems_log_callback;
 
 // System Stages
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED             0
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED              1
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT              2
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP        0
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP         1
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP              2
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN       3
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN        4
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN             5
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE         6
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE          7
-#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE               8
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_DISABLED             0b00000000
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ENABLED              0b00000001
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STATE_ONESHOT              0b00000000
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_STARTUP        0b00000000
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_STARTUP         0b00000001
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_STARTUP              0b00000010
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_SHUTDOWN       0b00000011
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_SHUTDOWN        0b00000100
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_SHUTDOWN             0b00000101
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_EARLY_UPDATE         0b00000110
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_LATE_UPDATE          0b00000111
+#define CALYPSO_FRAMEWORK_SYSTEMS_SYSTEM_STAGE_UPDATE               0b00001000
 typedef void (*calypso_framework_systems_system_t)(void);
 calypso_framework_systems_system_t* _calypso_framework_systems_system_array;
 int* _calypso_framework_systems_system_state_array;
@@ -40,7 +41,7 @@ void calypso_framework_systems_set_log_callback(calypso_framework_systems_log_ca
 * \brief Do system's log callback
 * \return void
 */
-void calypso_framework_systems_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_systems_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_systems_log_callback == NULL)
         return;

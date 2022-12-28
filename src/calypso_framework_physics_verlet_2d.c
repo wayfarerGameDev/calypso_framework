@@ -4,9 +4,12 @@
 
 #pragma once
 
+// Includes
+#include <stdbool.h>    // bool
+
 // State
-#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL                          0
-#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_INIT                          1
+#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL                          0b00000000
+#define CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_INIT                          0b00000001
 unsigned int _calypso_framework_physics_verlet_2d_state =                       CALYPSO_FRAMEWORK_PHYSICS_VERLET_2D_STATE_NULL;
 
 // Bodies

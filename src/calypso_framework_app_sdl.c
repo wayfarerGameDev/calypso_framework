@@ -6,18 +6,19 @@
 
 // Includes
 #include <stdio.h>
+#include <stdint.h>     // uint8_t
 #include <dependencies/SDL2/SDL.h>
 
 // Logging Callback
-typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, const Uint8 log_type);
+typedef void (*calypso_framework_app_sdl_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_app_sdl_log_callback_t _calypso_framework_app_sdl_log_callback;
 
 // State
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL                 0
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT                 1
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING              2
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN             3
-#define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR                4
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL                 0b00000000
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_INIT                 0b00000001
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_RUNNING              0b00000010
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_SHUTDOWN             0b00000011
+#define CALYPSO_FRAMEWORK_APP_SDL_STATE_ERROR                0b00000100
 unsigned int _calypso_framework_app_sdl_state =              CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
 
 // Window
@@ -55,7 +56,7 @@ void calypso_framework_app_sdl_set_log_callback(calypso_framework_app_sdl_log_ca
 * \brief Do app's log callback
 * \return void
 */
-void calypso_framework_app_sdl_do_log_callback(const char* log_msg, const Uint8 log_type)
+void calypso_framework_app_sdl_do_log_callback(const char* log_msg, const uint8_t log_type)
 {
     if (_calypso_framework_app_sdl_log_callback == NULL)
         return;
@@ -145,10 +146,10 @@ void calypso_framework_app_sdl_set_window_title(const char* title)
 
 /**
 * \brief Sets window's ability to be resizable enabled
-* \param bIsResizable const Uint8
+* \param bIsResizable const uint8_t
 * \return void
 */
-void calypso_framework_app_sdl_set_window_resizable(const Uint8 bIsResizable)
+void calypso_framework_app_sdl_set_window_resizable(const uint8_t bIsResizable)
 {
     SDL_SetWindowResizable(_calypso_framework_app_sdl_window,bIsResizable);
 }
