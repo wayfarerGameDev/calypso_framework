@@ -12,6 +12,17 @@
 typedef void (*calypso_framework_renderer_2d_opengl_log_callback_t)(const char* log_msg, const uint8_t log_type);
 calypso_framework_renderer_2d_opengl_log_callback_t _calypso_framework_renderer_2d_opengl_log_callback;
 
+struct calypso_framework_renderer_2d_opengl_quad_batch 
+{
+    float* vertices;
+    int* indicies;
+    int instance_count;
+    int data_size;
+    unsigned int vao;
+    unsigned int vbo;
+    unsigned int ibo;
+};
+
 // State
 #define CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_NULL                    0b00000000
 #define CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT                    0b00000001
@@ -27,9 +38,6 @@ unsigned int _calypso_framework_renderer_2d_opengl_state =                 CALYP
 unsigned int _calypso_framework_renderer_2d_opengl_vao_quad_immediate;    // Quad (Immediate)
 unsigned int _calypso_framework_renderer_2d_opengl_vbo_quad_immediate;
 unsigned int _calypso_framework_renderer_2d_opengl_ibo_quad_immediate;
-unsigned int _calypso_framework_renderer_2d_opengl_vao_quad_batched;      // Quad (Batched)
-unsigned int _calypso_framework_renderer_2d_opengl_vbo_quad_batched;
-unsigned int _calypso_framework_renderer_2d_opengl_ibo_quad_batched;
 
 // Current Shader Program
 unsigned int calypso_framework_renderer_2d_opengl_current_program;
@@ -323,6 +331,61 @@ bool calypso_framework_renderer_2d_opengl_is_init()
     return _calypso_framework_renderer_2d_opengl_state == CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT;
 }
 
+void calypso_framework_renderer_2d_opengl_set_batch_instance_data(struct calypso_framework_renderer_2d_opengl_quad_batch* batch, const int instance, const float pos[2], const float color[4], int texture_index)
+{
+    if (instance < 0 || instance >= batch->instance_count)
+        return;
+
+    // Vertices
+    {
+        //    POS (XYZ)           COLOR (RGBA)                    Texture (UV)        Texture (Index/ID)
+        //    -3, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,0,                0,
+        //    -1, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,0,                0,
+        //    -1,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,1,                0,
+        //    -3,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,1,                0,
+
+        const int vertex_data_stride = 40 * instance;
+        const float size = 1;
+        float* vertices = batch->vertices;
+
+        // Row One                                                  // Row Two
+        vertices[vertex_data_stride + 0] = pos[0];                 vertices[vertex_data_stride + 10] = pos[0] + size;
+        vertices[vertex_data_stride + 1] = pos[1];                 vertices[vertex_data_stride + 11] = pos[1];
+        vertices[vertex_data_stride + 2] = 0;                      vertices[vertex_data_stride + 12] = 0;
+        vertices[vertex_data_stride + 3] = color[0];               vertices[vertex_data_stride + 13] = color[0];
+        vertices[vertex_data_stride + 4] = color[1];               vertices[vertex_data_stride + 14] = color[1];
+        vertices[vertex_data_stride + 5] = color[2];               vertices[vertex_data_stride + 15] = color[2];
+        vertices[vertex_data_stride + 6] = color[3];               vertices[vertex_data_stride + 16] = color[3];
+        vertices[vertex_data_stride + 7] = 0;                      vertices[vertex_data_stride + 17] = 1;
+        vertices[vertex_data_stride + 8] = 0;                      vertices[vertex_data_stride + 18] = 0;
+        vertices[vertex_data_stride + 9] = texture_index;          vertices[vertex_data_stride + 19] = texture_index;
+
+         // Row Three                                                // Row Four
+        vertices[vertex_data_stride + 20] = pos[0] + size;          vertices[vertex_data_stride + 30] = pos[0];
+        vertices[vertex_data_stride + 21] = pos[1] + size;          vertices[vertex_data_stride + 31] = pos[1] + size;
+        vertices[vertex_data_stride + 22] = 0;                      vertices[vertex_data_stride + 32] = 0;
+        vertices[vertex_data_stride + 23] = color[0];               vertices[vertex_data_stride + 33] = color[0];
+        vertices[vertex_data_stride + 24] = color[1];               vertices[vertex_data_stride + 34] = color[1];
+        vertices[vertex_data_stride + 25] = color[2];               vertices[vertex_data_stride + 35] = color[2];
+        vertices[vertex_data_stride + 26] = color[3];               vertices[vertex_data_stride + 36] = color[3];
+        vertices[vertex_data_stride + 27] = 1;                      vertices[vertex_data_stride + 37] = 0;
+        vertices[vertex_data_stride + 28] = 1;                      vertices[vertex_data_stride + 38] = 1;
+        vertices[vertex_data_stride + 29] = texture_index;          vertices[vertex_data_stride + 39] = texture_index;
+    }
+
+    // Indicies
+    {
+
+    }
+}
+
+void calypso_framework_renderer_2d_opengl_build_batch(struct calypso_framework_renderer_2d_opengl_quad_batch* batch)
+{
+    // Vertices
+    glBindBuffer(GL_ARRAY_BUFFER,batch->vbo);
+    glBufferSubData(GL_ARRAY_BUFFER,0,batch->data_size,batch->vertices);
+}
+
 /**
 * \brief Initializes renderer
 * \return void
@@ -342,16 +405,19 @@ void calypso_framework_renderer_2d_opengl_init(void* opengl_proc_address)
     // Quad (Immediate)
     {
          // Vertices (XYZ UV)
-        float vertices[] = {
-             1,  1, 0, 0, 0,
-             1, -1, 0, 0, 1,
-            -1, -1, 0, 1, 1,
-            -1,  1, 0, 1, 0
+        const float vertices[] = {
+
+            // POS (XYZ)        // Texture (UV)
+             1,  1, 0,          0, 0,
+             1, -1, 0,          0, 1,
+            -1, -1, 0,          1, 1,
+            -1,  1, 0,          1, 0
+
         };
-        int vertex_data_stride = 5;
+        const int vertex_data_stride = 5;
 
         // Indicies
-        unsigned int indices[] = {
+        const unsigned int indices[] = {
              0, 1, 2, 2, 3, 0
         };
 
@@ -379,43 +445,56 @@ void calypso_framework_renderer_2d_opengl_init(void* opengl_proc_address)
  
         glBindVertexArray(0);
     }
+}
 
+struct calypso_framework_renderer_2d_opengl_quad_batch calypso_framework_renderer_2d_opengl_create_quad_batch(int batch_instance_count)
+{
     // Quad (Batched)
     {
         // Vertices (XYZ UV RGBA(Color))
-        float vertices[] = {
-
-            // POS (XYZ)        // COLOR (RGBA)                 // Texture (UV)     // Texture (Index/ID)
-            -3, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,0,                0,
-            -1, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,0,                0,
-            -1,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,1,                0,
-            -3,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,1,                0,
-
-            1, -1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       0,0,                1,
-            3, -1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       1,0,                1,
-            3,  1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       1,1,                1,
-            1,  1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       0,1,                1,
-        };
-        int vertex_data_stride = 10;
+        //float vertices[] = {
+        //
+        //    // POS (XYZ)        // COLOR (RGBA)                 // Texture (UV)     // Texture (Index/ID)
+        //    -3, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,0,                0,
+        //    -1, -1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,0,                0,
+        //    -1,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       1,1,                0,
+        //    -3,  1, 0,          1.0f, 0.0f,  0.0f,  1.0f,       0,1,                0,
+        //
+        //    1, -1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       0,0,                1,
+        //    3, -1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       1,0,                1,
+        //    3,  1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       1,1,                1,
+        //    1,  1, 0,           1.0f, 0.93f, 0.24f, 1.0f,       0,1,                1,
+        //};
+        const int vertex_data_stride = 10;
 
         // Indicies
-        unsigned int indices[] = {
+        const unsigned int indices[] = {
+        
             0, 1, 2, 2, 3, 0,
             4, 5, 6, 6, 7, 4,
+            8, 9, 10, 10, 11, 8,
+            12, 13, 14, 14, 15, 12,
         };
 
+        
+        struct calypso_framework_renderer_2d_opengl_quad_batch _batch;
+        
+        _batch.instance_count = batch_instance_count;
+        const int batch_data_size = _batch.data_size = 40 * _batch.instance_count * sizeof(float);
+        _batch.vertices = malloc(batch_data_size);
+
         // VAO
-        glGenVertexArrays(1, &_calypso_framework_renderer_2d_opengl_vao_quad_batched);
-        glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_quad_batched);
+        glGenVertexArrays(1, &_batch.vao);
+        glBindVertexArray(_batch.vao);
 
         // VBO
-        glGenBuffers(1, &_calypso_framework_renderer_2d_opengl_vbo_quad_batched);
-        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_2d_opengl_vbo_quad_batched);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),vertices, GL_STATIC_DRAW);
+        glGenBuffers(1, &_batch.vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, _batch.vbo);
+        glBufferData(GL_ARRAY_BUFFER,batch_data_size,NULL, GL_DYNAMIC_DRAW);
 
         // IBO
-        glGenBuffers(1, &_calypso_framework_renderer_2d_opengl_ibo_quad_batched);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_2d_opengl_ibo_quad_batched);
+        glGenBuffers(1, &_batch.ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _batch.ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),indices, GL_STATIC_DRAW);
 
         // Vertex Attributes (XYZ)
@@ -435,6 +514,9 @@ void calypso_framework_renderer_2d_opengl_init(void* opengl_proc_address)
         glEnableVertexAttribArray(3);
 
         glBindVertexArray(0);
+
+        return _batch;
+  
     }
 }
 
@@ -500,9 +582,9 @@ void calypso_framework_renderer_2d_opengl_render_quad_immediate()
 * \brief Render a Quad (Batched)
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_render_quad_batched() 
+void calypso_framework_renderer_2d_opengl_render_quad_batched(struct calypso_framework_renderer_2d_opengl_quad_batch* batch) 
 {
     // OpenGL
-    glBindVertexArray(_calypso_framework_renderer_2d_opengl_vao_quad_batched);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(batch->vao);
+    glDrawElements(GL_TRIANGLES, 6 * batch->instance_count, GL_UNSIGNED_INT, 0);
 }

@@ -27,6 +27,7 @@ unsigned int _renderer_shader_program_array_count;
 
 // Renderer (Other)
 bool _renderer_is_dirty;
+struct calypso_framework_renderer_2d_opengl_quad_batch _renderer_quad_batch;
 
 // Colors
 const uint8_t* _c_color_white_array = _c_calypso_framework_colors_color_byte_array_white;
@@ -60,7 +61,6 @@ void start(void)
         // Init OpengGl (Wee ned openGl processing address from our app)
         calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
 
-
         // Default Shader Program (Batched)
         _renderer_default_shader_batched_program = calypso_framework_renderer_2d_opengl_create_default_batched_shader_program();
         _renderer_shader_program_array_count++;
@@ -77,6 +77,31 @@ void start(void)
 
         // Is Dirty By Default
         _renderer_is_dirty = true;
+    }
+
+    // Create Render Quad batch
+    {
+        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(4);
+     
+        {
+             float pos[2] = {-3,0};
+            float color[4] = {1,0,0,1};
+            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,0,pos,color,0);
+
+            float pos2[2] = {3,0};
+            float color2[4] = {1,0.93f,0.24f,1};
+            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,1,pos2,color2,0);
+
+            float pos3[2] = {0,-3};
+            float color3[4] = {0,1,0,1};
+            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,2,pos3,color3,0);
+            calypso_framework_renderer_2d_opengl_build_batch(&_renderer_quad_batch);
+
+            float pos4[2] = {0,3};
+            float color4[4] = {0,0,1,1};
+            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,3,pos4,color4,0);
+            calypso_framework_renderer_2d_opengl_build_batch(&_renderer_quad_batch);
+        }
     }
 }
 
@@ -180,7 +205,7 @@ void update(void)
         calypso_framework_renderer_2d_opengl_set_current_render_shader_program(_renderer_default_shader_batched_program);
         calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f("model_in",_renderer_model_matrix); // Apply Transform
 
-        calypso_framework_renderer_2d_opengl_render_quad_batched();
+        calypso_framework_renderer_2d_opengl_render_quad_batched(&_renderer_quad_batch);
     }
 
     // Renderer (End)
