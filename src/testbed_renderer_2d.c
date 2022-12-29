@@ -81,26 +81,16 @@ void start(void)
 
     // Create Render Quad batch
     {
-        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(4);
-     
-        {
-             float pos[2] = {-3,0};
-            float color[4] = {1,0,0,1};
-            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,0,pos,color,0);
+        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(30000);
+        {        
+            for (int i = 0; i < _renderer_quad_batch.instance_max_count; i++)
+            {
+                float pos[2] = {1.1f * i - 40,0};
+                float color[4] = {1,1 * 0.02f * i,0,1};
+                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data(&_renderer_quad_batch,i,pos,0.01f * i,color,0);
+            }
 
-            float pos2[2] = {3,0};
-            float color2[4] = {1,0.93f,0.24f,1};
-            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,1,pos2,color2,0);
-
-            float pos3[2] = {0,-3};
-            float color3[4] = {0,1,0,1};
-            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,2,pos3,color3,0);
-            calypso_framework_renderer_2d_opengl_build_batch(&_renderer_quad_batch);
-
-            float pos4[2] = {0,3};
-            float color4[4] = {0,0,1,1};
-            calypso_framework_renderer_2d_opengl_set_batch_instance_data(&_renderer_quad_batch,3,pos4,color4,0);
-            calypso_framework_renderer_2d_opengl_build_batch(&_renderer_quad_batch);
+             calypso_framework_renderer_2d_opengl_build_quad_batch(&_renderer_quad_batch); 
         }
     }
 }
