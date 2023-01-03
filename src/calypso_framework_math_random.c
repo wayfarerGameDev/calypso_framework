@@ -1,6 +1,11 @@
 
 #pragma once
 
+#include <stdio.h>      // rand
+#include <stdlib.h>     // rand
+#include <stdint.h>     // uint8_t
+#include <time.h>       // time
+
 //Some Usefual *Baked* Math Values (Floats)
 #define CALYPSO_FRAMEWORK_MATH_RANDOM_MATH_PI_F			    3.145926f
 #define CALYPSO_FRAMEWORK_MATH_RANDOM_MATH_PI2_F		    6.291852f
@@ -44,4 +49,19 @@ int calypso_framework_math_random_rand_xorshift_int()
     r = r ^ (r >> 17);
     r = r ^ (r << 5);
     return r;
+}
+
+void calypso_framework_random_rand_set_seed_as_time()
+{
+    srand(time(0));
+}
+
+int calypso_framework_math_random_rand_range_i(int min, int max)
+{
+    return (rand() % (max - min + 1)) + min;
+}
+
+int calypso_framework_math_random_rand_range_f(float min, float max)
+{
+    return (float)(rand()) / ((float)(RAND_MAX / (max - min)));
 }

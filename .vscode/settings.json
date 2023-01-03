@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "iostream": "cpp",
-        "limits": "c"
+        "limits": "c",
+        "glfw3.h": "c"
     }
 }

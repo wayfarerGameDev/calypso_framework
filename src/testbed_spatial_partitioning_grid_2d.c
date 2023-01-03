@@ -200,8 +200,8 @@ void update(void)
 
 
     // Render (Start)
-    calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to  do this every frame but why not
-    calypso_framework_renderer_2d_opengl_clear();
+    calypso_framework_renderer_2d_opengl_set_renderer_clear_color_by_byte_color_array(_c_calypso_framework_colors_color_byte_array_black); // Don't need to  do this every frame but why not
+    calypso_framework_renderer_2d_opengl_renderer_clear();
 
     // Render (Render Entities)
     for (int i = 0; i < *_entity_count_max_ptr; i++)

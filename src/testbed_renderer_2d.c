@@ -1,8 +1,21 @@
 // Includes
+#include <stdio.h>      // rand
+#include <stdlib.h>     // rand
 #include <stdint.h>     // uint8_t
+#include <time.h>       // time
+
+// Calypso (SDL or GLFW)
+#define USE_GLFW_OVER_SDL 1
+#if(USE_GLFW_OVER_SDL)
+#include "calypso_framework_app_glfw.c"
+#include "calypso_framework_input_glfw.c"
+#else
+#include "calypso_framework_app_sdl.c"
+#include "calypso_framework_input_sdl.c"
+#endif
+
 
 // Calypso
-#include "calypso_framework_app_sdl.c"
 #include "calypso_framework_colors.c"
 #include "calypso_framework_io.c"
 #include "calypso_framework_math_matrix4.c"
@@ -15,6 +28,8 @@ float _renderer_view_matrix[4][4];
 float _renderer_projection_view_matrix[4][4];
 float _renderer_viewport_position_x;
 float _renderer_viewport_position_y;
+float _renderer_viewport_width;
+float _renderer_viewport_height;
 float _renderer_viewport_scale_x;
 float _renderer_viewport_scale_y;
 
@@ -56,13 +71,29 @@ void log_msg(const char* log_msg, const uint8_t log_type)
 
 void start(void)
 {
+    // Viewport Width / Height (GLFW)
+    #if(USE_GLFW_OVER_SDL)
+    _renderer_viewport_width = calypso_framework_app_glfw_get_window_width();
+    _renderer_viewport_height = calypso_framework_app_glfw_get_window_height();
+    
+    #else
+    // Viewport Width / Height (SDL)
+    _renderer_viewport_width = calypso_framework_app_sdl_get_window_width();
+    _renderer_viewport_height = calypso_framework_app_sdl_get_window_height();
+    #endif
+
     // Init Renderer
     {
-        // Init OpengGl (Wee ned openGl processing address from our app)
+        // Viewport Width / Height (GLFW)
+        #if(USE_GLFW_OVER_SDL)
+        calypso_framework_renderer_2d_opengl_init(calypso_framework_app_glfw_get_open_gl_proc_address());
+        #else
         calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
+        #endif
+
 
         // Default Shader Program (Batched)
-        _renderer_default_shader_batched_program = calypso_framework_renderer_2d_opengl_create_default_batched_shader_program();
+        _renderer_default_shader_batched_program = calypso_framework_renderer_2d_opengl_create_default_batched_circle_shader_program();
         _renderer_shader_program_array_count++;
         _renderer_shader_program_array = realloc(_renderer_shader_program_array,_renderer_shader_program_array_count * sizeof(unsigned int));
         _renderer_shader_program_array[_renderer_shader_program_array_count - 1] = _renderer_default_shader_batched_program;
@@ -79,19 +110,41 @@ void start(void)
         _renderer_is_dirty = true;
     }
 
-    // Create Render Quad batch
+    // Create render Quad (Immediate)
+    calypso_framework_renderer_2d_create_build_quad_immediate();
+
+    // Create Render Quad (Batch)
     {
-        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(30000);
-        {        
+        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(300);
+        calypso_framework_renderer_2d_opengl_set_quad_batch_data_default(&_renderer_quad_batch);
+
+        // Randomize
+        {
+            // Cache Max/Min Width/Height
+            const int max_width = ((int)_renderer_viewport_width) * 0.04f;
+            const int min_width = -max_width;
+            const int max_height = ((int)_renderer_viewport_height) * 0.04f;
+            const int min_height = -max_height;
+
+            // Set Entities Data
+            float position[2] = {0,0};
+            float color[4] = {0,0,0,1};
+            calypso_framework_random_rand_set_seed_as_time();
             for (int i = 0; i < _renderer_quad_batch.instance_max_count; i++)
             {
-                float pos[2] = {1.1f * i - 40,0};
-                float color[4] = {1,1 * 0.02f * i,0,1};
-                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data(&_renderer_quad_batch,i,pos,0.01f * i,color,0);
-            }
+                position[0] = calypso_framework_math_random_rand_range_i(min_width,max_width);
+                position[1] = calypso_framework_math_random_rand_range_i(min_height,max_height);
+                color[0] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
+                color[1] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
+                color[2] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
+                color[3] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
 
-             calypso_framework_renderer_2d_opengl_build_quad_batch(&_renderer_quad_batch); 
+                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data_position_size_pair(&_renderer_quad_batch,i,position,3);
+                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data_color(&_renderer_quad_batch,i,color);
+            }
         }
+
+        calypso_framework_renderer_2d_opengl_build_quad_batch(&_renderer_quad_batch); 
     }
 }
 
@@ -113,18 +166,25 @@ void update(void)
     // Renderer (Update Viewport)
     if (_renderer_is_dirty)
     {
-         // Viewport Width / Height
-        const float viewport_width = calypso_framework_app_sdl_get_window_width();
-        const float viewport_height = calypso_framework_app_sdl_get_window_height();
+        // Viewport Width / Height (GLFW)
+        #if(USE_GLFW_OVER_SDL)
+        _renderer_viewport_width = calypso_framework_app_glfw_get_window_width();
+        _renderer_viewport_height = calypso_framework_app_glfw_get_window_height();
+        
+        #else
+        // Viewport Width / Height (SDL)
+        _renderer_viewport_width = calypso_framework_app_sdl_get_window_width();
+        _renderer_viewport_height = calypso_framework_app_sdl_get_window_height();
+        #endif
 
         // Viewport Transform
-        _renderer_viewport_position_x = viewport_width / 2;
-        _renderer_viewport_position_y = viewport_height / 2;
+        _renderer_viewport_position_x = _renderer_viewport_width / 2;
+        _renderer_viewport_position_y = _renderer_viewport_height / 2;
         _renderer_viewport_scale_x = 0.3f;
         _renderer_viewport_scale_y = 0.3f;
 
         // Viewport Matrix (Projection And View) (Ortho 2D)
-        calypso_framework_math_matrix_build_projection_ortho_matrix4f(0,viewport_width,0,viewport_height,-1,1,_renderer_viewport_projection_matrix);
+        calypso_framework_math_matrix_build_projection_ortho_matrix4f(0,_renderer_viewport_width,0,_renderer_viewport_height,-1,1,_renderer_viewport_projection_matrix);
         calypso_framework_math_matrix_build_identity_matrix4f(_renderer_view_matrix);
         calypso_framework_math_matrix_modify_set_scale(_renderer_viewport_scale_x,_renderer_viewport_scale_y,1,_renderer_view_matrix);
         calypso_framework_math_matrix_modify_set_position(_renderer_viewport_position_x,_renderer_viewport_position_y,0,_renderer_view_matrix);
@@ -141,11 +201,11 @@ void update(void)
 
 
     // Render (Start)
-    {
+    {        
         // Render Start
         const uint8_t color[4] = {10,10,10,255};
-        calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(color); // Don't need to  do this every frame but why not
-        calypso_framework_renderer_2d_opengl_clear();
+        calypso_framework_renderer_2d_opengl_set_renderer_clear_color_by_byte_color_array(color); // Don't need to  do this every frame but why not
+        calypso_framework_renderer_2d_opengl_renderer_clear();
     }
 
     // Render Entities(Immediate)
@@ -206,14 +266,25 @@ int main(int argc, char** argv)
 {
     // Logging
     calypso_framework_renderer_2d_opengl_set_log_callback(log_msg);
-    calypso_framework_app_sdl_set_log_callback(log_msg);
-   
-    // App
-    calypso_framework_app_sdl_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
-    calypso_framework_app_sdl_set_window_title("Testbed : Renderer2D");
-    calypso_framework_app_sdl_set_events(start,end,update);
-    calypso_framework_app_sdl_run();
 
+        // App (GLFW)
+        #if(USE_GLFW_OVER_SDL)
+        calypso_framework_app_glfw_set_log_callback(log_msg);
+        calypso_framework_app_glfw_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+        calypso_framework_app_glfw_set_window_title("Testbed : Renderer2D (GLFW)");
+        calypso_framework_app_glfw_set_events(start,end,update);
+        calypso_framework_app_glfw_run();
+        
+        #else
+        // App (SDL)
+        calypso_framework_app_sdl_set_log_callback(log_msg);
+        calypso_framework_app_sdl_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+        calypso_framework_app_sdl_set_window_title("Testbed : Renderer2D (SDL)");
+        calypso_framework_app_sdl_set_events(start,end,update);
+        calypso_framework_app_sdl_run();
+        #endif
+
+   
     // We Done Baby
     return 0;
 }

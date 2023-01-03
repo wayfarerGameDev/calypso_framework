@@ -414,11 +414,17 @@ void calypso_framework_app_sdl_run(void)
     if (_calypso_framework_app_sdl_event_on_shutdown != NULL)
         _calypso_framework_app_sdl_event_on_shutdown();
 
-    // Quit OpenGL
-    if (_calypso_framework_app_sdl_gl_context)
-        SDL_GL_DeleteContext(_calypso_framework_app_sdl_gl_context);
-
     // Quit
-    SDL_DestroyWindow(_calypso_framework_app_sdl_window);
-    SDL_Quit();
+    {
+        // SDL
+        SDL_DestroyWindow(_calypso_framework_app_sdl_window);
+        SDL_Quit();
+
+        // OpenGL
+        if (_calypso_framework_app_sdl_gl_context)
+            SDL_GL_DeleteContext(_calypso_framework_app_sdl_gl_context);
+    }
+
+    // No State
+    _calypso_framework_app_sdl_state = CALYPSO_FRAMEWORK_APP_SDL_STATE_NULL;
 }
