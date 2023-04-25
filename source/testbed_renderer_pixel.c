@@ -86,21 +86,20 @@ void end(void)
 
 void update(void)
 {
-    // Set Pixel Buffer Pixel Data
+    // Set Pixel Buffer Pixel Data (Foreground)
     for (int x = 0; x < _pixel_count_x; x++)
         for (int y = 0; y < _pixel_count_y; y++)
-        {
-            calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(&_pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255);
-            calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(&_pixel_buffer_midground,x,y,rand() % 255,0,0);
-        }
+            calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(&_pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255, 255);
+
+    // Set Pixel Buffer Pixel Data (Midground)       
+    calypso_framework_renderer_pixel_opengl_set_pixel_fill_rect(&_pixel_buffer_midground,10,10,10,10,255,0,0,155);
 
     // Render
-    {        
-        calypso_framework_renderer_pixel_opengl_set_clear_color(255,0,0,0);
-        calypso_framework_renderer_pixel_opengl_clear();
-        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_foreground);
-        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_midground);
-    }
+    calypso_framework_renderer_pixel_opengl_set_clear_color(0,0,0,0);
+    calypso_framework_renderer_pixel_opengl_clear();
+    calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_foreground);
+    calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_midground);
+    
 }
 
 void resize(void)

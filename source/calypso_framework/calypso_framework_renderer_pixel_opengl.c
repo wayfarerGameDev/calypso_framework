@@ -39,7 +39,7 @@ unsigned int _calypso_framework_renderer_pixel_opengl_shader_program;
 unsigned int _calypso_framework_renderer_pixel_opengl_texture;
 
 // Pixel Buffer
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT        3
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT        4 // RGBA
 typedef struct calypso_framework_renderer_pixel_opengl_pixel_buffer_t
 {
     GLubyte* buffer;
@@ -77,10 +77,11 @@ void calypso_framework_renderer_pixel_opengl_log_graphics_card()
     // Log
     const char* vendor = (const char*)glGetString(GL_VENDOR);
     const char* renderer = (const char*)glGetString(GL_RENDERER);
-    calypso_framework_renderer_pixel_opengl_do_log_callback("Graphics Card\n",1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback("Graphics Card[",1);
     calypso_framework_renderer_pixel_opengl_do_log_callback(vendor,1);
-    calypso_framework_renderer_pixel_opengl_do_log_callback("\n",1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback(":",1);
     calypso_framework_renderer_pixel_opengl_do_log_callback(renderer,1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback("]\n",1);
 }
 
 /*------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         const char* vertex_shader_source =
         "#version 330 core\n"
         "layout(location = 0) in vec3 position_a;\n"
-        "layout(location = 2) in vec2 texCoord_a;\n"
+        "layout(location = 1) in vec2 texCoord_a;\n"
         "out vec2 texCoord_s;\n"
         "void main()\n"
         "{\n"
@@ -154,18 +155,18 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
 
     // OpenGl Object
     {
-        // Vertex buffer
+        // Vertex Buffer
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),(void *)0);
         glEnableVertexAttribArray(0);
 
         // Verticies
         float vertices[] = 
         {
-            // Position (XYZ)       // Color (RGB)          // TextureCoords (UV)
-            1.0f, 1.0f, 0.0f,       0.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
-            1.0f, -1.0f, 0.0f,      0.0f, 0.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
-            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, 0.0f,       0.0f, 0.0f,                 // bottom left
-            -1.0f, 1.0f, 0.0f,      0.0f, 0.0f, 0.0f,       0.0f, 1.0f                  // top left
+            // Position (XYZ)       // TextureCoords (UV)
+             1.0f,  1.0f,  0.0f,    1.0f, 1.0f,             // top right
+             1.0f, -1.0f,  0.0f,    1.0f, 0.0f,             // bottom right
+            -1.0f, -1.0f,  0.0f,    0.0f, 0.0f,             // bottom left
+            -1.0f,  1.0f,  0.0f,    0.0f, 1.0f              // top left
         };
 
         // Indicies
@@ -190,16 +191,12 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
         // Position(XYZ) Attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
         glEnableVertexAttribArray(0);
         
-        // Color(RGB) Attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
         // TextureCoord(UV) Attribute
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
         // Unbind Our Buffer And Vertex Array
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -242,7 +239,7 @@ Calypso Framework Renderer Pixel OpenGL : Renderer (Pixel Buffer)
 void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int width, const int height)
 {
     // Create Pixel Buffer
-    pixel_buffer->buffer = (GLubyte*) malloc(width * height * 3); // 3 Is number of channels (rgb)
+    pixel_buffer->buffer = (GLubyte*) malloc(width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT);
     pixel_buffer->buffer_width = width;
     pixel_buffer->buffer_height = height;
     pixel_buffer->buffer_length = width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
@@ -250,9 +247,10 @@ void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framewo
     // Set Default Values (White)
     for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT)
     {
-        pixel_buffer->buffer[i] = 255;
-        pixel_buffer->buffer[i + 1] = 255;
-        pixel_buffer->buffer[i + 2] = 255;
+        pixel_buffer->buffer[i] = 0;
+        pixel_buffer->buffer[i + 1] = 0;
+        pixel_buffer->buffer[i + 2] = 0;
+        pixel_buffer->buffer[i + 3] = 0;
     }
 }
 
@@ -268,18 +266,18 @@ void calypso_framework_renderer_pixel_opengl_free_pixel_buffer(calypso_framework
 * \brief Set Pixel
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint8_t r,uint8_t g,uint8_t b)
+void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
 {
-    // Make sure we are in range
-    if (x < 0 || x > pixel_buffer->buffer_width || y < 0 || y > pixel_buffer->buffer_height)
-        return;
-
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
          _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel\n",3);
         return;
     }
+
+    // Make sure we are in range
+    if (x < 0 || x > pixel_buffer->buffer_width || y < 0 || y > pixel_buffer->buffer_height)
+        return;
 
     // Get Index
     uint32_t index = ((y * pixel_buffer->buffer_width) + x) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
@@ -288,13 +286,46 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_fram
     pixel_buffer->buffer[index] = r;
     pixel_buffer->buffer[index + 1] = g;
     pixel_buffer->buffer[index + 2] = b;
+    pixel_buffer->buffer[index + 3] = a;
+}
+
+/**
+* \brief Set pixel fill rect
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_set_pixel_fill_rect(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, const int w, const int h, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
+{
+     // Check If Pixel Buffer Is Valid
+    if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
+    {
+         _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel\n",3);
+        return;
+    }
+
+    // Set Pixels
+    for (int xi = x; x < w; xi++)
+        for (int yi = x; y < h; yi++)
+        {
+            // Make sure we are in range
+            if (xi < 0 || xi > pixel_buffer->buffer_width || yi < 0 || yi > pixel_buffer->buffer_height)
+                continue;
+            
+            // Get Index
+            uint32_t index = ((yi * pixel_buffer->buffer_width) + xi) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+
+            // Set Pixel Data
+            pixel_buffer->buffer[index] = r;
+            pixel_buffer->buffer[index + 1] = g;
+            pixel_buffer->buffer[index + 2] = b;
+            pixel_buffer->buffer[index + 3] = a;
+        }
 }
 
 /**
 * \brief Set pixel fill screen
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint8_t r,uint8_t g,uint8_t b)
+void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
 {
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
@@ -304,11 +335,12 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_frame
     }
     
     // Set Pixel Data
-    for (int i = 0; i < pixel_buffer->buffer_length; i+= 3)
+    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT)
     {
         pixel_buffer->buffer[i] = r;
         pixel_buffer->buffer[i + 1] = g;
         pixel_buffer->buffer[i + 2] = b;
+        pixel_buffer->buffer[i + 3] = a;
     }
 }
 
@@ -336,7 +368,7 @@ void calypso_framework_renderer_pixel_opengl_render_pixel_buffer(calypso_framewo
     glUseProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
 
     // Create Texture From Pixels | Bind It
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pixel_buffer->buffer_width, pixel_buffer->buffer_height, 0, GL_RGB, GL_UNSIGNED_BYTE,pixel_buffer->buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixel_buffer->buffer_width, pixel_buffer->buffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,pixel_buffer->buffer);
     glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_texture);
         
     // Render    
@@ -385,7 +417,7 @@ void calypso_framework_renderer_pixel_opengl_clear()
     }
 
     // Clear
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 /*------------------------------------------------------------------------------
