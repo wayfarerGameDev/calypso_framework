@@ -27,6 +27,9 @@ const int _window_height = 800;
 int _pixel_count_y = 800 / 8;
 int _pixel_count_x = 800 / 8;
 
+calypso_framework_renderer_pixel_opengl_pixel_buffer_t pixel_buffer_foreground;
+calypso_framework_renderer_pixel_opengl_pixel_buffer_t pixel_buffer_midground;
+
 void log_msg(const char* log_msg, const uint8_t log_type)
 {
     // Color Log
@@ -48,6 +51,10 @@ void log_msg(const char* log_msg, const uint8_t log_type)
 
 void start(void)
 {
+    // Create Pixel Buffer (Foreground | Midground)
+    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&pixel_buffer_foreground,_pixel_count_x,_pixel_count_y);
+    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&pixel_buffer_midground,_pixel_count_x,_pixel_count_y);
+
     // Init Renderer
     {
         // _pixel_count_x = calypso_framework_app_glfw_get_window_width();
@@ -72,15 +79,19 @@ void end(void)
 
 void update(void)
 {
+    // Set Pixel Buffer Pixel Data
     for (int x = 0; x < _pixel_count_x; x++)
         for (int y = 0; y < _pixel_count_y; y++)
         {
-            calypso_framework_renderer_pixel_opengl_renderer_set_pixel(x,y,rand() % 255,rand() % 255,rand() % 255);
+            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255);
+            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_midground,x,y,255,0,0);
         }
 
-    // Render (Start)
+    // Render
     {        
-        calypso_framework_renderer_pixel_opengl_renderer_render();
+        calypso_framework_renderer_pixel_opengl_renderer_clear();
+        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_foreground);
+        // calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_midground);
     }
 }
 

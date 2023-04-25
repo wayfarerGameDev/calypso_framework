@@ -38,12 +38,15 @@ unsigned int _calypso_framework_renderer_pixel_opengl_shader_program;
 // Texture
 unsigned int _calypso_framework_renderer_pixel_opengl_texture;
 
-// Width | Height
-unsigned int _calypso_framework_renderer_pixel_opengl_width;
-unsigned int _calypso_framework_renderer_pixel_opengl_height;
-
 // Pixel Buffer
-GLubyte*  _calypso_framework_renderer_pixel_opengl_pixel_buffer;
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT        3
+typedef struct calypso_framework_renderer_pixel_opengl_pixel_buffer_t
+{
+    GLubyte* buffer;
+    unsigned int buffer_width;
+    unsigned int buffer_height;
+    unsigned int buffer_length;
+} calypso_framework_renderer_pixel_opengl_pixel_buffer_t;
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer PIXEL OpenGL : Log Callback
@@ -61,56 +64,6 @@ void calypso_framework_renderer_pixel_opengl_do_log_callback(const char* log_msg
 
     _calypso_framework_renderer_pixel_opengl_log_callback(log_msg,log_type);
 }
-
-/*------------------------------------------------------------------------------
-Calypso Framework Renderer PIXEL OpenGL : Renderer (Get | Set)
-------------------------------------------------------------------------------*/
-
-/**
-* \brief Set Pixel
-* \return void
-*/
-void calypso_framework_renderer_pixel_opengl_renderer_set_pixel(int x, int y, uint8_t r,uint8_t g,uint8_t b)
-{
-    // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
-    {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
-        return;
-    }
-
-    // Make sure we are in range
-    if (x < 0 || x > _calypso_framework_renderer_pixel_opengl_width || y < 0 || y > _calypso_framework_renderer_pixel_opengl_height)
-        return;
-
-    // Get Index
-    uint32_t index = ((y * _calypso_framework_renderer_pixel_opengl_width) + x) * 3;
-
-    // Set Pixel Data
-    _calypso_framework_renderer_pixel_opengl_pixel_buffer[index] = r;
-    _calypso_framework_renderer_pixel_opengl_pixel_buffer[index + 1] = g;
-    _calypso_framework_renderer_pixel_opengl_pixel_buffer[index + 2] = b;
-}
-
-void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_fill_screen(uint8_t r,uint8_t g,uint8_t b)
-{
-     // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
-    {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
-        return;
-    }
-
-    int s = _calypso_framework_renderer_pixel_opengl_width * _calypso_framework_renderer_pixel_opengl_height * 3;
-
-    for (int i = 0; i < s; i+= 3)
-    {
-        _calypso_framework_renderer_pixel_opengl_pixel_buffer[i] = r;
-        _calypso_framework_renderer_pixel_opengl_pixel_buffer[i + 1] = g;
-        _calypso_framework_renderer_pixel_opengl_pixel_buffer[i + 2] = b;
-    }
-}
-
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer PIXEL OpenGL : Init / Deinit
@@ -247,14 +200,9 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    // Set Width | Height
-    _calypso_framework_renderer_pixel_opengl_width = width;
-    _calypso_framework_renderer_pixel_opengl_height = height;
-
-    // Create Pixel Buffer
-    _calypso_framework_renderer_pixel_opengl_pixel_buffer = (GLubyte*) malloc(width * height * 3); // 3 Is number of channels (rgb)
-    calypso_framework_renderer_pixel_opengl_renderer_set_pixel_fill_screen(0,0,255); // Set Default Pixel(s) Color
-
+    // Blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void calypso_framework_renderer_pixel_opengl_deinit(void)
@@ -266,20 +214,97 @@ void calypso_framework_renderer_pixel_opengl_deinit(void)
 
     // De-allocate OpenGl Shader Programs
     glDeleteProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
-
-    // De-allocate Pixel Buffer
-    free(_calypso_framework_renderer_pixel_opengl_pixel_buffer);
 }
 
 /*------------------------------------------------------------------------------
-Calypso Framework Renderer PIXEL OpenGL : Renderer (Render)
+Calypso Framework Renderer Pixel OpenGL : Renderer (Pixel Buffer)
+------------------------------------------------------------------------------*/
+
+void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int width, const int height)
+{
+    // Create Pixel Buffer
+    pixel_buffer->buffer = (GLubyte*) malloc(width * height * 3); // 3 Is number of channels (rgb)
+    pixel_buffer->buffer_width = width;
+    pixel_buffer->buffer_height = height;
+    pixel_buffer->buffer_length = width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+
+    // Set Default Values (White)
+    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT)
+    {
+        pixel_buffer->buffer[i] = 255;
+        pixel_buffer->buffer[i + 1] = 255;
+        pixel_buffer->buffer[i + 2] = 255;
+    }
+}
+
+/**
+* \brief Set Pixel
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint8_t r,uint8_t g,uint8_t b)
+{
+    // Make sure we are in range
+    if (x < 0 || x > pixel_buffer->buffer_width || y < 0 || y > pixel_buffer->buffer_height)
+        return;
+
+    // Get Index
+    uint32_t index = ((y * pixel_buffer->buffer_width) + x) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+
+    // Set Pixel Data
+    pixel_buffer->buffer[index] = r;
+    pixel_buffer->buffer[index + 1] = g;
+    pixel_buffer->buffer[index + 2] = b;
+}
+
+/**
+* \brief Set pixel fill screen
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint8_t r,uint8_t g,uint8_t b)
+{
+    // Set Pixel Data
+    for (int i = 0; i < pixel_buffer->buffer_length; i+= 3)
+    {
+        pixel_buffer->buffer[i] = r;
+        pixel_buffer->buffer[i + 1] = g;
+        pixel_buffer->buffer[i + 2] = b;
+    }
+}
+
+/**
+* \brief renderer render
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_render_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer)
+{
+    // Check If We Are Init
+    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    {
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        return;
+    }
+
+    // Use Our Shader Program
+    glUseProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
+
+    // Create Texture From Pixels | Bind It
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pixel_buffer->buffer_width, pixel_buffer->buffer_height, 0, GL_RGB, GL_UNSIGNED_BYTE,pixel_buffer->buffer);
+    glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_texture);
+        
+    // Render    
+    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+/*------------------------------------------------------------------------------
+Calypso Framework Renderer Pixel OpenGL : Renderer (Clear)
 ------------------------------------------------------------------------------*/
 
 /**
 * \brief Clear renderer
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_renderer_render()
+void calypso_framework_renderer_pixel_opengl_renderer_clear()
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
@@ -291,17 +316,6 @@ void calypso_framework_renderer_pixel_opengl_renderer_render()
     // Clear
     glClearColor(255,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    // Use Our Shader Program
-    glUseProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
-
-    // Create Texture From Pixels | Bind It
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _calypso_framework_renderer_pixel_opengl_width,_calypso_framework_renderer_pixel_opengl_height, 0, GL_RGB, GL_UNSIGNED_BYTE,_calypso_framework_renderer_pixel_opengl_pixel_buffer);
-    glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_texture);
-        
-    // Render    
-    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 /*------------------------------------------------------------------------------
