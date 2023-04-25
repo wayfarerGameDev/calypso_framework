@@ -88,14 +88,14 @@ void update(void)
         for (int y = 0; y < _pixel_count_y; y++)
         {
             calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255);
-            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_midground,x,y,255,0,0);
+            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_midground,x,y,rand() % 255,0,0);
         }
 
     // Render
     {        
         calypso_framework_renderer_pixel_opengl_renderer_clear();
         calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_foreground);
-        // calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_midground);
+        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_midground);
     }
 }
 

@@ -87,27 +87,24 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         // Vertex Shader Source
         const char* vertex_shader_source =
         "#version 330 core\n"
-        "layout(location = 0) in vec3 aPos;\n"
-        "layout(location = 1) in vec3 aColor;\n"
-        "layout(location = 2) in vec2 aTexCoord;\n"
-        "out vec3 ourColor;\n"
-        "out vec2 TexCoord;\n"
+        "layout(location = 0) in vec3 position_a;\n"
+        "layout(location = 2) in vec2 texCoord_a;\n"
+        "out vec2 texCoord_s;\n"
         "void main()\n"
         "{\n"
-        "    gl_Position = vec4(aPos, 1.0);\n"
-        "    TexCoord = aTexCoord;\n"
+        "    gl_Position = vec4(position_a, 1.0);\n"
+        "    texCoord_s = texCoord_a;\n"
         "}\n";
 
         // Fragment Shader Source
         const char* fragment_shader_source =
         "#version 330 core \n"
-        "out vec4 FragColor; \n"
-        "in vec3 ourColor; \n"
-        "in vec2 TexCoord; \n"
-        "uniform sampler2D ourTexture; \n"
+        "out vec4 fragColor_s; \n"
+        "in vec2 texCoord_s; \n"
+        "uniform sampler2D tex; \n"
         "void main() \n"
         "{\n"
-        "  FragColor = texture(ourTexture, TexCoord);\n"
+        "  fragColor_s = texture(tex, texCoord_s);\n"
         "}\n";
 
         // Define Vertex Shader
@@ -147,10 +144,10 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         float vertices[] = 
         {
             // Position (XYZ)       // Color (RGB)          // TextureCoords (UV)
-            1.0f, 1.0f, 0.0f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
-            1.0f, -1.0f, 0.0f,      0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
-            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
-            -1.0f, 1.0f, 0.0f,      1.0f, 1.0f, 0.0f,       0.0f, 1.0f                  // top left
+            1.0f, 1.0f, 0.0f,       0.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
+            1.0f, -1.0f, 0.0f,      0.0f, 0.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
+            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, 0.0f,       0.0f, 0.0f,                 // bottom left
+            -1.0f, 1.0f, 0.0f,      0.0f, 0.0f, 0.0f,       0.0f, 1.0f                  // top left
         };
 
         // Indicies

@@ -180,7 +180,8 @@ void calypso_framework_renderer_2d_create_build_quad_immediate(void)
     // Indicies
     const unsigned int indices[] = 
     {
-         0, 1, 2, 2, 3, 0
+         0, 1, 2, // 1st Triangle
+         2, 3, 0 // Second Triangle
     };
 
     // VAO (Vertex Array Object)
