@@ -74,6 +74,10 @@ void end(void)
 {
     // Renderer
     calypso_framework_renderer_pixel_opengl_deinit();
+    
+    // Free Pixel Buffers
+    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&pixel_buffer_foreground);
+    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&pixel_buffer_midground);
 }
 
 

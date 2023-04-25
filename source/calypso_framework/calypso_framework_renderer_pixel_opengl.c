@@ -143,20 +143,21 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),(void *)0);
         glEnableVertexAttribArray(0);
 
-        // Assign verticies
+        // Verticies
         float vertices[] = 
         {
-            // positions // colors // texture coords
-            1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
-            1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-            -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
+            // Position (XYZ)       // Color (RGB)          // TextureCoords (UV)
+            1.0f, 1.0f, 0.0f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
+            1.0f, -1.0f, 0.0f,      0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
+            -1.0f, -1.0f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
+            -1.0f, 1.0f, 0.0f,      1.0f, 1.0f, 0.0f,       0.0f, 1.0f                  // top left
         };
 
+        // Indicies
         unsigned int indices[] = 
         {
-            0, 1, 3, // first Triangle
-            1, 2, 3, // second Triangle
+            0, 1, 3, // 1st Triangle
+            1, 2, 3, // 2nd Triangle
         };
 
         // Generate objects
@@ -165,24 +166,27 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo);
         glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao);
 
+        // Set VBO Verticies
         glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+        // Set Ibo Indicies
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        // Position attribute
+        // Position(XYZ) Attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
         glEnableVertexAttribArray(0);
         
-        // Color attribute
+        // Color(RGB) Attribute
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        // Texture coord attribute
+        // TextureCoord(UV) Attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
+        // Unbind Our Buffer And Vertex Array
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
@@ -237,6 +241,14 @@ void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framewo
     }
 }
 
+void calypso_framework_renderer_pixel_opengl_free_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer)
+{
+    free(pixel_buffer->buffer);
+    pixel_buffer->buffer_width = 0;
+    pixel_buffer->buffer_height = 0;
+    pixel_buffer->buffer_length = 0;
+}
+
 /**
 * \brief Set Pixel
 * \return void
@@ -246,6 +258,13 @@ void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(cal
     // Make sure we are in range
     if (x < 0 || x > pixel_buffer->buffer_width || y < 0 || y > pixel_buffer->buffer_height)
         return;
+
+    // Check If Pixel Buffer Is Valid
+    if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
+    {
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        return;
+    }
 
     // Get Index
     uint32_t index = ((y * pixel_buffer->buffer_width) + x) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
@@ -262,6 +281,13 @@ void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(cal
 */
 void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint8_t r,uint8_t g,uint8_t b)
 {
+     // Check If Pixel Buffer Is Valid
+    if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
+    {
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        return;
+    }
+    
     // Set Pixel Data
     for (int i = 0; i < pixel_buffer->buffer_length; i+= 3)
     {
@@ -279,6 +305,13 @@ void calypso_framework_renderer_pixel_opengl_render_pixel_buffer(calypso_framewo
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    {
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        return;
+    }
+
+    // Check If Pixel Buffer Is Valid
+    if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
         _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
         return;

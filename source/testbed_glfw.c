@@ -23,10 +23,15 @@ void update()
      free(c);
 }
 
+void resize()
+{
+
+}
+
 int main(int argc, char** argv)
 {
     calypso_framework_app_glfw_init_with_opengl(3,3,2);
-    calypso_framework_app_glfw_set_events(start,end,update);
+    calypso_framework_app_glfw_set_events(start,end,update,resize);
     calypso_framework_app_glfw_run();
     return 0;
 }
