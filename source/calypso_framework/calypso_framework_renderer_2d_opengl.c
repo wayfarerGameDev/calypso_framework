@@ -70,6 +70,24 @@ void calypso_framework_renderer_2d_opengl_do_log_callback(const char* log_msg, c
     _calypso_framework_renderer_2d_opengl_log_callback(log_msg,log_type);
 }
 
+void calypso_framework_renderer_2d_opengl_log_graphics_card()
+{
+    // Check If We Are Init
+    if (_calypso_framework_renderer_2d_opengl_state != CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT)
+    {
+        _calypso_framework_renderer_2d_opengl_log_callback("Renderer Not init : calypso_framework_renderer_2d_opengl_log_graphics_card\n",3);
+        return;
+    }
+
+    // Log
+    const char* vendor = (const char*)glGetString(GL_VENDOR);
+    const char* renderer = (const char*)glGetString(GL_RENDERER);
+    calypso_framework_renderer_2d_opengl_do_log_callback("Graphics Card\n",1);
+    calypso_framework_renderer_2d_opengl_do_log_callback(vendor,1);
+    calypso_framework_renderer_2d_opengl_do_log_callback("\n",1);
+    calypso_framework_renderer_2d_opengl_do_log_callback(renderer,1);
+}
+
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer 2D OpenGL : Init / Deinit
 ------------------------------------------------------------------------------*/
@@ -898,7 +916,7 @@ Calypso Framework Renderer 2D OpenGL : Renderer (Clear)
 * \param a float
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_set_renderer_clear_color(const float r, const float g, const float b, const float a)
+void calypso_framework_renderer_2d_opengl_set_clear_color(const float r, const float g, const float b, const float a)
 {
     glClearColor(r,g,b,a);
 }
@@ -908,7 +926,7 @@ void calypso_framework_renderer_2d_opengl_set_renderer_clear_color(const float r
 * \param color_array uint8_t[4]
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_set_renderer_clear_color_by_byte_color_array(const uint8_t color_array[4])
+void calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(const uint8_t color_array[4])
 {
     glClearColor(color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
 }
@@ -917,7 +935,7 @@ void calypso_framework_renderer_2d_opengl_set_renderer_clear_color_by_byte_color
 * \brief Clear renderer
 * \return void
 */
-void calypso_framework_renderer_2d_opengl_renderer_clear()
+void calypso_framework_renderer_2d_opengl_clear()
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_2d_opengl_state != CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_STATE_INIT)

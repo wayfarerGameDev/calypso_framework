@@ -49,7 +49,7 @@ typedef struct calypso_framework_renderer_pixel_opengl_pixel_buffer_t
 } calypso_framework_renderer_pixel_opengl_pixel_buffer_t;
 
 /*------------------------------------------------------------------------------
-Calypso Framework Renderer PIXEL OpenGL : Log Callback
+Calypso Framework Renderer Pixel OpenGL : Log Callback
 ------------------------------------------------------------------------------*/
 
 void calypso_framework_renderer_pixel_opengl_set_log_callback(calypso_framework_renderer_pixel_opengl_log_callback_t log_callback)
@@ -65,8 +65,26 @@ void calypso_framework_renderer_pixel_opengl_do_log_callback(const char* log_msg
     _calypso_framework_renderer_pixel_opengl_log_callback(log_msg,log_type);
 }
 
+void calypso_framework_renderer_pixel_opengl_log_graphics_card()
+{
+    // Check If We Are Init
+    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    {
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_log_graphics_card\n",3);
+        return;
+    }
+
+    // Log
+    const char* vendor = (const char*)glGetString(GL_VENDOR);
+    const char* renderer = (const char*)glGetString(GL_RENDERER);
+    calypso_framework_renderer_pixel_opengl_do_log_callback("Graphics Card\n",1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback(vendor,1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback("\n",1);
+    calypso_framework_renderer_pixel_opengl_do_log_callback(renderer,1);
+}
+
 /*------------------------------------------------------------------------------
-Calypso Framework Renderer PIXEL OpenGL : Init / Deinit
+Calypso Framework Renderer Pixel OpenGL : Init / Deinit
 ------------------------------------------------------------------------------*/
   
 bool calypso_framework_renderer_pixel_opengl_is_init()
@@ -250,7 +268,7 @@ void calypso_framework_renderer_pixel_opengl_free_pixel_buffer(calypso_framework
 * \brief Set Pixel
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint8_t r,uint8_t g,uint8_t b)
+void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint8_t r,uint8_t g,uint8_t b)
 {
     // Make sure we are in range
     if (x < 0 || x > pixel_buffer->buffer_width || y < 0 || y > pixel_buffer->buffer_height)
@@ -259,7 +277,7 @@ void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(cal
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+         _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel\n",3);
         return;
     }
 
@@ -276,12 +294,12 @@ void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(cal
 * \brief Set pixel fill screen
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_renderer_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint8_t r,uint8_t g,uint8_t b)
+void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint8_t r,uint8_t g,uint8_t b)
 {
-     // Check If Pixel Buffer Is Valid
+    // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen\n",3);
         return;
     }
     
@@ -303,14 +321,14 @@ void calypso_framework_renderer_pixel_opengl_render_pixel_buffer(calypso_framewo
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_render_pixel_buffer\n",3);
         return;
     }
 
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        _calypso_framework_renderer_pixel_opengl_log_callback("Invalid Pixel Buffer : calypso_framework_renderer_pixel_opengl_render_pixel_buffer\n",3);
         return;
     }
 
@@ -331,25 +349,47 @@ Calypso Framework Renderer Pixel OpenGL : Renderer (Clear)
 ------------------------------------------------------------------------------*/
 
 /**
+* \brief Set renderer's clear color
+* \param r float
+* \param g float
+* \param b float
+* \param a float
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_set_clear_color(const float r, const float g, const float b, const float a)
+{
+    glClearColor(r,g,b,a);
+}
+
+/**
+* \brief Set renderer's clear color by byte color array
+* \param color_array uint8_t[4]
+* \return void
+*/
+void calypso_framework_renderer_pixel_opengl_set_clear_color_by_byte_color_array(const uint8_t color_array[4])
+{
+    glClearColor(color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
+}
+
+/**
 * \brief Clear renderer
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_renderer_clear()
+void calypso_framework_renderer_pixel_opengl_clear()
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_clear\n",3);
         return;
     }
 
     // Clear
-    glClearColor(255,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 /*------------------------------------------------------------------------------
-Calypso Framework Renderer PIXEL OpenGL : Renderer (Resize)
+Calypso Framework Renderer Pixel OpenGL : Renderer (Resize)
 ------------------------------------------------------------------------------*/
 
 /**
@@ -361,16 +401,15 @@ void calypso_framework_renderer_pixel_opengl_renderer_resize(const int width, co
      // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Pixel(OpengGl) Not init\n",3);
+        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_renderer_resize\n",3);
         return;
     }
 
     // Set Viewport
     glViewport(0,0,width,height);
 }
-
-
 /*
+
 ------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : license
 ------------------------------------------------------------------------------

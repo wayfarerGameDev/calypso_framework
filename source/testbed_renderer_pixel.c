@@ -24,11 +24,11 @@
 // App Properties
 const int _window_width  = 800;
 const int _window_height = 800;
-int _pixel_count_y = 800 / 8;
-int _pixel_count_x = 800 / 8;
+int _pixel_count_y = 32;
+int _pixel_count_x = 32;
 
-calypso_framework_renderer_pixel_opengl_pixel_buffer_t pixel_buffer_foreground;
-calypso_framework_renderer_pixel_opengl_pixel_buffer_t pixel_buffer_midground;
+calypso_framework_renderer_pixel_opengl_pixel_buffer_t _pixel_buffer_foreground;
+calypso_framework_renderer_pixel_opengl_pixel_buffer_t _pixel_buffer_midground;
 
 void log_msg(const char* log_msg, const uint8_t log_type)
 {
@@ -52,8 +52,8 @@ void log_msg(const char* log_msg, const uint8_t log_type)
 void start(void)
 {
     // Create Pixel Buffer (Foreground | Midground)
-    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&pixel_buffer_foreground,_pixel_count_x,_pixel_count_y);
-    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&pixel_buffer_midground,_pixel_count_x,_pixel_count_y);
+    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&_pixel_buffer_foreground,_pixel_count_x,_pixel_count_y);
+    calypso_framework_renderer_pixel_opengl_create_pixel_buffer(&_pixel_buffer_midground,_pixel_count_x,_pixel_count_y);
 
     // Init Renderer
     {
@@ -67,6 +67,9 @@ void start(void)
         calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
         #endif
     }    
+
+    // Log Graphics Card
+    calypso_framework_renderer_pixel_opengl_log_graphics_card();
 }
 
 
@@ -76,8 +79,8 @@ void end(void)
     calypso_framework_renderer_pixel_opengl_deinit();
     
     // Free Pixel Buffers
-    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&pixel_buffer_foreground);
-    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&pixel_buffer_midground);
+    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&_pixel_buffer_foreground);
+    calypso_framework_renderer_pixel_opengl_free_pixel_buffer(&_pixel_buffer_midground);
 }
 
 
@@ -87,15 +90,16 @@ void update(void)
     for (int x = 0; x < _pixel_count_x; x++)
         for (int y = 0; y < _pixel_count_y; y++)
         {
-            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255);
-            calypso_framework_renderer_pixel_opengl_renderer_set_pixel_buffer_pixel(&pixel_buffer_midground,x,y,rand() % 255,0,0);
+            calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(&_pixel_buffer_foreground,x,y,rand() % 255,rand() % 255,rand() % 255);
+            calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(&_pixel_buffer_midground,x,y,rand() % 255,0,0);
         }
 
     // Render
     {        
-        calypso_framework_renderer_pixel_opengl_renderer_clear();
-        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_foreground);
-        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&pixel_buffer_midground);
+        calypso_framework_renderer_pixel_opengl_set_clear_color(255,0,0,0);
+        calypso_framework_renderer_pixel_opengl_clear();
+        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_foreground);
+        calypso_framework_renderer_pixel_opengl_render_pixel_buffer(&_pixel_buffer_midground);
     }
 }
 

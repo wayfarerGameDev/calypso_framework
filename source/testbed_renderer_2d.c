@@ -204,8 +204,8 @@ void update(void)
     {        
         // Render Start
         const uint8_t color[4] = {10,10,10,255};
-        calypso_framework_renderer_2d_opengl_set_renderer_clear_color_by_byte_color_array(color); // Don't need to  do this every frame but why not
-        calypso_framework_renderer_2d_opengl_renderer_clear();
+        calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(color); // Don't need to  do this every frame but why not
+        calypso_framework_renderer_2d_opengl_clear();
     }
 
     // Render Entities(Immediate)
