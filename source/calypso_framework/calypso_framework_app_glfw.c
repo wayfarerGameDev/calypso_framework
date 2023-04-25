@@ -39,6 +39,7 @@ typedef void (*calypso_framework_app_glfw_event_t)(void);
 calypso_framework_app_glfw_event_t _calypso_framework_app_glfw_event_on_startup;
 calypso_framework_app_glfw_event_t _calypso_framework_app_glfw_event_on_shutdown;
 calypso_framework_app_glfw_event_t _calypso_framework_app_glfw_event_on_update;
+calypso_framework_app_glfw_event_t _calypso_framework_app_glfw_event_on_resize;
 
 /**
 * \brief Set app's log callback
@@ -141,6 +142,18 @@ void calypso_framework_app_glfw_set_window_title(const char* title)
 }
 
 /**
+* \brief window's title
+* 
+* \param title const char*
+* \return void
+*/
+void calypso_framework_app_glfw_set_window_size(int with, int height)
+{
+    //GLFW_SetWindowTitle(_calypso_framework_app_glfw_window,title);
+    glfwSetWindowSize(_calypso_framework_app_glfw_window,with,height);
+}
+
+/**
 * \brief Sets window's ability to be resizable enabled
 * \param bIsResizable const uint8_t
 * \return void
@@ -232,11 +245,12 @@ char* calypso_framework_app_glfw_get_time_delta_time_as_string(void)
     return result;
 }
 
-void calypso_framework_app_glfw_set_events(calypso_framework_app_glfw_event_t event_on_startup, calypso_framework_app_glfw_event_t event_on_shutdown, calypso_framework_app_glfw_event_t event_on_update)
+void calypso_framework_app_glfw_set_events(calypso_framework_app_glfw_event_t event_on_startup, calypso_framework_app_glfw_event_t event_on_shutdown, calypso_framework_app_glfw_event_t event_on_update,  calypso_framework_app_glfw_event_t event_on_resize)
 {
     _calypso_framework_app_glfw_event_on_startup = event_on_startup;
     _calypso_framework_app_glfw_event_on_shutdown = event_on_shutdown;
     _calypso_framework_app_glfw_event_on_update = event_on_update;
+    _calypso_framework_app_glfw_event_on_resize = event_on_resize;
 }
 
 /**
@@ -334,9 +348,21 @@ void calypso_framework_app_glfw_run(void)
     int time_frame_count = 0;
     int time_frame_last = 0;
 
+    // Window Size Properties
+    int _calypso_framework_app_glfw_window_width_previous;
+    int _calypso_framework_app_glfw_window_height_previous;
+
     // Run
     while (_calypso_framework_app_glfw_state == CALYPSO_FRAMEWORK_APP_GLFW_STATE_RUNNING && !glfwWindowShouldClose(_calypso_framework_app_glfw_window))
     {  
+        // Resize
+        if (_calypso_framework_app_glfw_window_width_previous != calypso_framework_app_glfw_get_window_width() || _calypso_framework_app_glfw_window_height_previous != calypso_framework_app_glfw_get_window_height())
+        {
+            _calypso_framework_app_glfw_window_width_previous = calypso_framework_app_glfw_get_window_width();
+            _calypso_framework_app_glfw_window_height_previous = calypso_framework_app_glfw_get_window_height();
+            _calypso_framework_app_glfw_event_on_resize();
+        }
+
         // Event Loop
         glfwPollEvents();
         if (glfwWindowShouldClose(_calypso_framework_app_glfw_window))

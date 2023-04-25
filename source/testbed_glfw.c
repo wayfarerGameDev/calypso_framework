@@ -4,12 +4,12 @@
 #include <stdint.h>     // uint8_t
 #include <time.h>       // time
 
-#include "calypso_framework_app_glfw.c"
-#include "calypso_framework_renderer_2d_opengl.c"
+#include "calypso_framework/calypso_framework_app_glfw.c"
+#include "calypso_framework/calypso_framework_renderer_2d_opengl.c"
 
 void start()
 {
-
+    
 }
 
 void end()
@@ -19,7 +19,8 @@ void end()
 
 void update()
 {
-
+     int* c = malloc(100000 * sizeof(int));
+     free(c);
 }
 
 int main(int argc, char** argv)

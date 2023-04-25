@@ -2,6 +2,8 @@
     "files.associations": {
         "iostream": "cpp",
         "limits": "c",
-        "glfw3.h": "c"
+        "glfw3.h": "c",
+        "glad.h": "c",
+        "khrplatform.h": "c"
     }
 }

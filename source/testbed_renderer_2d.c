@@ -7,20 +7,20 @@
 // Calypso (SDL or GLFW)
 #define USE_GLFW_OVER_SDL 1
 #if(USE_GLFW_OVER_SDL)
-#include "calypso_framework_app_glfw.c"
-#include "calypso_framework_input_glfw.c"
+#include "calypso_framework/calypso_framework_app_glfw.c"
+#include "calypso_framework/calypso_framework_input_glfw.c"
 #else
-#include "calypso_framework_app_sdl.c"
-#include "calypso_framework_input_sdl.c"
+#include "calypso_framework/calypso_framework_app_sdl.c"
+#include "calypso_framework/calypso_framework_input_sdl.c"
 #endif
 
 
 // Calypso
-#include "calypso_framework_colors.c"
-#include "calypso_framework_io.c"
-#include "calypso_framework_math_matrix4.c"
-#include "calypso_framework_math_random.c"
-#include "calypso_framework_renderer_2d_opengl.c"
+#include "calypso_framework/calypso_framework_colors.c"
+#include "calypso_framework/calypso_framework_io.c"
+#include "calypso_framework/calypso_framework_math_matrix4.c"
+#include "calypso_framework/calypso_framework_math_random.c"
+#include "calypso_framework/calypso_framework_renderer_2d_opengl.c"
 
 // Renderer (Viewport)
 float _renderer_viewport_projection_matrix[4][4];
@@ -93,7 +93,7 @@ void start(void)
 
 
         // Default Shader Program (Batched)
-        _renderer_default_shader_batched_program = calypso_framework_renderer_2d_opengl_create_default_batched_circle_shader_program();
+        _renderer_default_shader_batched_program = calypso_framework_renderer_2d_opengl_create_default_batched_textured_shader_program();
         _renderer_shader_program_array_count++;
         _renderer_shader_program_array = realloc(_renderer_shader_program_array,_renderer_shader_program_array_count * sizeof(unsigned int));
         _renderer_shader_program_array[_renderer_shader_program_array_count - 1] = _renderer_default_shader_batched_program;
@@ -115,7 +115,7 @@ void start(void)
 
     // Create Render Quad (Batch)
     {
-        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch(300);
+        _renderer_quad_batch = calypso_framework_renderer_2d_opengl_create_quad_batch();
         calypso_framework_renderer_2d_opengl_set_quad_batch_data_default(&_renderer_quad_batch);
 
         // Randomize
@@ -130,7 +130,7 @@ void start(void)
             float position[2] = {0,0};
             float color[4] = {0,0,0,1};
             calypso_framework_random_rand_set_seed_as_time();
-            for (int i = 0; i < _renderer_quad_batch.instance_max_count; i++)
+            for (int i = 0; i < CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_QUAD_BATCH_INSTANCE_MAX_COUNT; i++)
             {
                 position[0] = calypso_framework_math_random_rand_range_i(min_width,max_width);
                 position[1] = calypso_framework_math_random_rand_range_i(min_height,max_height);
@@ -139,7 +139,7 @@ void start(void)
                 color[2] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
                 color[3] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
 
-                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data_position_size_pair(&_renderer_quad_batch,i,position,3);
+                calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data_transform(&_renderer_quad_batch,i,position,3);
                 calypso_framework_renderer_2d_opengl_set_quad_batch_instance_data_color(&_renderer_quad_batch,i,color);
             }
         }
@@ -255,11 +255,15 @@ void update(void)
         calypso_framework_renderer_2d_opengl_set_current_render_shader_program(_renderer_default_shader_batched_program);
         calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f("model_in",_renderer_model_matrix); // Apply Transform
 
-        calypso_framework_renderer_2d_opengl_render_quad_batched(&_renderer_quad_batch);
+        calypso_framework_renderer_2d_opengl_render_quad_textured_batched(&_renderer_quad_batch);
     }
 
     // Renderer (End)
     _renderer_is_dirty = false;
+}
+
+void resize(void)
+{
 }
 
 int main(int argc, char** argv)
@@ -267,21 +271,21 @@ int main(int argc, char** argv)
     // Logging
     calypso_framework_renderer_2d_opengl_set_log_callback(log_msg);
 
-        // App (GLFW)
-        #if(USE_GLFW_OVER_SDL)
-        calypso_framework_app_glfw_set_log_callback(log_msg);
-        calypso_framework_app_glfw_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
-        calypso_framework_app_glfw_set_window_title("Testbed : Renderer2D (GLFW)");
-        calypso_framework_app_glfw_set_events(start,end,update);
-        calypso_framework_app_glfw_run();
-        
-        #else
-        // App (SDL)
-        calypso_framework_app_sdl_set_log_callback(log_msg);
-        calypso_framework_app_sdl_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
-        calypso_framework_app_sdl_set_window_title("Testbed : Renderer2D (SDL)");
-        calypso_framework_app_sdl_set_events(start,end,update);
-        calypso_framework_app_sdl_run();
+    // App (GLFW)
+    #if(USE_GLFW_OVER_SDL)
+    calypso_framework_app_glfw_set_log_callback(log_msg);
+    calypso_framework_app_glfw_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+    calypso_framework_app_glfw_set_window_title("Testbed : Renderer2D (GLFW)");
+    calypso_framework_app_glfw_set_events(start,end,update,resize);
+    calypso_framework_app_glfw_run();
+    
+    #else
+    // App (SDL)
+    calypso_framework_app_sdl_set_log_callback(log_msg);
+    calypso_framework_app_sdl_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+    calypso_framework_app_sdl_set_window_title("Testbed : Renderer2D (SDL)");
+    calypso_framework_app_sdl_set_events(start,end,update);
+    calypso_framework_app_sdl_run();
         #endif
 
    

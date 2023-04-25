@@ -1,13 +1,13 @@
 # Shared
-MAIN_FILE = src/testbed_renderer_2d.c
+MAIN_FILE = source/testbed_renderer_pixel.c
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g -DNDEBUG
 CC_FLAGS_RELEASE = -std=c99 -O3
 LIBRARY_PATH_32 = -Idependencies/sdl2_32/Include -Ldependencies/sdl2_32/lib -Idependencies/glad/include
-LINKER_FLAGS_32 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
+LINKER_FLAGS_32 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -m64
 LIBRARY_PATH_64 = -Idependencies/sdl2_64/Include -Ldependencies/sdl2_64/lib -Idependencies/glad/include -Idependencies/glfw_64/include -Ldependencies/glfw_64/lib
-LINKER_FLAGS_64 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lglfw3 -lgdi32 #-lgdi32 needed for glfw3
-SOURCE_FILES =  $(MAIN_FILE) dependencies/glad/src/glad.c
+LINKER_FLAGS_64 = -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lglfw3 -lgdi32  -m64 #-lgdi32 needed for glfw3 
+SOURCE_FILES =  $(MAIN_FILE) dependencies/glad/source/glad.c
 
 # Shared Win
 clear_console_win:
