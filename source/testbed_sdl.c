@@ -4,6 +4,10 @@
 #include <stdint.h>     // uint8_t
 #include <time.h>       // time
 
+// Includes (Calypso Math) 
+#include "calypso_framework_math/calypso_framework_math_colors.c"
+
+// Includes (Calypso SDL) 
 #include "calypso_framework_sdl/calypso_framework_sdl_app.c"
 #include "calypso_framework_sdl/calypso_framework_sdl_input.c"
 #include "calypso_framework_sdl/calypso_framework_sdl_renderer.c"

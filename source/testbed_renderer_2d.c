@@ -15,8 +15,8 @@
 #endif
 
 // Calypso
-#include "calypso_framework/calypso_framework_colors.c"
 #include "calypso_framework/calypso_framework_io.c"
+#include "calypso_framework_math/calypso_framework_math_colors.c"
 #include "calypso_framework_math/calypso_framework_math_matrix4.c"
 #include "calypso_framework_math/calypso_framework_math_random.c"
 #include "calypso_framework/calypso_framework_renderer_2d_opengl.c"
@@ -44,9 +44,9 @@ bool _renderer_is_dirty;
 struct calypso_framework_renderer_2d_opengl_quad_batch _renderer_quad_batch;
 
 // Colors
-const uint8_t* _c_color_white_array = _c_calypso_framework_colors_color_byte_array_white;
-const uint8_t* _c_color_red_array = _c_calypso_framework_colors_color_byte_array_red;
-const uint8_t* _c_color_yellow_array = _c_calypso_framework_colors_color_byte_array_yellow;
+const uint8_t* _c_color_white_array = _calypso_framework_math_colors_color_rgba_white;
+const uint8_t* _c_color_red_array = _calypso_framework_math_colors_color_rgba_red;
+const uint8_t* _c_color_yellow_array = _calypso_framework_math_colors_color_rgba_yellow;
 
 
 void log_msg(const char* log_msg, const uint8_t log_type)

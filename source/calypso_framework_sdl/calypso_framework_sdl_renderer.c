@@ -88,24 +88,69 @@ void calypso_framework_sdl_renderer_deinit()
 }
 
 /*------------------------------------------------------------------------------
-Calypso Framework SDL Renderer : Clear
+Calypso Framework SDL Renderer : Draw Color
 ------------------------------------------------------------------------------*/
 
-void calypso_framework_sdl_renderer_set_draw_color(const float r, const float g, const float b, const float a)
+void calypso_framework_sdl_renderer_set_draw_color_rgb(const float r, const float g, const float b)
 {
-    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, r, b, b, a);
+    // Set Clear Color
+    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, r, g, b, 255);
 }
 
-void calypso_framework_sdl_renderer_set_draw_color_by_byte_color_array(const uint8_t color_array[4])
+void calypso_framework_sdl_renderer_set_draw_color_rgba(const float r, const float g, const float b, const float a)
 {
-    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
+    // Set Clear Color
+     SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, r, g, b, a);
+}
+
+void calypso_framework_sdl_renderer_set_draw_color_rgb_array(const uint8_t color_rgb_array[3])
+{
+    // Set Clear Color
+    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, color_rgb_array[0], color_rgb_array[1], color_rgb_array[2], 255);
+}
+
+void calypso_framework_sdl_renderer_set_draw_color_rgba_array(const uint8_t color_rgba_array[4])
+{
+    // Set Clear Color
+    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, color_rgba_array[0], color_rgba_array[1], color_rgba_array[2], color_rgba_array[3]);
+}
+
+void calypso_framework_sdl_renderer_set_draw_color_rgb_hex(int hex_value)
+{
+    // Convert Hex Color to RGB
+    uint8_t r = ((hex_value >> 16) & 0xFF);
+    uint8_t g = ((hex_value >> 8) & 0xFF);
+    uint8_t b = ((hex_value) & 0xFF);
+
+    // Set Clear Color
+    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, r, g, b, 255);
+}
+
+void calypso_framework_sdl_renderer_set_draw_color_rgba_hex(int hex_value, uint8_t a)
+{
+    // Convert Hex Color to RGB
+    uint8_t r = ((hex_value >> 16) & 0xFF);
+    uint8_t g = ((hex_value >> 8) & 0xFF);
+    uint8_t b = ((hex_value) & 0xFF);
+
+    // Set Clear Color
+    SDL_SetRenderDrawColor(_calypso_framework_sdl_renderer_renderer, r, g, b, a);
 }
 
 /*------------------------------------------------------------------------------
 Calypso Framework SDL Renderer : Clear
 ------------------------------------------------------------------------------*/
 
-void calypso_framework_sdl_renderer_set_clear_color(const float r, const float g, const float b, const float a)
+void calypso_framework_sdl_renderer_set_clear_color_rgb(const float r, const float g, const float b)
+{
+    // Set Clear Color
+    _calypso_framework_sdl_renderer_clear_color_r = r;
+    _calypso_framework_sdl_renderer_clear_color_g = g;
+    _calypso_framework_sdl_renderer_clear_color_b = b;
+    _calypso_framework_sdl_renderer_clear_color_a = 255;
+}
+
+void calypso_framework_sdl_renderer_set_clear_color_rgba(const float r, const float g, const float b, const float a)
 {
     // Set Clear Color
     _calypso_framework_sdl_renderer_clear_color_r = r;
@@ -114,12 +159,50 @@ void calypso_framework_sdl_renderer_set_clear_color(const float r, const float g
     _calypso_framework_sdl_renderer_clear_color_a = a;
 }
 
-void calypso_framework_sdl_renderer_set_clear_color_by_byte_color_array(const uint8_t color_array[4])
+void calypso_framework_sdl_renderer_set_clear_color_rgb_array(const uint8_t color_rgb_array[3])
 {
-    _calypso_framework_sdl_renderer_clear_color_r = color_array[0] / 255.0f;
-    _calypso_framework_sdl_renderer_clear_color_g = color_array[1] / 255.0f;
-    _calypso_framework_sdl_renderer_clear_color_b = color_array[2] / 255.0f;
-    _calypso_framework_sdl_renderer_clear_color_a = color_array[3] / 255.0f;
+    // Set Clear Color
+    _calypso_framework_sdl_renderer_clear_color_r = color_rgb_array[0];
+    _calypso_framework_sdl_renderer_clear_color_g = color_rgb_array[1];
+    _calypso_framework_sdl_renderer_clear_color_b = color_rgb_array[2];
+    _calypso_framework_sdl_renderer_clear_color_a = 255;
+}
+
+void calypso_framework_sdl_renderer_set_clear_color_rgba_array(const uint8_t color_rgba_array[4])
+{
+    // Set Clear Color
+    _calypso_framework_sdl_renderer_clear_color_r = color_rgba_array[0];
+    _calypso_framework_sdl_renderer_clear_color_g = color_rgba_array[1];
+    _calypso_framework_sdl_renderer_clear_color_b = color_rgba_array[2];
+    _calypso_framework_sdl_renderer_clear_color_a = color_rgba_array[3];
+}
+
+void calypso_framework_sdl_renderer_set_clear_color_rgb_hex(int hex_value)
+{
+    // Convert Hex Color to RGB
+    uint8_t r = ((hex_value >> 16) & 0xFF);
+    uint8_t g = ((hex_value >> 8) & 0xFF);
+    uint8_t b = ((hex_value) & 0xFF);
+
+    // Set Clear Color
+    _calypso_framework_sdl_renderer_clear_color_r = r;
+    _calypso_framework_sdl_renderer_clear_color_g = g;
+    _calypso_framework_sdl_renderer_clear_color_b = b;
+    _calypso_framework_sdl_renderer_clear_color_a = 255;
+}
+
+void calypso_framework_sdl_renderer_set_clear_color_rgba_hex(int hex_value, uint8_t a)
+{
+    // Convert Hex Color to RGB
+    uint8_t r = ((hex_value >> 16) & 0xFF);
+    uint8_t g = ((hex_value >> 8) & 0xFF);
+    uint8_t b = ((hex_value) & 0xFF);
+
+    // Set Clear Color
+    _calypso_framework_sdl_renderer_clear_color_r = r;
+    _calypso_framework_sdl_renderer_clear_color_g = g;
+    _calypso_framework_sdl_renderer_clear_color_b = b;
+    _calypso_framework_sdl_renderer_clear_color_a = a;
 }
 
 void calypso_framework_sdl_renderer_clear()
