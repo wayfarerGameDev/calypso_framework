@@ -7,19 +7,18 @@
 // Calypso (SDL or GLFW)
 #define USE_GLFW_OVER_SDL 1
 #if(USE_GLFW_OVER_SDL)
-#include "calypso_framework/calypso_framework_app_glfw.c"
-#include "calypso_framework/calypso_framework_input_glfw.c"
+#include "calypso_framework_glfw/calypso_framework_glfw_app.c"
+#include "calypso_framework_glfw/calypso_framework_glfw_input.c"
 #else
-#include "calypso_framework/calypso_framework_app_sdl.c"
-#include "calypso_framework/calypso_framework_input_sdl.c"
+#include "calypso_framework_sdl/calypso_framework_sdl_app.c"
+#include "calypso_framework_sdl/calypso_framework_sdl_input.c"
 #endif
-
 
 // Calypso
 #include "calypso_framework/calypso_framework_colors.c"
 #include "calypso_framework/calypso_framework_io.c"
-#include "calypso_framework/calypso_framework_math_matrix4.c"
-#include "calypso_framework/calypso_framework_math_random.c"
+#include "calypso_framework_math/calypso_framework_math_matrix4.c"
+#include "calypso_framework_math/calypso_framework_math_random.c"
 #include "calypso_framework/calypso_framework_renderer_2d_opengl.c"
 
 // Renderer (Viewport)
@@ -73,22 +72,22 @@ void start(void)
 {
     // Viewport Width / Height (GLFW)
     #if(USE_GLFW_OVER_SDL)
-    _renderer_viewport_width = calypso_framework_app_glfw_get_window_width();
-    _renderer_viewport_height = calypso_framework_app_glfw_get_window_height();
+    _renderer_viewport_width = calypso_framework_glfw_app_get_window_width();
+    _renderer_viewport_height = calypso_framework_glfw_app_get_window_height();
     
     #else
     // Viewport Width / Height (SDL)
-    _renderer_viewport_width = calypso_framework_app_sdl_get_window_width();
-    _renderer_viewport_height = calypso_framework_app_sdl_get_window_height();
+    _renderer_viewport_width = calypso_framework_sdl_app_get_window_width();
+    _renderer_viewport_height = calypso_framework_sdl_app_get_window_height();
     #endif
 
     // Init Renderer
     {
         // Viewport Width / Height (GLFW)
         #if(USE_GLFW_OVER_SDL)
-        calypso_framework_renderer_2d_opengl_init(calypso_framework_app_glfw_get_open_gl_proc_address());
+        calypso_framework_renderer_2d_opengl_init(calypso_framework_glfw_app_get_open_gl_proc_address());
         #else
-        calypso_framework_renderer_2d_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
+        calypso_framework_renderer_2d_opengl_init(calypso_framework_sdl_app_get_open_gl_proc_address());
         #endif
 
 
@@ -168,13 +167,13 @@ void update(void)
     {
         // Viewport Width / Height (GLFW)
         #if(USE_GLFW_OVER_SDL)
-        _renderer_viewport_width = calypso_framework_app_glfw_get_window_width();
-        _renderer_viewport_height = calypso_framework_app_glfw_get_window_height();
+        _renderer_viewport_width = calypso_framework_glfw_app_get_window_width();
+        _renderer_viewport_height = calypso_framework_glfw_app_get_window_height();
         
         #else
         // Viewport Width / Height (SDL)
-        _renderer_viewport_width = calypso_framework_app_sdl_get_window_width();
-        _renderer_viewport_height = calypso_framework_app_sdl_get_window_height();
+        _renderer_viewport_width = calypso_framework_sdl_app_get_window_width();
+        _renderer_viewport_height = calypso_framework_sdl_app_get_window_height();
         #endif
 
         // Viewport Transform
@@ -273,20 +272,20 @@ int main(int argc, char** argv)
 
     // App (GLFW)
     #if(USE_GLFW_OVER_SDL)
-    calypso_framework_app_glfw_set_log_callback(log_msg);
-    calypso_framework_app_glfw_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
-    calypso_framework_app_glfw_set_window_title("Testbed : Renderer2D (GLFW)");
-    calypso_framework_app_glfw_set_events(start,end,update,resize);
-    calypso_framework_app_glfw_run();
+    calypso_framework_glfw_app_set_log_callback(log_msg);
+    calypso_framework_glfw_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+    calypso_framework_glfw_app_set_window_title("Testbed : Renderer2D (GLFW)");
+    calypso_framework_glfw_app_set_events(start,end,update,resize);
+    calypso_framework_glfw_app_run();
     
     #else
     // App (SDL)
-    calypso_framework_app_sdl_set_log_callback(log_msg);
-    calypso_framework_app_sdl_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
-    calypso_framework_app_sdl_set_window_title("Testbed : Renderer2D (SDL)");
-    calypso_framework_app_sdl_set_events(start,end,update);
-    calypso_framework_app_sdl_run();
-        #endif
+    calypso_framework_sdl_app_set_log_callback(log_msg);
+    calypso_framework_sdl_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_CONTEXT_PROFILE);
+    calypso_framework_sdl_app_set_window_title("Testbed : Renderer2D (SDL)");
+    calypso_framework_sdl_app_set_events(start,end,update);
+    calypso_framework_sdl_app_run();
+    #endif
 
    
     // We Done Baby

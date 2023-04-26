@@ -790,20 +790,12 @@ unsigned int calypso_framework_renderer_2d_opengl_create_default_batched_texture
 Calypso Framework Renderer 2D OpenGL : Current Shader Program
 ------------------------------------------------------------------------------*/
 
-/**
-* \brief Set current shader program
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_render_shader_program(const unsigned shader_program)
 {
     glUseProgram(shader_program);
     _calypso_framework_renderer_2d_opengl_current_program = shader_program;
 }
 
-/**
-* \brief Set current shader float parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_float(char* paramter_name, const float v0)
 {
     int location = glGetUniformLocation(_calypso_framework_renderer_2d_opengl_current_program,paramter_name);
@@ -818,10 +810,6 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_f
     glUniform1f(location,v0);
 }
 
-/**
-* \brief Set current shader vec2 parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec2f(char* paramter_name, const float v0, const float v1)
 {
     int location = glGetUniformLocation(_calypso_framework_renderer_2d_opengl_current_program,paramter_name);
@@ -836,10 +824,6 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_v
     glUniform2f(location,v0,v1);
 }
 
-/**
-* \brief Set current shader vec3 parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec3f(char* paramter_name, const float v0, const float v1, const float v2)
 {
     int location = glGetUniformLocation(_calypso_framework_renderer_2d_opengl_current_program,paramter_name);
@@ -854,10 +838,6 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_v
     glUniform3f(location,v0,v1,v2);
 }
 
-/**
-* \brief Set current shader vec4 parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_vec4f(char* paramter_name, const float v0, const float v1, const float v2, const float v3)
 {
     int location = glGetUniformLocation(_calypso_framework_renderer_2d_opengl_current_program,paramter_name);
@@ -872,10 +852,6 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_v
     glUniform4f(location,v0,v1,v2,v3);
 }
 
-/**
-* \brief Set current shader vec4 parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_matrix4f(char* paramter_name, float matrix4f[4][4])
 {
     int location = glGetUniformLocation(_calypso_framework_renderer_2d_opengl_current_program,paramter_name);
@@ -894,10 +870,6 @@ void calypso_framework_renderer_2d_opengl_set_current_shader_program_parameter_m
 Calypso Framework Renderer 2D OpenGL : Other
 ------------------------------------------------------------------------------*/
 
-/**
-* \brief Set current shader vec4 parameter
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_transpose_matrix(bool value)
 {
     _calypso_framework_renderer_2d_opengl_transpose_matrix = value;
@@ -908,33 +880,16 @@ void calypso_framework_renderer_2d_opengl_set_transpose_matrix(bool value)
 Calypso Framework Renderer 2D OpenGL : Renderer (Clear)
 ------------------------------------------------------------------------------*/
 
-/**
-* \brief Set renderer's clear color
-* \param r float
-* \param g float
-* \param b float
-* \param a float
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_clear_color(const float r, const float g, const float b, const float a)
 {
     glClearColor(r,g,b,a);
 }
 
-/**
-* \brief Set renderer's clear color by byte color array
-* \param color_array uint8_t[4]
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_set_clear_color_by_byte_color_array(const uint8_t color_array[4])
 {
     glClearColor(color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
 }
 
-/**
-* \brief Clear renderer
-* \return void
-*/
 void calypso_framework_renderer_2d_opengl_clear()
 {
     // Check If We Are Init

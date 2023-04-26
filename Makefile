@@ -1,5 +1,5 @@
 # Shared
-MAIN_FILE = source/testbed_renderer_pixel.c
+MAIN_FILE = source/testbed_sdl.c
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g -DNDEBUG
 CC_FLAGS_RELEASE = -std=c99 -O3

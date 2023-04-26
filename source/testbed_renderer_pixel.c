@@ -7,8 +7,8 @@
 // Calypso (SDL or GLFW)
 #define USE_GLFW_OVER_SDL 1
 #if(USE_GLFW_OVER_SDL)
-#include "calypso_framework/calypso_framework_app_glfw.c"
-#include "calypso_framework/calypso_framework_input_glfw.c"
+#include "calypso_framework_glfw/calypso_framework_glfw_app.c"
+#include "calypso_framework_glfw/calypso_framework_glfw_input.c"
 #else
 #include "calypso_framework/calypso_framework_app_sdl.c"
 #include "calypso_framework/calypso_framework_input_sdl.c"
@@ -17,8 +17,6 @@
 // Calypso
 #include "calypso_framework/calypso_framework_colors.c"
 #include "calypso_framework/calypso_framework_io.c"
-#include "calypso_framework/calypso_framework_math_matrix4.c"
-#include "calypso_framework/calypso_framework_math_random.c"
 #include "calypso_framework/calypso_framework_renderer_pixel_opengl.c"
 
 // App Properties
@@ -57,12 +55,12 @@ void start(void)
 
     // Init Renderer
     {
-        // _pixel_count_x = calypso_framework_app_glfw_get_window_width();
-        // _pixel_count_y = calypso_framework_app_glfw_get_window_height();
+        // _pixel_count_x = calypso_framework_glfw_app_get_window_width();
+        // _pixel_count_y = calypso_framework_glfw_app_get_window_height();
 
         // Viewport Width / Height (GLFW)
         #if(USE_GLFW_OVER_SDL)
-        calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_glfw_get_open_gl_proc_address(),_pixel_count_x,_pixel_count_y);
+        calypso_framework_renderer_pixel_opengl_init(calypso_framework_glfw_app_get_open_gl_proc_address(),_pixel_count_x,_pixel_count_y);
         #else
         calypso_framework_renderer_pixel_opengl_init(calypso_framework_app_sdl_get_open_gl_proc_address());
         #endif
@@ -105,7 +103,7 @@ void update(void)
 void resize(void)
 {
     // Resize Renderer
-    calypso_framework_renderer_pixel_opengl_renderer_resize(calypso_framework_app_glfw_get_window_width(),calypso_framework_app_glfw_get_window_height());
+    calypso_framework_renderer_pixel_opengl_renderer_resize(calypso_framework_glfw_app_get_window_width(),calypso_framework_glfw_app_get_window_height());
 }
 
 int main(int argc, char** argv)
@@ -115,12 +113,12 @@ int main(int argc, char** argv)
 
     // App (GLFW)
     #if(USE_GLFW_OVER_SDL)
-    calypso_framework_app_glfw_set_log_callback(log_msg);
-    calypso_framework_app_glfw_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_CONTEXT_PROFILE);
-    calypso_framework_app_glfw_set_window_title("Testbed : RendererPixel (GLFW)");
-    calypso_framework_app_glfw_set_events(start,end,update, resize);
-    calypso_framework_app_glfw_set_window_size(_window_width,_window_height);
-    calypso_framework_app_glfw_run();
+    calypso_framework_glfw_app_set_log_callback(log_msg);
+    calypso_framework_glfw_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_CONTEXT_PROFILE);
+    calypso_framework_glfw_app_set_window_title("Testbed : RendererPixel (GLFW)");
+    calypso_framework_glfw_app_set_events(start,end,update, resize);
+    calypso_framework_glfw_app_set_window_size(_window_width,_window_height);
+    calypso_framework_glfw_app_run();
     
     #else
     // App (SDL)
