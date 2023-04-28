@@ -15,7 +15,7 @@
 #endif
 
 // Calypso
-#include "calypso_framework/calypso_framework_colors.c"
+#include "calypso_framework_math/calypso_framework_math_colors.c"
 #include "calypso_framework/calypso_framework_io.c"
 #include "calypso_framework/calypso_framework_renderer_pixel_opengl.c"
 
@@ -118,6 +118,7 @@ int main(int argc, char** argv)
     calypso_framework_glfw_app_set_window_title("Testbed : RendererPixel (GLFW)");
     calypso_framework_glfw_app_set_events(start,end,update, resize);
     calypso_framework_glfw_app_set_window_size(_window_width,_window_height);
+    calypso_framework_glfw_app_set_window_resizable(1);
     calypso_framework_glfw_app_run();
     
     #else

@@ -262,17 +262,17 @@ void calypso_framework_glfw_app_run(void)
     int time_frame_last = 0;
 
     // Window Size Properties
-    int _calypso_framework_glfw_app_window_width_previous;
-    int _calypso_framework_glfw_app_window_height_previous;
+    int window_width_previous;
+    int window_height_previous;
 
     // Run
     while (_calypso_framework_glfw_app_state == CALYPSO_FRAMEWORK_GLFW_APP_STATE_RUNNING && !glfwWindowShouldClose(_calypso_framework_glfw_app_window))
     {  
         // Resize
-        if (_calypso_framework_glfw_app_window_width_previous != calypso_framework_glfw_app_get_window_width() || _calypso_framework_glfw_app_window_height_previous != calypso_framework_glfw_app_get_window_height())
+        if (window_width_previous != calypso_framework_glfw_app_get_window_width() || window_height_previous != calypso_framework_glfw_app_get_window_height())
         {
-            _calypso_framework_glfw_app_window_width_previous = calypso_framework_glfw_app_get_window_width();
-            _calypso_framework_glfw_app_window_height_previous = calypso_framework_glfw_app_get_window_height();
+            window_width_previous = calypso_framework_glfw_app_get_window_width();
+            window_height_previous = calypso_framework_glfw_app_get_window_height();
             _calypso_framework_glfw_app_event_on_resize();
         }
 
