@@ -19,7 +19,7 @@ calypso_framework_sdl2_app_log_callback_t _calypso_framework_sdl2_app_log_callba
 #define CALYPSO_FRAMEWORK_SDL2_APP_STATE_RUNNING              0b00000010
 #define CALYPSO_FRAMEWORK_SDL2_APP_STATE_SHUTDOWN             0b00000011
 #define CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR                0b00000100
-unsigned int _calypso_framework_sdl2_app_state =              CALYPSO_FRAMEWORK_SDL2_APP_STATE_NULL;
+unsigned int _calypso_framework_sdl2_app_state                = CALYPSO_FRAMEWORK_SDL2_APP_STATE_NULL;
 
 // Window
 #define CALYPSO_FRAMEWORK_SDL2_APP_SCREEN_WIDTH_DEFAULT       1280 
@@ -30,7 +30,9 @@ SDL_Window* _calypso_framework_sdl2_app_window_ptr;
 SDL_GLContext _calypso_framework_sdl2_app_gl_context_ptr;
 
 // Time
-float _calypso_framework_sdl2_app_time_delta_time =            0;
+float _calypso_framework_sdl2_app_time_delta_time             = 0;
+float _calypso_framework_sdl2_app_time_fps                    = 0;
+char _calypso_framework_sdl2_app_time_fps_as_string[16];
 
 // Events
 typedef void (*calypso_framework_sdl2_app_event_t)(void);
@@ -61,7 +63,7 @@ void calypso_framework_sdl2_app_do_log_callback(const char* log_msg, const uint8
 Calypso Framework SDL App : Window
 ------------------------------------------------------------------------------*/
 
-SDL_Window* calypso_framework_sdl2_app_get_window_sdl_window_ptr(void)
+SDL_Window* calypso_framework_sdl2_app_get_window_sdl2_window_ptr(void)
 {
     return _calypso_framework_sdl2_app_window_ptr;
 }
@@ -113,9 +115,38 @@ void calypso_framework_sdl2_app_set_window_title(const char* title)
     SDL_SetWindowTitle(_calypso_framework_sdl2_app_window_ptr,title);
 }
 
-void calypso_framework_sdl2_app_set_window_resizable(const uint8_t bIsResizable)
+void calypso_framework_sdl2_app_set_window_resizable(const int is_resizable)
 {
-    SDL_SetWindowResizable(_calypso_framework_sdl2_app_window_ptr,bIsResizable);
+    SDL_SetWindowResizable(_calypso_framework_sdl2_app_window_ptr,is_resizable);
+}
+
+void calypso_framework_sdl2_app_maxamize_window()
+{
+    SDL_MaximizeWindow(_calypso_framework_sdl2_app_window_ptr);
+}
+
+void calypso_framework_sdl2_app_restore_window()
+{
+    SDL_RestoreWindow(_calypso_framework_sdl2_app_window_ptr);
+}
+
+void calypso_framework_sdl2_app_maxamize_restore_toggle_window()
+{
+    // Check if the window is maximized
+    if (SDL_GetWindowFlags(_calypso_framework_sdl2_app_window_ptr) & SDL_WINDOW_MAXIMIZED) 
+        SDL_RestoreWindow(_calypso_framework_sdl2_app_window_ptr);
+    else 
+        SDL_MaximizeWindow(_calypso_framework_sdl2_app_window_ptr);
+}
+
+void calypso_framework_sdl2_app_minimize_window()
+{
+    SDL_MinimizeWindow(_calypso_framework_sdl2_app_window_ptr);
+}
+
+void calypso_framework_sdl2_app_set_window_bordered(int is_bordered)
+{
+    SDL_SetWindowBordered(_calypso_framework_sdl2_app_window_ptr, is_bordered);
 }
 
 /*------------------------------------------------------------------------------
@@ -283,11 +314,25 @@ void calypso_framework_sdl2_app_run(void)
             }
         }
 
-        // Do Time (Start)
+        // Get Time
         {
             Uint32 currentTime = SDL_GetTicks();
             _calypso_framework_sdl2_app_time_delta_time  = (float)(currentTime - time_time_previous) / 1000.0f; // Convert to seconds
             time_time_previous = currentTime;
+        }
+
+        // Get FPS
+        {
+            // Get FPS (Float)
+            _calypso_framework_sdl2_app_time_fps = 1 / _calypso_framework_sdl2_app_time_delta_time;  
+
+            // Get FPS (String) | Check For Errors
+            int len = snprintf(_calypso_framework_sdl2_app_time_fps_as_string, sizeof(_calypso_framework_sdl2_app_time_fps_as_string), "%.2f", 1.0 / _calypso_framework_sdl2_app_time_delta_time);
+            if (len < 0 || len >= sizeof(_calypso_framework_sdl2_app_time_fps_as_string)) 
+            {
+                calypso_framework_sdl2_app_do_log_callback("FPS String Is Invalid",2);
+            }
+
         }
 
          // On Event Update

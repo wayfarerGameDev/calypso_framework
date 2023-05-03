@@ -73,9 +73,12 @@
 #define CALYPSO_FRAMEWORK_SDL2_INPUT_KEYCODE_Y                           SDL_SCANCODE_Y
 #define CALYPSO_FRAMEWORK_SDL2_INPUT_KEYCODE_Z                           SDL_SCANCODE_Z
 
-// State
-uint8_t _calypso_framework_sdl2_input_keycode_state_array[255]; // SDL HAS 255 KEYS
+// Keyboard
+uint8_t _calypso_framework_sdl2_input_keycode_state_array[255];          // SDL HAS 255 KEYS
 
+// Mouse
+int _calypso_framework_sdl_input_mouse_position[2]                       = {0,0};
+int _calypso_framework_sdl2_input_mouse_button_left_state                = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP;
 
 void calypso_framework_sdl2_input_show_mouse_cursor(void) 
 {
@@ -87,43 +90,82 @@ void calypso_framework_sdl2_input_hide_mouse_cursor(void)
     SDL_ShowCursor(SDL_DISABLE);
 }
 
-void calypso_framework_sdl2_input_get_mouse_cursor_xy_f(float* x, float* y) 
+int calypso_framework_sdl2_app_get_mouse_position_x()
 {
-    int x_i;
-    int y_i;
-    SDL_GetMouseState(&x_i,&y_i);
-    *x = x_i;
-    *y = y_i;
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    return x;
 }
 
-void calypso_framework_sdl2_input_get_mouse_cursor_xy_d(double* x, double* y) 
+int calypso_framework_sdl2_app_get_mouse_position_y()
 {
-    int x_i;
-    int y_i;
-    SDL_GetMouseState(&x_i,&y_i);
-    *x = (double)x_i;
-    *y = (double)y_i;
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    return y;
+}
+
+int* calypso_framework_sdl2_app_get_mouse_position_ptr()
+{
+    return _calypso_framework_sdl_input_mouse_position;
+}
+
+int* calypso_framework_sdl2_app_get_mouse_button_left_state_ptr()
+{
+    return &_calypso_framework_sdl2_input_mouse_button_left_state;
+}
+
+int calypso_framework_sdl2_app_get_mouse_button_left_state_is_pressed()
+{
+    return _calypso_framework_sdl2_input_mouse_button_left_state == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
 }
 
 void calypso_framework_sdl2_input_update() 
 {
-    const uint8_t* keyboard_state = SDL_GetKeyboardState(NULL);
-
-    for (int i = 0; i < 255; i++)
+    // Keyboard State
     {
-        if (keyboard_state[i])
+        const uint8_t* keyboard_state = SDL_GetKeyboardState(NULL);
+
+        for (int i = 0; i < 255; i++)
         {
-            if (_calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP)
-                _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN;
+            if (keyboard_state[i])
+            {
+                if (_calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP)
+                    _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN;
+                else 
+                     _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
+            }
+            else
+            {
+                if (_calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN && _calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED)
+                    _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP;
+                else
+                    _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_RELEASED;
+            }
+        }
+    }
+
+    // Mouse State (Position)
+    {
+        _calypso_framework_sdl_input_mouse_position[0] = calypso_framework_sdl2_app_get_mouse_position_x();
+        _calypso_framework_sdl_input_mouse_position[1] = calypso_framework_sdl2_app_get_mouse_position_y();
+    }
+
+    // Mouse (Left Mouse Button)
+    {
+        int mouse_state = SDL_GetMouseState(NULL, NULL);
+        if (mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT))
+        {
+            if (_calypso_framework_sdl2_input_mouse_button_left_state != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP)
+                _calypso_framework_sdl2_input_mouse_button_left_state = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN;
             else 
-                 _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
+                _calypso_framework_sdl2_input_mouse_button_left_state = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
         }
         else
         {
-            if (_calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN && _calypso_framework_sdl2_input_keycode_state_array[i] != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED)
-                _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP;
+             if (_calypso_framework_sdl2_input_mouse_button_left_state != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN && _calypso_framework_sdl2_input_mouse_button_left_state != CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED)
+                _calypso_framework_sdl2_input_mouse_button_left_state = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP;
             else
-                _calypso_framework_sdl2_input_keycode_state_array[i] = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_RELEASED;
+                _calypso_framework_sdl2_input_mouse_button_left_state = CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_RELEASED;
         }
     }
 }

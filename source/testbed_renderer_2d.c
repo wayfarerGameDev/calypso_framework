@@ -19,7 +19,7 @@
 #include "calypso_framework_math/calypso_framework_math_colors.c"
 #include "calypso_framework_math/calypso_framework_math_matrix4.c"
 #include "calypso_framework_math/calypso_framework_math_random.c"
-#include "calypso_framework/calypso_framework_renderer_2d_opengl.c"
+#include "calypso_framework_renderer/calypso_framework_renderer_2d_opengl.c"
 
 // Renderer (Viewport)
 float _renderer_viewport_projection_matrix[4][4];

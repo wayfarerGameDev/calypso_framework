@@ -16,8 +16,8 @@
 
 // Calypso
 #include "calypso_framework_math/calypso_framework_math_colors.c"
+#include "calypso_framework_renderer/calypso_framework_renderer_pixel_opengl.c"
 #include "calypso_framework/calypso_framework_io.c"
-#include "calypso_framework/calypso_framework_renderer_pixel_opengl.c"
 
 // App Properties
 const int _window_width  = 800;
