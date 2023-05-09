@@ -4,10 +4,6 @@
 
 #pragma once
 
-// Includes
-#include <stdio.h>
-#include <stdint.h>     // uint8_t
-
 // Colors (Hexadecimal)
 const int _calypso_framework_math_colors_color_hex_white                                        = 0xffffff;
 const int _calypso_framework_math_colors_color_hex_black                                        = 0x000000;
@@ -103,34 +99,34 @@ const int _calypso_framework_math_colors_color_hex_indigo                       
 const int _calypso_framework_math_colors_color_hex_dark_slate_blue                              = 0x483d8b;
 
 // Colors (RGBA)
-const uint8_t _calypso_framework_math_colors_color_rgba_white[4]                                = {255, 255, 255, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_black[4]                                = {0, 0, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_red[4]                                  = {255, 0, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_green[4]                                = {0, 255, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_blue[4]                                 = {0, 0, 255, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_yellow[4]                               = {255, 255, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_magenta[4]                              = {255, 0, 255, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_cyan[4]                                 = {0, 255, 255, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_gray[4]                                 = {128, 128, 128, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_brown[4]                                = {165, 42, 42, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_orange[4]                               = {255, 165, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_pink[4]                                 = {255, 192, 203, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_purple[4]                               = {128, 0, 128, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_lavender[4]                             = {230, 230, 250, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_turquoise[4]                            = {64, 224, 208, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_gold[4]                                 = {255, 215, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_silver[4]                               = {192, 192, 192, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_navy[4]                                 = {0, 0, 128, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_maroon[4]                               = {128, 0, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_olive[4]                                = {128, 128, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_teal[4]                                 = {0, 128, 128, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_forest_green[4]                         = {34, 139, 34, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_lime_green[4]                           = {0, 255, 0, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_sky_blue[4]                             = {135, 206, 235, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_royal_blue[4]                           = {65, 105, 225, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_steel_blue[4]                           = {70, 130, 180, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_slate_gray[4]                           = {112, 128, 144, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_dark_gray[4]                            = {169, 169, 169, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_light_gray[4]                           = {211, 211, 211, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_beige[4]                                = {245, 245, 220, 255};
-const uint8_t _calypso_framework_math_colors_color_rgba_salmon[4]                               = {250, 128, 114, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_white[4]                          = {255, 255, 255, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_black[4]                          = {0, 0, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_red[4]                            = {255, 0, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_green[4]                          = {0, 255, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_blue[4]                           = {0, 0, 255, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_yellow[4]                         = {255, 255, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_magenta[4]                        = {255, 0, 255, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_cyan[4]                           = {0, 255, 255, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_gray[4]                           = {128, 128, 128, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_brown[4]                          = {165, 42, 42, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_orange[4]                         = {255, 165, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_pink[4]                           = {255, 192, 203, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_purple[4]                         = {128, 0, 128, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_lavender[4]                       = {230, 230, 250, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_turquoise[4]                      = {64, 224, 208, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_gold[4]                           = {255, 215, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_silver[4]                         = {192, 192, 192, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_navy[4]                           = {0, 0, 128, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_maroon[4]                         = {128, 0, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_olive[4]                          = {128, 128, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_teal[4]                           = {0, 128, 128, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_forest_green[4]                   = {34, 139, 34, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_lime_green[4]                     = {0, 255, 0, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_sky_blue[4]                       = {135, 206, 235, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_royal_blue[4]                     = {65, 105, 225, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_steel_blue[4]                     = {70, 130, 180, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_slate_gray[4]                     = {112, 128, 144, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_dark_gray[4]                      = {169, 169, 169, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_light_gray[4]                     = {211, 211, 211, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_beige[4]                          = {245, 245, 220, 255};
+const unsigned char _calypso_framework_math_colors_color_rgba_salmon[4]                         = {250, 128, 114, 255};

@@ -4,12 +4,8 @@
 
 #pragma once
 
-// Includes
-#include <stdio.h>
-#include <stdint.h>     // uint8_t
-
 // Logging Callback
-typedef void (*calypso_framework_imgui_minimal_log_callback_t)(const char* log_msg, const uint8_t log_type);
+typedef void (*calypso_framework_imgui_minimal_log_callback_t)(const char* log_msg, const unsigned char log_type);
 calypso_framework_imgui_minimal_log_callback_t _calypso_framework_imgui_minimal_log_callback;
 
 // Callback
@@ -30,9 +26,10 @@ calypso_framework_imgui_minimal_text_callback_t _calypso_framework_imgui_minimal
 calypso_framework_imgui_minimal_text_width_height_callback_t _calypso_framework_imgui_minimal_text_width_callback;
 calypso_framework_imgui_minimal_text_width_height_callback_t _calypso_framework_imgui_minimal_text_height_callback;
 calypso_framework_imgui_minimal_listner_callback_t _calypso_framework_imgui_minimal_mouse_left_pressed_listner_callback;   
+calypso_framework_imgui_minimal_listner_callback_t _calypso_framework_imgui_minimal_mouse_left_released_listner_callback;   
 
 // Bindings
-int* _calypso_framework_imgui_minimal_mouse_position_ptr                                  = NULL;
+int* _calypso_framework_imgui_minimal_mouse_position_ptr                                  = ((void*)0);
 
 // Style
 int _calypso_framework_imgui_minimal_style_normal_color_pair[2]                           = {0x212428,0xa2a7ae};
@@ -53,9 +50,9 @@ void calypso_framework_imgui_minimal_set_log_callback(calypso_framework_imgui_mi
     _calypso_framework_imgui_minimal_log_callback = log_callback;
 }
 
-void calypso_framework_imgui_minimal_do_log_callback(const char* log_msg, const uint8_t log_type)
+void calypso_framework_imgui_minimal_do_log_callback(const char* log_msg, const unsigned char log_type)
 {
-    if (_calypso_framework_imgui_minimal_log_callback == NULL)
+    if (_calypso_framework_imgui_minimal_log_callback == ((void*)0))
         return;
 
     _calypso_framework_imgui_minimal_log_callback(log_msg,log_type);
@@ -74,7 +71,8 @@ calypso_framework_imgui_minimal_rect_callback_t rect_callback,
 calypso_framework_imgui_minimal_text_callback_t text_callback,
 calypso_framework_imgui_minimal_text_width_height_callback_t text_width_callback,
 calypso_framework_imgui_minimal_text_width_height_callback_t text_height_callback,
-calypso_framework_imgui_minimal_listner_callback_t mouse_left_pressed_listner_callback)
+calypso_framework_imgui_minimal_listner_callback_t mouse_left_pressed_listner_callback,
+calypso_framework_imgui_minimal_listner_callback_t mouse_left_released_listner_callback)
 {
     _calypso_framework_imgui_minimal_set_color_callback = set_color_callback;
     _calypso_framework_imgui_minimal_set_font_callback = set_font_callback;
@@ -85,6 +83,7 @@ calypso_framework_imgui_minimal_listner_callback_t mouse_left_pressed_listner_ca
     _calypso_framework_imgui_minimal_text_width_callback = text_width_callback;
     _calypso_framework_imgui_minimal_text_height_callback = text_height_callback;
     _calypso_framework_imgui_minimal_mouse_left_pressed_listner_callback = mouse_left_pressed_listner_callback;
+    _calypso_framework_imgui_minimal_mouse_left_released_listner_callback = mouse_left_released_listner_callback;
 }
 
 /*------------------------------------------------------------------------------
@@ -146,7 +145,7 @@ int calypso_framework_imgui_minimal_button_text(const char* string, float x, flo
     // Get Mouse Position
     int mouse_position_x = -999;
     int mouse_position_y = -999;
-    if (_calypso_framework_imgui_minimal_mouse_position_ptr != NULL)
+    if (_calypso_framework_imgui_minimal_mouse_position_ptr != ((void*)0))
     {
         mouse_position_x = _calypso_framework_imgui_minimal_mouse_position_ptr[0];
         mouse_position_y = _calypso_framework_imgui_minimal_mouse_position_ptr[1];
@@ -160,13 +159,13 @@ int calypso_framework_imgui_minimal_button_text(const char* string, float x, flo
 
     // Get Is Mouse Over
     int is_mouse_over = 0;
-    if (mouse_position_x >= x && mouse_position_x < x + w && mouse_position_y >= y && mouse_position_y < y + h)
+    if (mouse_position_x >= x && mouse_position_x <= x + w && mouse_position_y > y && mouse_position_y < y + h)
         is_mouse_over = 1;
 
-    // Get Mouse Pressed
-    int is_mouse_pressed = _calypso_framework_imgui_minimal_mouse_left_pressed_listner_callback();
+    // Get Mouse Released
+    int is_mouse_released = _calypso_framework_imgui_minimal_mouse_left_released_listner_callback();
     if (!is_mouse_over)
-        is_mouse_pressed = 0;
+        is_mouse_released = 0;
 
 
     // Get Style
@@ -180,16 +179,16 @@ int calypso_framework_imgui_minimal_button_text(const char* string, float x, flo
     _calypso_framework_imgui_minimal_set_color_callback(style[1]);
     _calypso_framework_imgui_minimal_text_callback(string,text_x,text_y);
 
-    return is_mouse_pressed;
+    return is_mouse_released;
 }
 
-int calypso_framework_imgui_minimal_window_titlebar(void* icon_ptr, char* title_string, int titlebar_w, int titlebar_h, int icon_size, int button_w, int button_h, int use_secondary_color)
+int calypso_framework_imgui_minimal_window_titlebar(void* icon_ptr, char* title_string, float titlebar_w, float titlebar_h, float icon_size, float button_w, float button_h, int use_secondary_color)
 {
     // Titlebar
     calypso_framework_imgui_minimal_rect(0,0,titlebar_w,titlebar_h,use_secondary_color);
 
     // Icon
-    if (icon_ptr != NULL)
+    if (icon_ptr != ((void*)0))
         calypso_framework_imgui_minimal_texture_sized(icon_ptr,10,5, icon_size,icon_size);
 
     // Title

@@ -4,6 +4,8 @@
         "limits": "c",
         "glfw3.h": "c",
         "glad.h": "c",
-        "khrplatform.h": "c"
+        "khrplatform.h": "c",
+        "sdl.h": "c",
+        "calypso_framework_io_tga": "c"
     }
 }

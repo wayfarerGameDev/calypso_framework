@@ -5,12 +5,11 @@
 #pragma once
 
 // Includes
-#include <stdio.h>
-#include <stdint.h>     // uint8_t
+#include <stdio.h> // snprintf
 #include <dependencies/GLFW/glfw3.h>
 
 // Logging Callback
-typedef void (*calypso_framework_glfw_app_log_callback_t)(const char* log_msg, const uint8_t log_type);
+typedef void (*calypso_framework_glfw_app_log_callback_t)(const char* log_msg, const unsigned char log_type);
 calypso_framework_glfw_app_log_callback_t _calypso_framework_glfw_app_log_callback;
 
 // State
@@ -27,12 +26,9 @@ unsigned int _calypso_framework_glfw_app_state =              CALYPSO_FRAMEWORK_
 GLFWwindow* _calypso_framework_glfw_app_window;
 
 // Time
-#define CALYPSO_FRAMEWORK_GLFW_APP_TIME_FPS_UNCAPPED          -1
-#define CALYPSO_FRAMEWORK_GLFW_APP_TIME_FPS_DEFAULT            CALYPSO_FRAMEWORK_GLFW_APP_TIME_FPS_UNCAPPED
-float _calypso_framework_glfw_app_time_frame_rate_target =     CALYPSO_FRAMEWORK_GLFW_APP_TIME_FPS_DEFAULT;
-float _calypso_framework_glfw_app_time_frame_rate =            0;
-float _calypso_framework_glfw_app_time_frame_time_target =     0;
-float _calypso_framework_glfw_app_time_delta_time =            0;
+float _calypso_framework_glfw_app_time_delta_time             = 0;
+float _calypso_framework_glfw_app_time_fps                    = 0;
+char _calypso_framework_glfw_app_time_fps_as_string[16];
 
 // Events
 typedef void (*calypso_framework_glfw_app_event_t)(void);
@@ -42,17 +38,41 @@ calypso_framework_glfw_app_event_t _calypso_framework_glfw_app_event_on_update;
 calypso_framework_glfw_app_event_t _calypso_framework_glfw_app_event_on_resize;
 
 
+/*------------------------------------------------------------------------------
+Calypso Framework GLFW App : Log
+------------------------------------------------------------------------------*/
+
 void calypso_framework_glfw_app_set_log_callback(calypso_framework_glfw_app_log_callback_t log_callback)
 {
     _calypso_framework_glfw_app_log_callback = log_callback;
 }
 
-void calypso_framework_glfw_app_do_log_callback(const char* log_msg, const uint8_t log_type)
+void calypso_framework_glfw_app_do_log_callback(const char* log_msg, const unsigned char log_type)
 {
-    if (_calypso_framework_glfw_app_log_callback == NULL)
+    if (_calypso_framework_glfw_app_log_callback == ((void *)0))
         return;
 
     _calypso_framework_glfw_app_log_callback(log_msg,log_type);
+}
+
+/*------------------------------------------------------------------------------
+Calypso Framework GLFW App : Title
+------------------------------------------------------------------------------*/
+
+void calypso_framework_glfw_app_set_title(const char* title)
+{
+    //GLFW_SetWindowTitle(_calypso_framework_glfw_app_window,title);
+    glfwSetWindowTitle(_calypso_framework_glfw_app_window,title);
+}
+
+void calypso_framework_glfw_app_set_window_icon()
+{
+    // Return If Icon Is NULL
+    //if (icon == NULL)
+    //{
+    //    calypso_framework_glfw_app_do_log_callback("App: Failed To Set Window Icon",3);
+    //    return;
+    //}
 }
 
 void* calypso_framework_glfw_app_get_open_gl_proc_address()
@@ -64,6 +84,10 @@ GLFWwindow* calypso_framework_glfw_app_get_window_glfw_window(void)
 {
     return _calypso_framework_glfw_app_window;
 }
+
+/*------------------------------------------------------------------------------
+Calypso Framework GLFW App : Winodw
+------------------------------------------------------------------------------*/
 
 int calypso_framework_glfw_app_get_window_width(void)
 {
@@ -95,55 +119,20 @@ int calypso_framework_glfw_app_get_window_height(void)
     return h;
 }
 
-void calypso_framework_glfw_app_set_window_icon()
-{
-    // Return If Icon Is NULL
-    //if (icon == NULL)
-    //{
-    //    calypso_framework_glfw_app_do_log_callback("App: Failed To Set Window Icon",3);
-    //    return;
-    //}
-}
-
-void calypso_framework_glfw_app_set_window_title(const char* title)
-{
-    //GLFW_SetWindowTitle(_calypso_framework_glfw_app_window,title);
-    glfwSetWindowTitle(_calypso_framework_glfw_app_window,title);
-}
-
 void calypso_framework_glfw_app_set_window_size(int with, int height)
 {
     //GLFW_SetWindowTitle(_calypso_framework_glfw_app_window,title);
     glfwSetWindowSize(_calypso_framework_glfw_app_window,with,height);
 }
 
-void calypso_framework_glfw_app_set_window_resizable(const uint8_t bIsResizable)
+void calypso_framework_glfw_app_set_window_resizable(const unsigned char bIsResizable)
 {
     glfwSetWindowAttrib(_calypso_framework_glfw_app_window, GLFW_RESIZABLE,bIsResizable == 1);
 }
 
-void calypso_framework_glfw_app_set_time_frame_rate_target_uncapped(void)
-{
-    // Time
-    _calypso_framework_glfw_app_time_frame_rate_target = CALYPSO_FRAMEWORK_GLFW_APP_TIME_FPS_UNCAPPED;
-    _calypso_framework_glfw_app_time_frame_time_target = 0;
-}
-
-void calypso_framework_glfw_app_set_time_frame_target_rate(const unsigned int frame_rate)
-{
-    _calypso_framework_glfw_app_time_frame_rate_target = frame_rate;
-    _calypso_framework_glfw_app_time_frame_time_target = 1000 / frame_rate;
-}
-
-float calypso_framework_glfw_app_get_time_frame_rate(void)
-{
-    return _calypso_framework_glfw_app_time_frame_rate;
-}
-
-float* calypso_framework_glfw_app_get_time_frame_rate_ptr(void)
-{
-    return &_calypso_framework_glfw_app_time_frame_rate;
-}
+/*------------------------------------------------------------------------------
+Calypso Framework SDL App : Time
+------------------------------------------------------------------------------*/
 
 float calypso_framework_glfw_app_get_time_delta_time(void)
 {
@@ -155,21 +144,9 @@ float* calypso_framework_glfw_app_get_time_delta_time_ptr(void)
     return &_calypso_framework_glfw_app_time_delta_time;
 }
 
-char* calypso_framework_glfw_app_get_time_fps_as_string(void)
-{
-    int len = snprintf(NULL, 0, "%i", (int)_calypso_framework_glfw_app_time_frame_rate);
-    char* result = malloc(len + 1);
-    snprintf(result, len + 1, "%i", (int)_calypso_framework_glfw_app_time_frame_rate);
-    return result;
-}
-
-char* calypso_framework_glfw_app_get_time_delta_time_as_string(void)
-{
-    int len = snprintf(NULL, 0, "%f", _calypso_framework_glfw_app_time_delta_time);
-    char* result = malloc(len + 1);
-    snprintf(result, len + 1, "%f", _calypso_framework_glfw_app_time_delta_time);
-    return result;
-}
+/*------------------------------------------------------------------------------
+Calypso Framework SDL App : Main
+------------------------------------------------------------------------------*/
 
 void calypso_framework_glfw_app_set_events(calypso_framework_glfw_app_event_t event_on_startup, calypso_framework_glfw_app_event_t event_on_shutdown, calypso_framework_glfw_app_event_t event_on_update,  calypso_framework_glfw_app_event_t event_on_resize)
 {
@@ -256,10 +233,7 @@ void calypso_framework_glfw_app_run(void)
     glfwSwapInterval(1);
 
     // Time Data To Do Calculations
-    int time_time_last = 0;
-    int time_time_delay = 0;
-    int time_frame_count = 0;
-    int time_frame_last = 0;
+    double time_time_previous =  glfwGetTime();
 
     // Window Size Properties
     int window_width_previous;
@@ -279,7 +253,27 @@ void calypso_framework_glfw_app_run(void)
         // Event Loop
         glfwPollEvents();
         if (glfwWindowShouldClose(_calypso_framework_glfw_app_window))
-            _calypso_framework_glfw_app_state == CALYPSO_FRAMEWORK_GLFW_APP_STATE_SHUTDOWN;
+            _calypso_framework_glfw_app_state = CALYPSO_FRAMEWORK_GLFW_APP_STATE_SHUTDOWN;
+
+         // Get Time
+        {
+            double currentTime = glfwGetTime();
+            _calypso_framework_glfw_app_time_delta_time  = (float)(currentTime - time_time_previous) / 1000.0f; // Convert to seconds
+            time_time_previous = currentTime;
+        }
+
+        // Get FPS
+        {
+            // Get FPS (Float)
+            _calypso_framework_glfw_app_time_fps = 1 / _calypso_framework_glfw_app_time_delta_time;  
+
+            // Get FPS (String) | Check For Errors
+            int len = snprintf(_calypso_framework_glfw_app_time_fps_as_string, sizeof(_calypso_framework_glfw_app_time_fps_as_string), "%.2f", 1.0 / _calypso_framework_glfw_app_time_delta_time);
+            if (len < 0 || len >= sizeof(_calypso_framework_glfw_app_time_fps_as_string)) 
+            {
+                calypso_framework_glfw_app_do_log_callback("FPS String Is Invalid",2);
+            }
+        }
 
         // On Event Update
         if (_calypso_framework_glfw_app_event_on_update != NULL)

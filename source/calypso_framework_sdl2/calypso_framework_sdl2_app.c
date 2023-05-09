@@ -4,13 +4,12 @@
 
 #pragma once
 
-// Includes
-#include <stdio.h>
-#include <stdint.h>     // uint8_t
+// Dependancies
+#include <stdio.h> // snprintf
 #include <dependencies/SDL2/SDL.h>
 
 // Logging Callback
-typedef void (*calypso_framework_sdl2_app_log_callback_t)(const char* log_msg, const uint8_t log_type);
+typedef void (*calypso_framework_sdl2_app_log_callback_t)(const char* log_msg, const unsigned char log_type);
 calypso_framework_sdl2_app_log_callback_t _calypso_framework_sdl2_app_log_callback;
 
 // State
@@ -41,6 +40,9 @@ calypso_framework_sdl2_app_event_t _calypso_framework_sdl2_app_event_on_shutdown
 calypso_framework_sdl2_app_event_t _calypso_framework_sdl2_app_event_on_update;
 calypso_framework_sdl2_app_event_t _calypso_framework_sdl2_app_event_on_resize;
 
+// Custom Toolbar
+int _calypso_framework_sdl2_app_custom_toolbar_height         = -1;
+
 
 /*------------------------------------------------------------------------------
 Calypso Framework SDL App : Log
@@ -51,12 +53,48 @@ void calypso_framework_sdl2_app_set_log_callback(calypso_framework_sdl2_app_log_
     _calypso_framework_sdl2_app_log_callback = log_callback;
 }
 
-void calypso_framework_sdl2_app_do_log_callback(const char* log_msg, const uint8_t log_type)
+void calypso_framework_sdl2_app_do_log_callback(const char* log_msg, const unsigned char log_type)
 {
     if (_calypso_framework_sdl2_app_log_callback == NULL)
         return;
 
     _calypso_framework_sdl2_app_log_callback(log_msg,log_type);
+}
+
+/*------------------------------------------------------------------------------
+Calypso Framework SDL App : Title
+------------------------------------------------------------------------------*/
+
+void calypso_framework_sdl2_app_set_title(const char* title)
+{
+    SDL_SetWindowTitle(_calypso_framework_sdl2_app_window_ptr,title);
+}
+
+void calypso_framework_sdl2_app_set_icon_by_surface(SDL_Surface* surface_ptr)
+{
+    // Return If Icon Is NULL
+    if (surface_ptr == NULL)
+    {
+        calypso_framework_sdl2_app_do_log_callback("App: Failed To Set Window Icon",3);
+        return;
+    }
+
+    SDL_SetWindowIcon(_calypso_framework_sdl2_app_window_ptr,surface_ptr);
+}
+
+void calypso_framework_sdl2_app_set_icon_bmp( char* file_path)
+{
+    // Load BMP | Create texture | Free
+    SDL_Surface* surface = SDL_LoadBMP(file_path);
+    
+    // Return If Icon Is NULL
+    if (surface == NULL)
+    {
+        calypso_framework_sdl2_app_do_log_callback("App: Failed To Set Window Icon\n",3);
+        return;
+    }
+
+    SDL_SetWindowIcon(_calypso_framework_sdl2_app_window_ptr,surface);
 }
 
 /*------------------------------------------------------------------------------
@@ -98,23 +136,6 @@ int calypso_framework_sdl2_app_get_window_height(void)
     return h;
 }
 
-void calypso_framework_sdl2_app_set_window_icon(SDL_Surface* icon)
-{
-    // Return If Icon Is NULL
-    if (icon == NULL)
-    {
-        calypso_framework_sdl2_app_do_log_callback("App: Failed To Set Window Icon",3);
-        return;
-    }
-
-    SDL_SetWindowIcon(_calypso_framework_sdl2_app_window_ptr,icon);
-}
-
-void calypso_framework_sdl2_app_set_window_title(const char* title)
-{
-    SDL_SetWindowTitle(_calypso_framework_sdl2_app_window_ptr,title);
-}
-
 void calypso_framework_sdl2_app_set_window_resizable(const int is_resizable)
 {
     SDL_SetWindowResizable(_calypso_framework_sdl2_app_window_ptr,is_resizable);
@@ -144,9 +165,47 @@ void calypso_framework_sdl2_app_minimize_window()
     SDL_MinimizeWindow(_calypso_framework_sdl2_app_window_ptr);
 }
 
-void calypso_framework_sdl2_app_set_window_bordered(int is_bordered)
+/*------------------------------------------------------------------------------
+Calypso Framework SDL App : Window Custom Toolbar
+------------------------------------------------------------------------------*/
+
+SDL_HitTestResult calypso_framework_sdl2_app_window_custom_toolbar_callback(SDL_Window* window, const SDL_Point* area, void* data) 
 {
-    SDL_SetWindowBordered(_calypso_framework_sdl2_app_window_ptr, is_bordered);
+    // Get Mouse Position
+    int mouse_x, mouse_y;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
+
+    // Get window Rect
+    SDL_Rect window_rect;
+    SDL_GetWindowPosition(window, &window_rect.x, &window_rect.y);
+    SDL_GetWindowSize(window, &window_rect.w, &window_rect.h);
+    
+    // Check If Mouse Is In Custom Toolbar Area
+    if (mouse_x >= window_rect.x && mouse_x < window_rect.x + window_rect.w && mouse_y >= window_rect.y && mouse_y < window_rect.y + _calypso_framework_sdl2_app_custom_toolbar_height)
+        return SDL_HITTEST_DRAGGABLE;
+
+    // Return Normal
+    return SDL_HITTEST_NORMAL;
+}
+
+void calypso_framework_sdl2_app_enable_window_custom_toolbar(const int is_enabled, const int toolbar_height)
+{
+    // Disable
+    if (is_enabled <= 0)
+    {
+        SDL_SetWindowHitTest(_calypso_framework_sdl2_app_window_ptr, NULL, NULL);
+        SDL_SetWindowBordered(_calypso_framework_sdl2_app_window_ptr,SDL_TRUE);
+        _calypso_framework_sdl2_app_custom_toolbar_height = -1;
+    }
+
+    // Enable
+    else        
+    {
+        // Register hit test callback function
+        SDL_SetWindowBordered(_calypso_framework_sdl2_app_window_ptr,SDL_FALSE);
+        SDL_SetWindowHitTest(_calypso_framework_sdl2_app_window_ptr, calypso_framework_sdl2_app_window_custom_toolbar_callback, NULL);
+        _calypso_framework_sdl2_app_custom_toolbar_height = toolbar_height;
+    }
 }
 
 /*------------------------------------------------------------------------------

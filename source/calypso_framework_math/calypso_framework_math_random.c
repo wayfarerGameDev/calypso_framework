@@ -1,10 +1,7 @@
-
 #pragma once
 
-#include <stdio.h>      // rand
-#include <stdlib.h>     // rand
-#include <stdint.h>     // uint8_t
-#include <time.h>       // time
+// Dependencies
+#include <time.h>
 
 //Some Usefual *Baked* Math Values (Floats)
 #define CALYPSO_FRAMEWORK_MATH_RANDOM_MATH_PI_F			    3.145926f
@@ -16,8 +13,21 @@
 #define CALYPSO_FRAMEWORK_MATH_RANDOM_MATH_PI2_D		    6.291852
 #define CALYPSO_FRAMEWORK_MATH_RANDOM_MATH_SQRT_2_HALF_D	0.7071068
 
-// Seed
-unsigned int _calypso_framework_math_random_seed =          3350834255;
+// MAX | Seed | Next
+#define CALYPSO_FRAMEWORK_MATH_RANDOM_RAND_MAX              32767
+unsigned int _calypso_framework_math_random_seed            = 3350834255;
+unsigned int _calypso_framework_math_random_next            = 1;
+
+int calypso_framework_math_random_rand()
+{
+    _calypso_framework_math_random_next = _calypso_framework_math_random_next * 1103515245 + 12345;
+    return (unsigned int)(_calypso_framework_math_random_next / 65536) % (CALYPSO_FRAMEWORK_MATH_RANDOM_RAND_MAX + 1);
+}
+
+void calypso_framework_math_random_srand(unsigned int seed) 
+{
+    _calypso_framework_math_random_next = seed;
+}
 
 void calypso_framework_math_random_rand_set_seed(const unsigned int seed)
 {
@@ -53,15 +63,15 @@ int calypso_framework_math_random_rand_xorshift_int()
 
 void calypso_framework_random_rand_set_seed_as_time()
 {
-    srand(time(0));
+    calypso_framework_math_random_srand(time(0));
 }
 
-int calypso_framework_math_random_rand_range_i(int min, int max)
+int calypso_framework_math_random_rand_range_i(const int min, const int max)
 {
-    return (rand() % (max - min + 1)) + min;
+    return (calypso_framework_math_random_rand() % (max - min + 1)) + min;
 }
 
-int calypso_framework_math_random_rand_range_f(float min, float max)
+int calypso_framework_math_random_rand_range_f(const float min, const float max)
 {
-    return (float)(rand()) / ((float)(RAND_MAX / (max - min)));
+    return (float)(calypso_framework_math_random_rand()) / ((float)(CALYPSO_FRAMEWORK_MATH_RANDOM_RAND_MAX / (max - min)));
 }

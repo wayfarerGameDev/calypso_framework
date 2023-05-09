@@ -1,5 +1,6 @@
 # Shared
-MAIN_FILE = source/testbed_sdl.c
+# MAIN_FILE = source/example_engine_sdl/example_engine_sdl_editor.c
+MAIN_FILE = source/testbeds/testbed_renderer_opengl_es.c
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g -DNDEBUG
 CC_FLAGS_RELEASE = -std=c99 -O3
@@ -16,8 +17,8 @@ clear_console_win:
 # Win 32
 BUILD_DIR_DEBUG_WIN_32 = build/debug_win_32/app
 RUN_DIR_DEBUG_WIN_32 = ./build/debug_win_32/app
-RUN_DIR_RELEASE_WIN_32 = ./build/release_win_32/app
 BUILD_DIR_RELEASE_WIN_32 = build/release_win_32/app
+RUN_DIR_RELEASE_WIN_32 = ./build/release_win_32/app
 
 build_debug_win_32: clear_console_win
 	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_32) -o $(BUILD_DIR_DEBUG_WIN_32) $(SOURCE_FILES) $(LINKER_FLAGS_32)
@@ -31,8 +32,8 @@ run_release_win_32: clear_console_win
 # Win 64
 BUILD_DIR_DEBUG_WIN_64 = build/debug_win_64/app
 RUN_DIR_DEBUG_WIN_64 = ./build/debug_win_64/app
-RUN_DIR_RELEASE_WIN_64 = ./build/release_win_64/app
 BUILD_DIR_RELEASE_WIN_64 = build/release_win_64/app
+RUN_DIR_RELEASE_WIN_64 = ./build/release_win_64/app
 
 build_debug_win_64: clear_console_win
 	$(CC) $(CC_FLAGS_DEBUG) $(LIBRARY_PATH_64) -o $(BUILD_DIR_DEBUG_WIN_64) $(SOURCE_FILES) $(LINKER_FLAGS_64)

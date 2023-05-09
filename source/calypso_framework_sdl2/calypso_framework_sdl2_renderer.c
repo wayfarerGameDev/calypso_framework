@@ -4,15 +4,13 @@
 
 #pragma once
 
-// Includes
-#include <stdio.h>
-#include <stdint.h>     // uint8_t
+// Dependencies
 #include <dependencies/SDL2/SDL.h>
 #include <dependencies/SDL2/SDL_ttf.h>
 #include <dependencies/SDL2/SDL_image.h>
 
 // Logging Callback
-typedef void (*calypso_framework_sdl2_renderer_log_callback_t)(const char* log_msg, const uint8_t log_type);
+typedef void (*calypso_framework_sdl2_renderer_log_callback_t)(const char* log_msg, const unsigned char log_type);
 calypso_framework_sdl2_renderer_log_callback_t _calypso_framework_sdl2_renderer_log_callback;
 
 // State
@@ -28,10 +26,10 @@ SDL_Window* _calypso_framework_sdl2_renderer_window_ptr                     = NU
 SDL_Renderer* _calypso_framework_sdl2_renderer_renderer_ptr                 = NULL;
 
 // Clear Color (Cornflower Blue By Default)
-uint8_t _calypso_framework_sdl2_renderer_clear_color_r                      = 100;
-uint8_t _calypso_framework_sdl2_renderer_clear_color_g                      = 149;
-uint8_t _calypso_framework_sdl2_renderer_clear_color_b                      = 237;
-uint8_t _calypso_framework_sdl2_renderer_clear_color_a                      = 255;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_r                      = 100;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_g                      = 149;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_b                      = 237;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_a                      = 255;
 
 // Render Space
 #define CALYPSO_FRAMEWORK_SDL2_RENDERER_RENDER_SPACE_WORLD                  0
@@ -56,7 +54,7 @@ void calypso_framework_sdl2_renderer_set_log_callback(calypso_framework_sdl2_ren
     _calypso_framework_sdl2_renderer_log_callback = log_callback;
 }
 
-void calypso_framework_sdl2_renderer_do_log_callback(const char* log_msg, const uint8_t log_type)
+void calypso_framework_sdl2_renderer_do_log_callback(const char* log_msg, const unsigned char log_type)
 {
     if (_calypso_framework_sdl2_renderer_log_callback == NULL)
         return;
@@ -129,25 +127,25 @@ void calypso_framework_sdl2_renderer_deinit()
 Calypso Framework SDL Renderer : Draw Color
 ------------------------------------------------------------------------------*/
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgb(const uint8_t r, const uint8_t g, const uint8_t b)
+void calypso_framework_sdl2_renderer_set_draw_color_rgb(const unsigned char r, const unsigned char g, const unsigned char b)
 {
     // Set Clear Color
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, r, g, b, 255);
 }
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgba(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a)
+void calypso_framework_sdl2_renderer_set_draw_color_rgba(const unsigned char r, const unsigned char g, const unsigned char b, const unsigned char a)
 {
     // Set Clear Color
      SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, r, g, b, a);
 }
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgb_array(const uint8_t color_rgb_array[3])
+void calypso_framework_sdl2_renderer_set_draw_color_rgb_array(const unsigned char color_rgb_array[3])
 {
     // Set Clear Color
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, color_rgb_array[0], color_rgb_array[1], color_rgb_array[2], 255);
 }
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgba_array(const uint8_t color_rgba_array[4])
+void calypso_framework_sdl2_renderer_set_draw_color_rgba_array(const unsigned char color_rgba_array[4])
 {
     // Set Clear Color
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, color_rgba_array[0], color_rgba_array[1], color_rgba_array[2], color_rgba_array[3]);
@@ -156,20 +154,20 @@ void calypso_framework_sdl2_renderer_set_draw_color_rgba_array(const uint8_t col
 void calypso_framework_sdl2_renderer_set_draw_color_rgb_hex(int hex_value)
 {
     // Convert Hex Color to RGB
-    uint8_t r = ((hex_value >> 16) & 0xFF);
-    uint8_t g = ((hex_value >> 8) & 0xFF);
-    uint8_t b = ((hex_value) & 0xFF);
+    unsigned char r = ((hex_value >> 16) & 0xFF);
+    unsigned char g = ((hex_value >> 8) & 0xFF);
+    unsigned char b = ((hex_value) & 0xFF);
 
     // Set Clear Color
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, r, g, b, 255);
 }
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgba_hex(int hex_value, uint8_t a)
+void calypso_framework_sdl2_renderer_set_draw_color_rgba_hex(int hex_value, unsigned char a)
 {
     // Convert Hex Color to RGB
-    uint8_t r = ((hex_value >> 16) & 0xFF);
-    uint8_t g = ((hex_value >> 8) & 0xFF);
-    uint8_t b = ((hex_value) & 0xFF);
+    unsigned char r = ((hex_value >> 16) & 0xFF);
+    unsigned char g = ((hex_value >> 8) & 0xFF);
+    unsigned char b = ((hex_value) & 0xFF);
 
     // Set Clear Color
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, r, g, b, a);
@@ -197,7 +195,7 @@ void calypso_framework_sdl2_renderer_set_clear_color_rgba(const float r, const f
     _calypso_framework_sdl2_renderer_clear_color_a = a;
 }
 
-void calypso_framework_sdl2_renderer_set_clear_color_rgb_array(const uint8_t color_rgb_array[3])
+void calypso_framework_sdl2_renderer_set_clear_color_rgb_array(const unsigned char color_rgb_array[3])
 {
     // Set Clear Color
     _calypso_framework_sdl2_renderer_clear_color_r = color_rgb_array[0];
@@ -206,7 +204,7 @@ void calypso_framework_sdl2_renderer_set_clear_color_rgb_array(const uint8_t col
     _calypso_framework_sdl2_renderer_clear_color_a = 255;
 }
 
-void calypso_framework_sdl2_renderer_set_clear_color_rgba_array(const uint8_t color_rgba_array[4])
+void calypso_framework_sdl2_renderer_set_clear_color_rgba_array(const unsigned char color_rgba_array[4])
 {
     // Set Clear Color
     _calypso_framework_sdl2_renderer_clear_color_r = color_rgba_array[0];
@@ -218,9 +216,9 @@ void calypso_framework_sdl2_renderer_set_clear_color_rgba_array(const uint8_t co
 void calypso_framework_sdl2_renderer_set_clear_color_rgb_hex(int hex_value)
 {
     // Convert Hex Color to RGB
-    uint8_t r = ((hex_value >> 16) & 0xFF);
-    uint8_t g = ((hex_value >> 8) & 0xFF);
-    uint8_t b = ((hex_value) & 0xFF);
+    unsigned char r = ((hex_value >> 16) & 0xFF);
+    unsigned char g = ((hex_value >> 8) & 0xFF);
+    unsigned char b = ((hex_value) & 0xFF);
 
     // Set Clear Color
     _calypso_framework_sdl2_renderer_clear_color_r = r;
@@ -229,12 +227,12 @@ void calypso_framework_sdl2_renderer_set_clear_color_rgb_hex(int hex_value)
     _calypso_framework_sdl2_renderer_clear_color_a = 255;
 }
 
-void calypso_framework_sdl2_renderer_set_clear_color_rgba_hex(int hex_value, uint8_t a)
+void calypso_framework_sdl2_renderer_set_clear_color_rgba_hex(int hex_value, unsigned char a)
 {
     // Convert Hex Color to RGB
-    uint8_t r = ((hex_value >> 16) & 0xFF);
-    uint8_t g = ((hex_value >> 8) & 0xFF);
-    uint8_t b = ((hex_value) & 0xFF);
+    unsigned char r = ((hex_value >> 16) & 0xFF);
+    unsigned char g = ((hex_value >> 8) & 0xFF);
+    unsigned char b = ((hex_value) & 0xFF);
 
     // Set Clear Color
     _calypso_framework_sdl2_renderer_clear_color_r = r;
@@ -347,6 +345,9 @@ void calypso_framework_sdl2_renderer_load_font_ttf(void** font_ptr_ref, char* fi
     // Do Not Do If Not Init
     if (!TTF_WasInit())
         return;
+
+    // Free
+    free(*font_ptr_ref);
 
     // Open Font
     *font_ptr_ref = TTF_OpenFont(file_path, font_size);
@@ -523,6 +524,9 @@ Calypso Framework SDL Renderer : Render (Texture)
 
 void calypso_framework_sdl2_renderer_load_texture_bmp(void** texture_ptr_ref, char* file_path)
 {
+    // Free
+    free(*texture_ptr_ref);
+    
     // Load BMP | Create texture | Free
     SDL_Surface* surface = SDL_LoadBMP(file_path);
     *texture_ptr_ref = SDL_CreateTextureFromSurface(_calypso_framework_sdl2_renderer_renderer_ptr,surface);
@@ -530,8 +534,11 @@ void calypso_framework_sdl2_renderer_load_texture_bmp(void** texture_ptr_ref, ch
 
 void calypso_framework_sdl2_renderer_load_texture(void** texture_ptr_ref, char* file_path)
 {
-   SDL_Surface* surface =  IMG_Load(file_path);
-   *texture_ptr_ref = SDL_CreateTextureFromSurface(_calypso_framework_sdl2_renderer_renderer_ptr,surface);
+    // Free
+    free(*texture_ptr_ref);
+
+    SDL_Surface* surface =  IMG_Load(file_path);
+    *texture_ptr_ref = SDL_CreateTextureFromSurface(_calypso_framework_sdl2_renderer_renderer_ptr,surface);
 }
 
 void calypso_framework_sdl2_renderer_render_texture_i(void* texture_ptr, int x, int y)

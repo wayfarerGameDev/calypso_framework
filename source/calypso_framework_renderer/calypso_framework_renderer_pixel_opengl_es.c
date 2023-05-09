@@ -5,98 +5,96 @@
 #pragma once
 
 #include <dependencies/glad/glad.h>
-#include <stdint.h>     // uint8_t
-#include <stdbool.h>    // bool
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : Data
 ------------------------------------------------------------------------------*/
 
 // Logging Callback
-typedef void (*calypso_framework_renderer_pixel_opengl_log_callback_t)(const char* log_msg, const uint8_t log_type);
-calypso_framework_renderer_pixel_opengl_log_callback_t _calypso_framework_renderer_pixel_opengl_log_callback;
+typedef void (*calypso_framework_renderer_pixel_opengl_es_log_callback_t)(const char* log_msg, const unsigned char  log_type);
+calypso_framework_renderer_pixel_opengl_es_log_callback_t _calypso_framework_renderer_pixel_opengl_es_log_callback;
 
 // State
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_NULL                         0b00000000
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT                         0b00000001
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_ERROR                        0b00000010
-unsigned int _calypso_framework_renderer_pixel_opengl_state =                      CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_NULL;
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_NULL                         0b00000000
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT                         0b00000001
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_ERROR                        0b00000010
+unsigned int _calypso_framework_renderer_pixel_opengl_es_state =                      CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_NULL;
 
 // Open GL Version
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MAJOR_VERSION                      3
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_MINOR_VERSION                      3
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_CONTEXT_PROFILE                    3
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_MAJOR_VERSION                      3
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_MINOR_VERSION                      3
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_CONTEXT_PROFILE                    3
 
 // OpenGL Object
-unsigned int _calypso_framework_renderer_pixel_opengl_vao;
-unsigned int _calypso_framework_renderer_pixel_opengl_vbo;
-unsigned int _calypso_framework_renderer_pixel_opengl_ibo;
+unsigned int _calypso_framework_renderer_pixel_opengl_es_vao;
+unsigned int _calypso_framework_renderer_pixel_opengl_es_vbo;
+unsigned int _calypso_framework_renderer_pixel_opengl_es_ibo;
 
 // Shader Program
-unsigned int _calypso_framework_renderer_pixel_opengl_shader_program;
+unsigned int _calypso_framework_renderer_pixel_opengl_es_shader_program;
 
 // Texture
-unsigned int _calypso_framework_renderer_pixel_opengl_texture;
+unsigned int _calypso_framework_renderer_pixel_opengl_es_texture;
 
 // Pixel Buffer
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT        4 // RGBA
-typedef struct calypso_framework_renderer_pixel_opengl_pixel_buffer_t
+#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT        4 // RGBA
+typedef struct calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t
 {
     GLubyte* buffer;
     unsigned int buffer_width;
     unsigned int buffer_height;
     unsigned int buffer_length;
-} calypso_framework_renderer_pixel_opengl_pixel_buffer_t;
+} calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t;
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : Log Callback
 ------------------------------------------------------------------------------*/
 
-void calypso_framework_renderer_pixel_opengl_set_log_callback(calypso_framework_renderer_pixel_opengl_log_callback_t log_callback)
+void calypso_framework_renderer_pixel_opengl_es_set_log_callback(calypso_framework_renderer_pixel_opengl_es_log_callback_t log_callback)
 {
-    _calypso_framework_renderer_pixel_opengl_log_callback = log_callback;
+    _calypso_framework_renderer_pixel_opengl_es_log_callback = log_callback;
 }
 
-void calypso_framework_renderer_pixel_opengl_do_log_callback(const char* log_msg, const uint8_t log_type)
+void calypso_framework_renderer_pixel_opengl_es_do_log_callback(const char* log_msg, const unsigned char  log_type)
 {
-    if (_calypso_framework_renderer_pixel_opengl_log_callback == NULL)
+    if (_calypso_framework_renderer_pixel_opengl_es_log_callback == NULL)
         return;
 
-    _calypso_framework_renderer_pixel_opengl_log_callback(log_msg,log_type);
+    _calypso_framework_renderer_pixel_opengl_es_log_callback(log_msg,log_type);
 }
 
-void calypso_framework_renderer_pixel_opengl_log_graphics_card()
+void calypso_framework_renderer_pixel_opengl_es_log_graphics_card()
 {
     // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_log_graphics_card\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_log_graphics_card\n",3);
         return;
     }
 
     // Log
     const char* vendor = (const char*)glGetString(GL_VENDOR);
     const char* renderer = (const char*)glGetString(GL_RENDERER);
-    calypso_framework_renderer_pixel_opengl_do_log_callback("Graphics Card[",1);
-    calypso_framework_renderer_pixel_opengl_do_log_callback(vendor,1);
-    calypso_framework_renderer_pixel_opengl_do_log_callback(":",1);
-    calypso_framework_renderer_pixel_opengl_do_log_callback(renderer,1);
-    calypso_framework_renderer_pixel_opengl_do_log_callback("]\n",1);
+    calypso_framework_renderer_pixel_opengl_es_do_log_callback("Graphics Card[",1);
+    calypso_framework_renderer_pixel_opengl_es_do_log_callback(vendor,1);
+    calypso_framework_renderer_pixel_opengl_es_do_log_callback(":",1);
+    calypso_framework_renderer_pixel_opengl_es_do_log_callback(renderer,1);
+    calypso_framework_renderer_pixel_opengl_es_do_log_callback("]\n",1);
 }
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : Init / Deinit
 ------------------------------------------------------------------------------*/
   
-bool calypso_framework_renderer_pixel_opengl_is_init()
+int calypso_framework_renderer_pixel_opengl_es_is_init()
 {
-    return _calypso_framework_renderer_pixel_opengl_state == CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT;
+    return _calypso_framework_renderer_pixel_opengl_es_state == CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT;
 }
 
-void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, unsigned int width, unsigned int height)
+void calypso_framework_renderer_pixel_opengl_es_init(void* opengl_proc_address, unsigned int width, unsigned int height)
 {
     // Set State
-    _calypso_framework_renderer_pixel_opengl_state = CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT;
+    _calypso_framework_renderer_pixel_opengl_es_state = CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT;
 
     // OpenGL (Glad)
     gladLoadGLLoader(opengl_proc_address);
@@ -143,10 +141,10 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         glCompileShader(fragmentShader);
 
         // Create Shader Program | Link shaders
-        _calypso_framework_renderer_pixel_opengl_shader_program = glCreateProgram();
-        glAttachShader(_calypso_framework_renderer_pixel_opengl_shader_program, vertexShader);
-        glAttachShader(_calypso_framework_renderer_pixel_opengl_shader_program, fragmentShader);
-        glLinkProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
+        _calypso_framework_renderer_pixel_opengl_es_shader_program = glCreateProgram();
+        glAttachShader(_calypso_framework_renderer_pixel_opengl_es_shader_program, vertexShader);
+        glAttachShader(_calypso_framework_renderer_pixel_opengl_es_shader_program, fragmentShader);
+        glLinkProgram(_calypso_framework_renderer_pixel_opengl_es_shader_program);
 
         // Delete Shaders (No Longer Needed When Program Is Created)
         glDeleteShader(vertexShader);
@@ -177,17 +175,17 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
         };
 
         // Generate objects
-        glGenVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_vao);
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_vbo);
-        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo);
-        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao);
+        glGenVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_es_vao);
+        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_es_vbo);
+        glGenBuffers(1, &_calypso_framework_renderer_pixel_opengl_es_ibo);
+        glBindVertexArray(_calypso_framework_renderer_pixel_opengl_es_vao);
 
         // Set VBO Verticies
-        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_es_vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
         // Set Ibo Indicies
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _calypso_framework_renderer_pixel_opengl_es_ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
         // Position(XYZ) Attribute
@@ -206,8 +204,8 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
     // Texture
     {
         // Generate | Bind Texture
-        glGenTextures(1, &_calypso_framework_renderer_pixel_opengl_texture);
-        glBindTexture(GL_TEXTURE_2D, _calypso_framework_renderer_pixel_opengl_texture);
+        glGenTextures(1, &_calypso_framework_renderer_pixel_opengl_es_texture);
+        glBindTexture(GL_TEXTURE_2D, _calypso_framework_renderer_pixel_opengl_es_texture);
 
         // Texture Filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -221,31 +219,31 @@ void calypso_framework_renderer_pixel_opengl_init(void* opengl_proc_address, uns
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void calypso_framework_renderer_pixel_opengl_deinit(void)
+void calypso_framework_renderer_pixel_opengl_es_deinit(void)
 {
     // De-allocate OpenGl Object
-    glDeleteVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_vao);
-    glDeleteBuffers(1, &_calypso_framework_renderer_pixel_opengl_vbo);
-    glDeleteBuffers(1, &_calypso_framework_renderer_pixel_opengl_ibo);
+    glDeleteVertexArrays(1, &_calypso_framework_renderer_pixel_opengl_es_vao);
+    glDeleteBuffers(1, &_calypso_framework_renderer_pixel_opengl_es_vbo);
+    glDeleteBuffers(1, &_calypso_framework_renderer_pixel_opengl_es_ibo);
 
     // De-allocate OpenGl Shader Programs
-    glDeleteProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
+    glDeleteProgram(_calypso_framework_renderer_pixel_opengl_es_shader_program);
 }
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : Renderer (Pixel Buffer)
 ------------------------------------------------------------------------------*/
 
-void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int width, const int height)
+void calypso_framework_renderer_pixel_opengl_es_create_pixel_buffer(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer, const int width, const int height)
 {
     // Create Pixel Buffer
-    pixel_buffer->buffer = (GLubyte*) malloc(width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT);
+    pixel_buffer->buffer = (GLubyte*) malloc(width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT);
     pixel_buffer->buffer_width = width;
     pixel_buffer->buffer_height = height;
-    pixel_buffer->buffer_length = width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+    pixel_buffer->buffer_length = width * height * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT;
 
     // Set Default Values (White)
-    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT)
+    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT)
     {
         pixel_buffer->buffer[i] = 0;
         pixel_buffer->buffer[i + 1] = 0;
@@ -254,7 +252,7 @@ void calypso_framework_renderer_pixel_opengl_create_pixel_buffer(calypso_framewo
     }
 }
 
-void calypso_framework_renderer_pixel_opengl_free_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer)
+void calypso_framework_renderer_pixel_opengl_es_free_pixel_buffer(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer)
 {
     free(pixel_buffer->buffer);
     pixel_buffer->buffer_width = 0;
@@ -266,12 +264,12 @@ void calypso_framework_renderer_pixel_opengl_free_pixel_buffer(calypso_framework
 * \brief Set Pixel
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
+void calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer, const int x, const int y, uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
 {
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-         _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel\n",3);
+         _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel\n",3);
         return;
     }
 
@@ -280,7 +278,7 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_fram
         return;
 
     // Get Index
-    uint32_t index = ((y * pixel_buffer->buffer_width) + x) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+    uint32_t index = ((y * pixel_buffer->buffer_width) + x) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT;
 
     // Set Pixel Data
     pixel_buffer->buffer[index] = r;
@@ -293,12 +291,12 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel(calypso_fram
 * \brief Set pixel fill rect
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_pixel_fill_rect(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, const int x, const int y, const int w, const int h, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
+void calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_rect(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer, const int x, const int y, const int w, const int h, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
 {
      // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-         _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_buffer_pixel\n",3);
+         _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel\n",3);
         return;
     }
 
@@ -311,7 +309,7 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_fill_rect(calypso_framewo
                 continue;
             
             // Get Index
-            uint32_t index = ((yi * pixel_buffer->buffer_width) + xi) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT;
+            uint32_t index = ((yi * pixel_buffer->buffer_width) + xi) * CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT;
 
             // Set Pixel Data
             pixel_buffer->buffer[index] = r;
@@ -325,17 +323,17 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_fill_rect(calypso_framewo
 * \brief Set pixel fill screen
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
+void calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_screen(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer, uint_fast8_t r,uint_fast8_t g, uint_fast8_t b, uint_fast8_t a)
 {
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_screen\n",3);
         return;
     }
     
     // Set Pixel Data
-    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_PIXEL_BUFFER_CHANNEL_COUNT)
+    for (int i = 0; i < pixel_buffer->buffer_length; i+= CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_PIXEL_BUFFER_CHANNEL_COUNT)
     {
         pixel_buffer->buffer[i] = r;
         pixel_buffer->buffer[i + 1] = g;
@@ -348,32 +346,36 @@ void calypso_framework_renderer_pixel_opengl_set_pixel_fill_screen(calypso_frame
 * \brief renderer render
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_render_pixel_buffer(calypso_framework_renderer_pixel_opengl_pixel_buffer_t* pixel_buffer)
+void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer)
 {
     // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_render_pixel_buffer\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer\n",3);
         return;
     }
 
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Invalid Pixel Buffer : calypso_framework_renderer_pixel_opengl_render_pixel_buffer\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Invalid Pixel Buffer : calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer\n",3);
         return;
     }
 
     // Use Our Shader Program
-    glUseProgram(_calypso_framework_renderer_pixel_opengl_shader_program);
+    glUseProgram(_calypso_framework_renderer_pixel_opengl_es_shader_program);
 
     // Create Texture From Pixels | Bind It
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixel_buffer->buffer_width, pixel_buffer->buffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,pixel_buffer->buffer);
-    glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_texture);
+    glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_es_texture);
         
     // Render    
-    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_vao);
+    glBindVertexArray(_calypso_framework_renderer_pixel_opengl_es_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    // Unbind
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    // glBindVertexArray(0);
 }
 
 /*------------------------------------------------------------------------------
@@ -388,17 +390,17 @@ Calypso Framework Renderer Pixel OpenGL : Renderer (Clear)
 * \param a float
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_clear_color(const float r, const float g, const float b, const float a)
+void calypso_framework_renderer_pixel_opengl_es_set_clear_color(const float r, const float g, const float b, const float a)
 {
     glClearColor(r,g,b,a);
 }
 
 /**
 * \brief Set renderer's clear color by byte color array
-* \param color_array uint8_t[4]
+* \param color_array unsigned char [4]
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_set_clear_color_by_byte_color_array(const uint8_t color_array[4])
+void calypso_framework_renderer_pixel_opengl_es_set_clear_color_by_byte_color_array(const unsigned char  color_array[4])
 {
     glClearColor(color_array[0] / 255.0f,color_array[1] / 255.0f,color_array[2] / 255.0f,color_array[3] / 255.0f);
 }
@@ -407,12 +409,12 @@ void calypso_framework_renderer_pixel_opengl_set_clear_color_by_byte_color_array
 * \brief Clear renderer
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_clear()
+void calypso_framework_renderer_pixel_opengl_es_clear()
 {
     // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_clear\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_clear\n",3);
         return;
     }
 
@@ -424,25 +426,20 @@ void calypso_framework_renderer_pixel_opengl_clear()
 Calypso Framework Renderer Pixel OpenGL : Renderer (Resize)
 ------------------------------------------------------------------------------*/
 
-/**
-* \brief Resize renderer
-* \return void
-*/
-void calypso_framework_renderer_pixel_opengl_renderer_resize(const int width, const int height)
+void calypso_framework_renderer_pixel_opengl_es_renderer_resize(const int width, const int height)
 {
      // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_STATE_INIT)
+    if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_renderer_resize\n",3);
+        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_renderer_resize\n",3);
         return;
     }
 
     // Set Viewport
     glViewport(0,0,width,height);
 }
-/*
 
-------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : license
 ------------------------------------------------------------------------------
 

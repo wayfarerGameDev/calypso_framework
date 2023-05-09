@@ -4,7 +4,7 @@
 
 #pragma once
 
-// Includes
+// Dependencies
 #include <dependencies/SDL2/SDL.h>
 
 // Input States
@@ -74,7 +74,7 @@
 #define CALYPSO_FRAMEWORK_SDL2_INPUT_KEYCODE_Z                           SDL_SCANCODE_Z
 
 // Keyboard
-uint8_t _calypso_framework_sdl2_input_keycode_state_array[255];          // SDL HAS 255 KEYS
+unsigned char _calypso_framework_sdl2_input_keycode_state_array[255];          // SDL HAS 255 KEYS
 
 // Mouse
 int _calypso_framework_sdl_input_mouse_position[2]                       = {0,0};
@@ -119,11 +119,17 @@ int calypso_framework_sdl2_app_get_mouse_button_left_state_is_pressed()
     return _calypso_framework_sdl2_input_mouse_button_left_state == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
 }
 
+int calypso_framework_sdl2_app_get_mouse_button_left_state_is_released()
+{
+    return _calypso_framework_sdl2_input_mouse_button_left_state == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_RELEASED;
+}
+
+
 void calypso_framework_sdl2_input_update() 
 {
     // Keyboard State
     {
-        const uint8_t* keyboard_state = SDL_GetKeyboardState(NULL);
+        const unsigned char* keyboard_state = SDL_GetKeyboardState(NULL);
 
         for (int i = 0; i < 255; i++)
         {
@@ -170,22 +176,22 @@ void calypso_framework_sdl2_input_update()
     }
 }
 
-int calypso_framework_sdl2_input_get_key_up(const uint8_t key_code) 
+int calypso_framework_sdl2_input_get_key_up(const unsigned char key_code) 
 {
     return _calypso_framework_sdl2_input_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_UP;
 }
 
-int calypso_framework_sdl2_input_get_key_down(const uint8_t key_code) 
+int calypso_framework_sdl2_input_get_key_down(const unsigned char key_code) 
 {
     return _calypso_framework_sdl2_input_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_DOWN;
 }
 
-int calypso_framework_sdl2_input_get_key_pressed(const uint8_t key_code) 
+int calypso_framework_sdl2_input_get_key_pressed(const unsigned char key_code) 
 {
     return _calypso_framework_sdl2_input_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_PRESSED;
 }
 
-int calypso_framework_sdl2_input_get_key_released(const uint8_t key_code) 
+int calypso_framework_sdl2_input_get_key_released(const unsigned char key_code) 
 {
     return _calypso_framework_sdl2_input_keycode_state_array[key_code] == CALYPSO_FRAMEWORK_SDL2_INPUT_INPUT_STATE_RELEASED;
 }
