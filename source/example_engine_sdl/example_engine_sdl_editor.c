@@ -18,7 +18,7 @@ char* CALYPSO_ENGINE_EDITOR_STYLE_ICON_FILE_PATH                    = "content/e
 char* CALYPSO_ENGINE_EDITOR_STYLE_FONT_FILE_PATH                    = "content/example_engine_sdl/fonts/OpenSans_Regular.ttf";
 
 // Style
-void* _style_font_ptr                                                = NULL;
+void* _style_font_ptr                                               = NULL;
 int _style_font_size                                                = 13;
 int _style_cutom_titlebar_enabled                                   = 0;
 int _style_cutom_titlebar_height                                    = 30;

@@ -26,9 +26,12 @@
 #include "../calypso_framework_math/calypso_framework_math_random.c"
 
 // Calypso (Render Modules)
-#include "../calypso_framework_renderer/calypso_framework_render_module_opengl_es_bootstrap.c"
-#include "../calypso_framework_renderer/calypso_framework_renderer_quad_opengl_es.c"
-#include "../calypso_framework_renderer/calypso_framework_renderer_pixel_opengl_es.c"
+#define CALYPSO_FRAMEWORK_OPENGL_ES_SHADER_DEBUGGING_ENABLED
+#include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_core.c"
+#include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_quad.c"
+#include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_shader.c"
+#include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_texture.c"
+#include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_pixel_buffer.c"
 
 // Renderer (Viewport)
 float _renderer_viewport_projection_matrix[4][4];
@@ -47,8 +50,8 @@ unsigned int _renderer_default_shader_immediate_program;
 unsigned int _renderer_default_shader_batched_program;
 
 // Renderer (Other)
-calypso_framework_renderer_quad_opengl_es_quad_batch_t _renderer_quad_batch_textured_a;
-calypso_framework_renderer_quad_opengl_es_quad_batch_t _renderer_quad_batch_textured_b;
+calypso_framework_render_module_opengl_es_quad_batch_t _renderer_quad_batch_textured_a;
+calypso_framework_render_module_opengl_es_quad_batch_t _renderer_quad_batch_textured_b;
 calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t _renderer_pixel_buffer;
 int _renderer_pixel_buffer_x = 1024;
 int _renderer_pixel_buffer_y = 1024;
@@ -78,48 +81,34 @@ void start(void)
 
     // Init Renderer
     {
-        // Viewport Width / Height (GLFW)
-        #if(USE_GLFW_OVER_SDL)
-        calypso_framework_renderer_quad_opengl_es_init(calypso_framework_glfw_app_get_open_gl_proc_address());
-        #else
-        calypso_framework_renderer_quad_opengl_es_init(calypso_framework_sdl2_app_get_open_gl_proc_address());
-        #endif
-
+        // Init OpenGL
+        calypso_framework_render_module_opengl_es_core_init(calypso_framework_glfw_app_get_open_gl_proc_address());
+        calypso_framework_renderer_pixel_opengl_es_init(_renderer_pixel_buffer_x,_renderer_pixel_buffer_y);
 
         // Default Shader Program (Batched)
-        _renderer_default_shader_batched_program = calypso_framework_renderer_quad_opengl_es_create_default_batched_shader_program_textured();
+        _renderer_default_shader_batched_program = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_batched_quad_textured(calypso_framework_render_module_opengl_es_shader_create_shader);
        
         // Default Shader Program (Immediate)
-        _renderer_default_shader_immediate_program = calypso_framework_renderer_quad_opengl_es_create_default_immediate_shader_program();
-        calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program(_renderer_default_shader_immediate_program);
-        calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_vec4_f("color_in",_c_color_white_array[0] / 255, _c_color_white_array[1] / 255, _c_color_white_array[2] / 255, _c_color_white_array[3] / 255);
+        _renderer_default_shader_immediate_program = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_quad_immediate(calypso_framework_render_module_opengl_es_shader_create_shader);
+        calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_renderer_default_shader_immediate_program);
+        calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",_c_color_white_array[0] / 255, _c_color_white_array[1] / 255, _c_color_white_array[2] / 255, _c_color_white_array[3] / 255);
+    
+        // Pixel Buffer
+        calypso_framework_renderer_pixel_opengl_es_create_pixel_buffer(&_renderer_pixel_buffer,_renderer_pixel_buffer_x,_renderer_pixel_buffer_y);
     }
 
-    // Init Renderer (Pixel)
-    {
-        // Viewport Width / Height (GLFW)
-        #if(USE_GLFW_OVER_SDL)
-        calypso_framework_renderer_pixel_opengl_es_init(calypso_framework_glfw_app_get_open_gl_proc_address(),_renderer_pixel_buffer_x,_renderer_pixel_buffer_y);
-        #else
-        calypso_framework_renderer_pixel_opengl_es_init(calypso_framework_sdl2_app_get_open_gl_proc_address(),_renderer_pixel_buffer_x,_renderer_pixel_buffer_y);
-        #endif
-
-        // Create Pixel Buffer (Foreground | Midground)
-        calypso_framework_renderer_pixel_opengl_es_create_pixel_buffer(&_renderer_pixel_buffer,_renderer_pixel_buffer_x,_renderer_pixel_buffer_y);
-    }    
-
     // Create render Quad (Immediate)
-    calypso_framework_renderer_quad_opengl_es_create_build_quad_immediate();
+    calypso_framework_render_module_opengl_es_quad_build_quad_immediate();
 
     // Create Render Quad (Batched)
     {
         // A
-        _renderer_quad_batch_textured_a = calypso_framework_renderer_quad_opengl_es_create_quad_batch_textured();
-        calypso_framework_renderer_quad_opengl_es_set_quad_batch_data_default_textured(&_renderer_quad_batch_textured_a);
+        _renderer_quad_batch_textured_a = calypso_framework_render_module_opengl_es_quad_create_quad_batch_textured();
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured(&_renderer_quad_batch_textured_a);
 
         // B
-        _renderer_quad_batch_textured_b = calypso_framework_renderer_quad_opengl_es_create_quad_batch_textured();
-        calypso_framework_renderer_quad_opengl_es_set_quad_batch_data_default_textured(&_renderer_quad_batch_textured_b);
+        _renderer_quad_batch_textured_b = calypso_framework_render_module_opengl_es_quad_create_quad_batch_textured();
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured(&_renderer_quad_batch_textured_b);
 
         // Randomize
         {
@@ -134,7 +123,7 @@ void start(void)
             float color[4] = {0,0,0,1};
             float scale = 1;
             calypso_framework_random_rand_set_seed_as_time();
-            for (int i = 0; i < CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_QUAD_BATCH_INSTANCE_MAX_COUNT; i++)
+            for (int i = 0; i < CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT; i++)
             {
                 position[0] = calypso_framework_math_random_rand_range_i(min_width,max_width);
                 position[1] = calypso_framework_math_random_rand_range_i(min_height,max_height);
@@ -145,10 +134,11 @@ void start(void)
                 color[3] = 255.0f;
                 scale = calypso_framework_math_random_rand_range_f(1,4);
 
-                calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_transform_2d_textured(&_renderer_quad_batch_textured_a,i,position,scale);
-                calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_color_textured(&_renderer_quad_batch_textured_a,i,color);
-                // calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_texture_index_textured(&_renderer_quad_batch_textured_a,i,i%2 ? 0 : 1);
+                calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform_textured(&_renderer_quad_batch_textured_a,i,position,scale);
+                calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color_textured(&_renderer_quad_batch_textured_a,i,color);
+                // calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_texture_index_textured(&_renderer_quad_batch_textured_a,i,i%2 ? 0 : 1);
             }
+            calypso_framework_render_module_opengl_es_quad_build_quad_batch_textured(&_renderer_quad_batch_textured_a);
 
              // Set Batch Data (B)
             calypso_framework_random_rand_set_seed_as_time();
@@ -162,17 +152,12 @@ void start(void)
                 color[2] = calypso_framework_math_random_rand_range_f(10,255) / 255.0f;
                 color[3] = 255;
 
-                calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_transform_2d_textured(&_renderer_quad_batch_textured_b,i,position,4);
-                calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_color_textured(&_renderer_quad_batch_textured_b,i,color);
-                // calypso_framework_renderer_quad_opengl_es_set_quad_batch_instance_data_texture_index_textured(&_renderer_quad_batch_textured_b,i,i%2 ? 0 : 1);
+                calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform_textured(&_renderer_quad_batch_textured_b,i,position,4);
+                calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color_textured(&_renderer_quad_batch_textured_b,i,color);
+                // calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_texture_index_textured(&_renderer_quad_batch_textured_b,i,i%2 ? 0 : 1);
             }
+            calypso_framework_render_module_opengl_es_quad_build_quad_batch_textured(&_renderer_quad_batch_textured_b);
         }
-
-        // Build A
-        calypso_framework_renderer_quad_opengl_es_build_quad_batch_textured(&_renderer_quad_batch_textured_a); 
-
-        // Build B
-        calypso_framework_renderer_quad_opengl_es_build_quad_batch_textured(&_renderer_quad_batch_textured_b); 
     }
 
     // Load TGA (Test)
@@ -180,29 +165,21 @@ void start(void)
         // A
         int image_width, image_height, image_column_count;
         unsigned char* image_data = stbi_load("content/testbed/test.tga",&image_width,&image_height,&image_column_count,0);
-        _texture_a = calypso_framework_renderer_quad_opengl_es_create_texture_2d_bgra(image_data,image_width,image_height);
+        _texture_a = calypso_framework_render_module_opengl_es_shader_create_texture_2d_bgra(image_data,image_width,image_height);
         free(image_data);
 
         // B
         image_data = stbi_load("content/testbed/test.png",&image_width,&image_height,&image_column_count,0);
-        _texture_b = calypso_framework_renderer_quad_opengl_es_create_texture_2d_bgra(image_data,image_width,image_height);
+        _texture_b = calypso_framework_render_module_opengl_es_shader_create_texture_2d_bgra(image_data,image_width,image_height);
         free(image_data);
     }
-
-    calypso_framework_render_module_opengl_es_bootstrap_log_graphics_card();
 }
 
-
 void end(void)
-{
-    // Renderer
-    calypso_framework_renderer_quad_opengl_es_deinit();
-    calypso_framework_renderer_pixel_opengl_es_deinit();
-    
+{    
     // Free Pixel Buffers
     calypso_framework_renderer_pixel_opengl_es_free_pixel_buffer(&_renderer_pixel_buffer);
 }
-
 
 void update(void)
 {
@@ -241,9 +218,8 @@ void update(void)
     // Render (Start)
     {        
         // Render Start
-        const unsigned char color[4] = {10,10,10,255};
-        calypso_framework_renderer_quad_opengl_es_set_clear_color_by_byte_color_array(color); // Don't need to  do this every frame but why not
-        calypso_framework_renderer_quad_opengl_es_clear();
+        calypso_framework_render_module_opengl_es_core_set_clear_color(10,10,10,255); // Don't need to  do this every frame but why not
+        calypso_framework_render_module_opengl_es_core_clear();
     }
 
     // Render (Pixel Buffer)
@@ -265,37 +241,37 @@ void update(void)
         // A
         {
             // Bind Textures
-            calypso_framework_renderer_quad_opengl_es_bind_texture_2d(_texture_a,0);
+            calypso_framework_render_module_opengl_es_shader_bind_texture_2d(_texture_a,0);
 
             // Update Shader Program
-            calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program(_renderer_default_shader_batched_program);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0]); // Apply Viewport Projection And View
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0]); // Apply Transform
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_i("u_texture",0);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_renderer_default_shader_batched_program);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0],0); // Apply Viewport Projection And View
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0],0); // Apply Transform
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_i("u_texture",0);
 
             // Render
-            calypso_framework_renderer_quad_opengl_es_render_quad_batched_textured(&_renderer_quad_batch_textured_a);
+            calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured(&_renderer_quad_batch_textured_a);
 
             // Unbind Texture
-            calypso_framework_renderer_quad_opengl_es_unbind_texture_2d();
+            calypso_framework_render_module_opengl_es_shader_unbind_texture_2d();
         }
 
         // B
         {
             // Bind Textures
-            calypso_framework_renderer_quad_opengl_es_bind_texture_2d(_texture_b,0);
+            calypso_framework_render_module_opengl_es_shader_bind_texture_2d(_texture_b,0);
 
             // Update Shader Program
-            calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program(_renderer_default_shader_batched_program);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0]); // Apply Viewport Projection And View
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0]); // Apply Transform
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_i("u_texture",0);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_renderer_default_shader_batched_program);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0],0); // Apply Viewport Projection And View
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0],0); // Apply Transform
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_i("u_texture",0);
 
             // Render
-            calypso_framework_renderer_quad_opengl_es_render_quad_batched_textured(&_renderer_quad_batch_textured_b);
+            calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured(&_renderer_quad_batch_textured_b);
 
             // Unbind Texture
-            calypso_framework_renderer_quad_opengl_es_unbind_texture_2d();
+            calypso_framework_render_module_opengl_es_shader_unbind_texture_2d();
         }
     }
 
@@ -309,13 +285,13 @@ void update(void)
             calypso_framework_math_matrix4_modify_position_f(0,0,10,_renderer_model_matrix);
 
             // Update Shader Program
-            calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program(_renderer_default_shader_immediate_program);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0]); // Apply Viewport Projection And View
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_vec4_f("color_in",_c_color_red_array[0] / 255, _c_color_red_array[1] / 255, _c_color_red_array[2] / 255, _c_color_red_array[3] / 255);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0]); // Apply Transform
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_renderer_default_shader_immediate_program);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0],0); // Apply Viewport Projection And View
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",_c_color_red_array[0] / 255, _c_color_red_array[1] / 255, _c_color_red_array[2] / 255, _c_color_red_array[3] / 255);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0],0); // Apply Transform
 
             // Render
-            calypso_framework_renderer_quad_opengl_es_render_quad_immediate();
+            calypso_framework_render_module_opengl_es_quad_render_quad_immediate();
         }
 
         // Entity (Yellow)
@@ -326,13 +302,13 @@ void update(void)
             calypso_framework_math_matrix4_modify_position_f(100,100,20,_renderer_model_matrix);
 
             // Update Shader Program
-            calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program(_renderer_default_shader_immediate_program);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0]); // Apply Viewport Projection And View
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_vec4_f("color_in",_c_color_yellow_array[0] / 255, _c_color_yellow_array[1] / 255, _c_color_yellow_array[2] / 255, _c_color_yellow_array[3] / 255);
-            calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0]); // Apply Transform
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_renderer_default_shader_immediate_program);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_renderer_projection_view_matrix[0],0); // Apply Viewport Projection And View
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",_c_color_yellow_array[0] / 255, _c_color_yellow_array[1] / 255, _c_color_yellow_array[2] / 255, _c_color_yellow_array[3] / 255);
+            calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_renderer_model_matrix[0],0); // Apply Transform
     
             // Render
-            calypso_framework_renderer_quad_opengl_es_render_quad_immediate();
+            calypso_framework_render_module_opengl_es_quad_render_quad_immediate();
         }
     }
 }
@@ -350,15 +326,14 @@ void resize(void)
     _renderer_viewport_height = calypso_framework_sdl2_app_get_window_height();
     #endif
 
-    calypso_framework_renderer_quad_opengl_es_renderer_resize(_renderer_viewport_width,_renderer_viewport_height);
-    // calypso_framework_renderer_pixel_opengl_es_renderer_resize(_renderer_viewport_width,_renderer_viewport_height); // Only Need To Do It On One
+    calypso_framework_render_module_opengl_es_core_set_viewport(_renderer_viewport_width,_renderer_viewport_height);
 }
 
 int main(int argc, char** argv)
 {
     // App (GLFW)
     #if(USE_GLFW_OVER_SDL)
-    calypso_framework_glfw_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_CONTEXT_PROFILE);
+    calypso_framework_glfw_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_CONTEXT_PROFILE);
     calypso_framework_glfw_app_set_title("Testbed : Renderer OpenglES (GLFW)");
     calypso_framework_glfw_app_set_events(start,end,update,resize);
     calypso_framework_glfw_app_set_window_resizable(1);
@@ -366,7 +341,7 @@ int main(int argc, char** argv)
     
     #else
     // App (SDL)
-    calypso_framework_sdl2_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_CONTEXT_PROFILE);
+    calypso_framework_sdl2_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_BOOTSTRAP_CONTEXT_PROFILE);
     calypso_framework_sdl2_app_set_title("Testbed : Renderer2D OpenglES (SDL)");
     calypso_framework_sdl2_app_set_events(start,end,update,resize);
     calypso_framework_sdl2_app_run();
