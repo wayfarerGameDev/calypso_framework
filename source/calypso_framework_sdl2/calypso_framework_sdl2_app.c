@@ -8,10 +8,6 @@
 #include <stdio.h> // snprintf
 #include <dependencies/SDL2/SDL.h>
 
-// Logging Callback
-typedef void (*calypso_framework_sdl2_app_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_sdl2_app_log_callback_t _calypso_framework_sdl2_app_log_callback;
-
 // State
 #define CALYPSO_FRAMEWORK_SDL2_APP_STATE_NULL                 0b00000000
 #define CALYPSO_FRAMEWORK_SDL2_APP_STATE_INIT                 0b00000001
@@ -45,23 +41,6 @@ int _calypso_framework_sdl2_app_custom_toolbar_height         = -1;
 
 
 /*------------------------------------------------------------------------------
-Calypso Framework SDL App : Log
-------------------------------------------------------------------------------*/
-
-void calypso_framework_sdl2_app_set_log_callback(calypso_framework_sdl2_app_log_callback_t log_callback)
-{
-    _calypso_framework_sdl2_app_log_callback = log_callback;
-}
-
-void calypso_framework_sdl2_app_do_log_callback(const char* log_msg, const unsigned char log_type)
-{
-    if (_calypso_framework_sdl2_app_log_callback == NULL)
-        return;
-
-    _calypso_framework_sdl2_app_log_callback(log_msg,log_type);
-}
-
-/*------------------------------------------------------------------------------
 Calypso Framework SDL App : Title
 ------------------------------------------------------------------------------*/
 
@@ -75,14 +54,15 @@ void calypso_framework_sdl2_app_set_icon_by_surface(SDL_Surface* surface_ptr)
     // Return If Icon Is NULL
     if (surface_ptr == NULL)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: Failed To Set Window Icon",3);
-        return;
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app","Failed to set window icon",3);
+        #endif
     }
 
     SDL_SetWindowIcon(_calypso_framework_sdl2_app_window_ptr,surface_ptr);
 }
 
-void calypso_framework_sdl2_app_set_icon_bmp( char* file_path)
+void calypso_framework_sdl2_app_set_icon_bmp(char* file_path)
 {
     // Load BMP | Create texture | Free
     SDL_Surface* surface = SDL_LoadBMP(file_path);
@@ -90,8 +70,9 @@ void calypso_framework_sdl2_app_set_icon_bmp( char* file_path)
     // Return If Icon Is NULL
     if (surface == NULL)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: Failed To Set Window Icon\n",3);
-        return;
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app","Failed to set window icon",3);
+        #endif
     }
 
     SDL_SetWindowIcon(_calypso_framework_sdl2_app_window_ptr,surface);
@@ -111,7 +92,9 @@ int calypso_framework_sdl2_app_get_window_width(void)
      // Not Valid Group
     if (!_calypso_framework_sdl2_app_window_ptr)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: Failed to get window width (window is NULL)\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app","Failed to get window width (window is NULL)",3);
+        #endif
         return 0;
     }
 
@@ -126,7 +109,9 @@ int calypso_framework_sdl2_app_get_window_height(void)
      // Not Valid Group
     if (!_calypso_framework_sdl2_app_window_ptr)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: Failed to get window height (window is NULL)\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app","Failed to get window height (window is NULL)",3);
+        #endif
         return 0;
     }
 
@@ -231,7 +216,9 @@ void calypso_framework_sdl2_app_init()
     // Only Init Once
     if (_calypso_framework_sdl2_app_state != CALYPSO_FRAMEWORK_SDL2_APP_STATE_NULL)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: App already init\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init","Already initalized",2);
+        #endif
         return;
     }
 
@@ -241,9 +228,10 @@ void calypso_framework_sdl2_app_init()
     // Init SDL (Everything)
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: SDL failed to initialize\n",3);
-        calypso_framework_sdl2_app_do_log_callback(SDL_GetError(),3);
-        calypso_framework_sdl2_app_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init","Failed to initalize",3);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+        #endif
         _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR;
         return;
     }
@@ -252,9 +240,10 @@ void calypso_framework_sdl2_app_init()
     _calypso_framework_sdl2_app_window_ptr = SDL_CreateWindow("App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CALYPSO_FRAMEWORK_SDL2_APP_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_SDL2_APP_SCREEN_HEIGHT_DEFAULT,SDL_WINDOW_OPENGL);
     if(!_calypso_framework_sdl2_app_window_ptr)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: SDL failed to create window\n",3);
-        calypso_framework_sdl2_app_do_log_callback(SDL_GetError(),3);
-        calypso_framework_sdl2_app_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init","Failed to initalize",3);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+        #endif
         _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR;
         return;
     }
@@ -280,7 +269,9 @@ void calypso_framework_sdl2_app_init_with_opengl(const int major_version, const 
     // Only Init Once
     if (_calypso_framework_sdl2_app_state != CALYPSO_FRAMEWORK_SDL2_APP_STATE_NULL)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: App already init\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init_with_opengl","Already initalized",2);
+        #endif
         return;
     }
 
@@ -290,9 +281,10 @@ void calypso_framework_sdl2_app_init_with_opengl(const int major_version, const 
     // Init SDL (Everything)
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: SDL failed to initialize\n",3);
-        calypso_framework_sdl2_app_do_log_callback(SDL_GetError(),3);
-        calypso_framework_sdl2_app_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init_with_opengl","Failed to initalize",3);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+        #endif
         _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR;
         return;
     }
@@ -301,9 +293,10 @@ void calypso_framework_sdl2_app_init_with_opengl(const int major_version, const 
     _calypso_framework_sdl2_app_window_ptr = SDL_CreateWindow("App", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CALYPSO_FRAMEWORK_SDL2_APP_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_SDL2_APP_SCREEN_HEIGHT_DEFAULT,SDL_WINDOW_OPENGL);
     if(!_calypso_framework_sdl2_app_window_ptr)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: SDL failed to create window\n",3);
-        calypso_framework_sdl2_app_do_log_callback(SDL_GetError(),3);
-        calypso_framework_sdl2_app_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init_with_opengl","Failed to initalize",3);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+        #endif
         _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR;
         return;
     }
@@ -313,9 +306,10 @@ void calypso_framework_sdl2_app_init_with_opengl(const int major_version, const 
         _calypso_framework_sdl2_app_gl_context_ptr = SDL_GL_CreateContext(_calypso_framework_sdl2_app_window_ptr);
         if (!_calypso_framework_sdl2_app_gl_context_ptr)
         {
-            calypso_framework_sdl2_app_do_log_callback("App: SDL failed to create opengl context\n",3);
-            calypso_framework_sdl2_app_do_log_callback(SDL_GetError(),3);
-            calypso_framework_sdl2_app_do_log_callback("\n",3);
+            #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+            CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->init_with_opengl","Failed to initalize",3);
+            CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+            #endif
             _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_ERROR;
             return;
         }
@@ -394,7 +388,10 @@ void calypso_framework_sdl2_app_run(void)
             int len = snprintf(_calypso_framework_sdl2_app_time_fps_as_string, sizeof(_calypso_framework_sdl2_app_time_fps_as_string), "%.2f", 1.0 / _calypso_framework_sdl2_app_time_delta_time);
             if (len < 0 || len >= sizeof(_calypso_framework_sdl2_app_time_fps_as_string)) 
             {
-                calypso_framework_sdl2_app_do_log_callback("FPS String Is Invalid",2);
+                #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+                CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->run","FPS string is invalid.",2);
+                CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
+                #endif
             }
 
         }

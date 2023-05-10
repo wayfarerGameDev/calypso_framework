@@ -8,26 +8,6 @@
 #include <stdlib.h>     // free, realloc
 #include <stdio.h>      // File
 
-// Logging Callback
-typedef void (*calypso_framework_io_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_io_log_callback_t _calypso_framework_io_log_callback;
-
-/*------------------------------------------------------------------------------
-Calypso Framework IO(File) : Log
-------------------------------------------------------------------------------*/
-
-void calypso_framework_io_file_set_log_callback(calypso_framework_io_log_callback_t log_callback)
-{
-    _calypso_framework_io_log_callback = log_callback;
-}
-
-void calypso_framework_io_file_do_log_callback(const char* log_msg, const unsigned char log_type)
-{
-    if (_calypso_framework_io_log_callback == NULL)
-        return;
-
-    _calypso_framework_io_log_callback(log_msg,log_type);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework IO(File) : Read
@@ -44,9 +24,9 @@ char* calypso_framework_io_file_read(const char* file_path)
 	FILE *file_ptr = fopen(file_path, "rb");
 	if (!file_ptr || ferror(file_ptr)) 
     {
-        calypso_framework_io_file_do_log_callback("IO: Could not read file (does not exist): ",3);
-        calypso_framework_io_file_do_log_callback(file_path,3);
-        calypso_framework_io_file_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (does not exist)",3);
+        #endif
         return ((void*)0);;
 	}
 
@@ -65,10 +45,9 @@ char* calypso_framework_io_file_read(const char* file_path)
 			if (size <= used) 
             {
 				free(data);
-
-                calypso_framework_io_file_do_log_callback("IO_File: Could not read file (file too large): ",3);
-                calypso_framework_io_file_do_log_callback(file_path,3);
-                calypso_framework_io_file_do_log_callback("\n",3);
+                #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+                CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (file to large):",3);
+                #endif
                 return data;
 			}
 
@@ -76,10 +55,9 @@ char* calypso_framework_io_file_read(const char* file_path)
 			if (!tmp) 
             {
 				free(data);
-
-				calypso_framework_io_file_do_log_callback("IO_File: Could not read file (not enough free memory to read file:): ",3);
-                calypso_framework_io_file_do_log_callback(file_path,3);
-                calypso_framework_io_file_do_log_callback("\n",3);
+                #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+                CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (not enough free memory to read file)",3);
+                #endif
                 return 0;
 			}
 			data = tmp;
@@ -95,9 +73,9 @@ char* calypso_framework_io_file_read(const char* file_path)
 	if (ferror(file_ptr)) 
     {
 		free(data);
-        calypso_framework_io_file_do_log_callback("IO_File: Could not read file (file too large): ",3);
-        calypso_framework_io_file_do_log_callback(file_path,3);
-        calypso_framework_io_file_do_log_callback("\n",3);		
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (file to large)",3);
+        #endif	
         return 0;
 	}
 
@@ -105,9 +83,9 @@ char* calypso_framework_io_file_read(const char* file_path)
 	if (!tmp) 
     {
 		free(data);
-		calypso_framework_io_file_do_log_callback("IO_Flie: Could not read file (not enough free memory to read file:): ",3);
-        calypso_framework_io_file_do_log_callback(file_path,3);
-        calypso_framework_io_file_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (not enough free memory to read file",3);
+        #endif
         return 0;
 	}
 
@@ -126,18 +104,18 @@ int io_file_write(const char* file_path, void *data_buffer, size_t size)
 	FILE *file_ptr = fopen(file_path, "wb");
 	if (!file_ptr || ferror(file_ptr)) 
     {
-        calypso_framework_io_file_do_log_callback("IO_File: Could not read file (does not exist): ",3);
-        calypso_framework_io_file_do_log_callback(file_path,3);
-        calypso_framework_io_file_do_log_callback("\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Could not read file (does not exist)",3);
+        #endif
 	}
 
     // Write FIle
 	size_t chunks_written = fwrite(data_buffer, size, 1, file_ptr);
     if (chunks_written != 1)
-     {
-        calypso_framework_io_file_do_log_callback("IO_File: Write error: ",3);
-        calypso_framework_io_file_do_log_callback(file_path,3);
-        calypso_framework_io_file_do_log_callback("\n",3);
+    {
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("io_file","Write error",3);
+        #endif
 	}
     
     // Close File

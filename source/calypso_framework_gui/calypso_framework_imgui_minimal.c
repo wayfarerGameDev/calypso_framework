@@ -4,10 +4,6 @@
 
 #pragma once
 
-// Logging Callback
-typedef void (*calypso_framework_imgui_minimal_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_imgui_minimal_log_callback_t _calypso_framework_imgui_minimal_log_callback;
-
 // Callback
 typedef void (*calypso_framework_imgui_minimal_int_callback_t)(int hex_value);
 typedef void (*calypso_framework_imgui_minimal_set_font_callback_t)(void* void_ptr);
@@ -41,22 +37,6 @@ int _calypso_framework_imgui_minimal_style_active_secondary_color_pair[2]       
 int _calypso_framework_imgui_minimal_style_focused_color_pair[2]                          = {0x500000,0xffffff};
 int _calypso_framework_imgui_minimal_style_focused_secondary_color_pair[2]                = {0x500000,0xffffff};
 
-/*------------------------------------------------------------------------------
-Calypso Framework Imgui(Minimal) : Log
-------------------------------------------------------------------------------*/
-
-void calypso_framework_imgui_minimal_set_log_callback(calypso_framework_imgui_minimal_log_callback_t log_callback)
-{
-    _calypso_framework_imgui_minimal_log_callback = log_callback;
-}
-
-void calypso_framework_imgui_minimal_do_log_callback(const char* log_msg, const unsigned char log_type)
-{
-    if (_calypso_framework_imgui_minimal_log_callback == ((void*)0))
-        return;
-
-    _calypso_framework_imgui_minimal_log_callback(log_msg,log_type);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework Imgui(Minimal) : Callbacks

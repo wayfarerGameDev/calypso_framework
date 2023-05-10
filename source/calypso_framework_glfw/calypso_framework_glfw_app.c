@@ -8,10 +8,6 @@
 #include <stdio.h> //snprintf
 #include <dependencies/GLFW/glfw3.h>
 
-// Logging Callback
-typedef void (*calypso_framework_glfw_app_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_glfw_app_log_callback_t _calypso_framework_glfw_app_log_callback;
-
 // State
 #define CALYPSO_FRAMEWORK_GLFW_APP_STATE_NULL                 0b00000000
 #define CALYPSO_FRAMEWORK_GLFW_APP_STATE_INIT                 0b00000001
@@ -37,23 +33,6 @@ calypso_framework_glfw_app_event_t _calypso_framework_glfw_app_event_on_shutdown
 calypso_framework_glfw_app_event_t _calypso_framework_glfw_app_event_on_update;
 calypso_framework_glfw_app_event_t _calypso_framework_glfw_app_event_on_resize;
 
-
-/*------------------------------------------------------------------------------
-Calypso Framework GLFW App : Log
-------------------------------------------------------------------------------*/
-
-void calypso_framework_glfw_app_set_log_callback(calypso_framework_glfw_app_log_callback_t log_callback)
-{
-    _calypso_framework_glfw_app_log_callback = log_callback;
-}
-
-void calypso_framework_glfw_app_do_log_callback(const char* log_msg, const unsigned char log_type)
-{
-    if (_calypso_framework_glfw_app_log_callback == ((void *)0))
-        return;
-
-    _calypso_framework_glfw_app_log_callback(log_msg,log_type);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework GLFW App : Title
@@ -94,7 +73,9 @@ int calypso_framework_glfw_app_get_window_width(void)
      // Not Valid Group
     if (!_calypso_framework_glfw_app_window)
     {
-        calypso_framework_glfw_app_do_log_callback("App: Failed to get window width (window is NULL)\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app","Failed to get window width (window is NULL)",3);
+        #endif
         return 0;
     }
 
@@ -109,7 +90,9 @@ int calypso_framework_glfw_app_get_window_height(void)
      // Not Valid Group
     if (!_calypso_framework_glfw_app_window)
     {
-        calypso_framework_glfw_app_do_log_callback("App: Failed to get window height (window is NULL)\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app","Failed to get window height (window is NULL)",3);
+        #endif
         return 0;
     }
 
@@ -168,7 +151,9 @@ void calypso_framework_glfw_app_init_with_opengl(const int major_version, const 
     // Only Init Once
     if (_calypso_framework_glfw_app_state != CALYPSO_FRAMEWORK_GLFW_APP_STATE_NULL)
     {
-        calypso_framework_glfw_app_do_log_callback("App: App already init\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app->init_with_opengl","Already initialized",2);
+        #endif
         return;
     }
 
@@ -178,9 +163,10 @@ void calypso_framework_glfw_app_init_with_opengl(const int major_version, const 
     // Init GLFW (Everything)
     if(!glfwInit())
     {
-        calypso_framework_glfw_app_do_log_callback("App: GLFW failed to initialize\n",3);
-        //calypso_framework_glfw_app_do_log_callback(GLFW_ERRO),3);
-        //calypso_framework_glfw_app_do_log_callback("\n",3);
+         #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app->init_with_opengl","Failed to initialize",3);
+        #endif
+        glfwTerminate();
         _calypso_framework_glfw_app_state = CALYPSO_FRAMEWORK_GLFW_APP_STATE_ERROR;
         return;
     }
@@ -189,10 +175,10 @@ void calypso_framework_glfw_app_init_with_opengl(const int major_version, const 
     _calypso_framework_glfw_app_window  = glfwCreateWindow(CALYPSO_FRAMEWORK_GLFW_APP_SCREEN_WIDTH_DEFAULT, CALYPSO_FRAMEWORK_GLFW_APP_SCREEN_HEIGHT_DEFAULT, "App", NULL, NULL);
     if(!_calypso_framework_glfw_app_window)
     {
-        calypso_framework_glfw_app_do_log_callback("App: GLFW failed to create window\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app->init_with_opengl","Failed to create window",3);
+        #endif
         glfwTerminate();
-        //calypso_framework_glfw_app_do_log_callback(GLFW_GetError(),3);
-        //calypso_framework_glfw_app_do_log_callback("\n",3);
         _calypso_framework_glfw_app_state = CALYPSO_FRAMEWORK_GLFW_APP_STATE_ERROR;
         return;
     }
@@ -263,7 +249,9 @@ void calypso_framework_glfw_app_run(void)
             int len = snprintf(_calypso_framework_glfw_app_time_fps_as_string, sizeof(_calypso_framework_glfw_app_time_fps_as_string), "%.2f", 1.0 / _calypso_framework_glfw_app_time_delta_time);
             if (len < 0 || len >= sizeof(_calypso_framework_glfw_app_time_fps_as_string)) 
             {
-                calypso_framework_glfw_app_do_log_callback("FPS String Is Invalid",2);
+                #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+                CALYPSO_FRAMEWORK_LOG_MESSAGE("glfw_app->run","FPS string(char*) is invalid",2);
+                #endif
             }
         }
 

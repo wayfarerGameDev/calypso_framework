@@ -2,8 +2,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-// Enable 64 Bit Precision
-typedef float calypso_framework_float_double_t;
+// Calypso (Logging)
+#define CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+#include "../calypso_framework_misc/calypso_framework_log.c"
 
 // Calypso (SDL or GLFW)
 #define USE_GLFW_OVER_SDL 1
@@ -15,12 +16,17 @@ typedef float calypso_framework_float_double_t;
 #include "../calypso_framework_sdl2/calypso_framework_sdl2_input.c"
 #endif
 
-// Calypso
+// Calypso (IO)
 #include "../calypso_framework_io/calypso_framework_io_file.c"
 #include "../calypso_framework_io/calypso_framework_io_tga.c"
+
+// Calypso (Math)
 #include "../calypso_framework_math/calypso_framework_math_colors.c"
 #include "../calypso_framework_math/calypso_framework_math_matrix4.c"
 #include "../calypso_framework_math/calypso_framework_math_random.c"
+
+// Calypso (Render Modules)
+#include "../calypso_framework_renderer/calypso_framework_render_module_opengl_es_bootstrap.c"
 #include "../calypso_framework_renderer/calypso_framework_renderer_quad_opengl_es.c"
 #include "../calypso_framework_renderer/calypso_framework_renderer_pixel_opengl_es.c"
 
@@ -56,25 +62,6 @@ const unsigned char* _c_color_white_array = _calypso_framework_math_colors_color
 const unsigned char* _c_color_red_array = _calypso_framework_math_colors_color_rgba_red;
 const unsigned char* _c_color_yellow_array = _calypso_framework_math_colors_color_rgba_yellow;
 
-
-void log_msg(const char* log_msg, const unsigned char log_type)
-{
-    // Color Log
-    if (log_type == 1)
-        printf("\033[0;32m"); // Green
-    else if (log_type == 2)
-        printf("\033[33m"); // Yellow
-    else if (log_type == 3)
-        printf("\033[0;31m"); // Red
-    else 
-        printf("\033[0;00m"); // White
-    
-    // Log
-    printf(log_msg);
-
-    // Reset Log
-    printf("\033[0;00m"); // White
-}
 
 void start(void)
 {
@@ -201,6 +188,8 @@ void start(void)
         _texture_b = calypso_framework_renderer_quad_opengl_es_create_texture_2d_bgra(image_data,image_width,image_height);
         free(image_data);
     }
+
+    calypso_framework_render_module_opengl_es_bootstrap_log_graphics_card();
 }
 
 
@@ -367,12 +356,8 @@ void resize(void)
 
 int main(int argc, char** argv)
 {
-    // Logging
-    calypso_framework_renderer_quad_opengl_es_set_log_callback(log_msg);
-
     // App (GLFW)
     #if(USE_GLFW_OVER_SDL)
-    calypso_framework_glfw_app_set_log_callback(log_msg);
     calypso_framework_glfw_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_CONTEXT_PROFILE);
     calypso_framework_glfw_app_set_title("Testbed : Renderer OpenglES (GLFW)");
     calypso_framework_glfw_app_set_events(start,end,update,resize);
@@ -381,7 +366,6 @@ int main(int argc, char** argv)
     
     #else
     // App (SDL)
-    calypso_framework_sdl2_app_set_log_callback(log_msg);
     calypso_framework_sdl2_app_init_with_opengl(CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_MAJOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_MINOR_VERSION,CALYPSO_FRAMEWORK_RENDERER_2D_OPENGL_ES_CONTEXT_PROFILE);
     calypso_framework_sdl2_app_set_title("Testbed : Renderer2D OpenglES (SDL)");
     calypso_framework_sdl2_app_set_events(start,end,update,resize);

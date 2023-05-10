@@ -10,20 +10,11 @@
 Calypso Framework Renderer Pixel OpenGL : Data
 ------------------------------------------------------------------------------*/
 
-// Logging Callback
-typedef void (*calypso_framework_renderer_pixel_opengl_es_log_callback_t)(const char* log_msg, const unsigned char  log_type);
-calypso_framework_renderer_pixel_opengl_es_log_callback_t _calypso_framework_renderer_pixel_opengl_es_log_callback;
-
 // State
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_NULL                         0b00000000
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT                         0b00000001
 #define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_ERROR                        0b00000010
 unsigned int _calypso_framework_renderer_pixel_opengl_es_state =                      CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_NULL;
-
-// Open GL Version
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_MAJOR_VERSION                      3
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_MINOR_VERSION                      3
-#define CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_CONTEXT_PROFILE                    3
 
 // OpenGL Object
 unsigned int _calypso_framework_renderer_pixel_opengl_es_vao;
@@ -46,41 +37,6 @@ typedef struct calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t
     unsigned int buffer_length;
 } calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t;
 
-/*------------------------------------------------------------------------------
-Calypso Framework Renderer Pixel OpenGL : Log Callback
-------------------------------------------------------------------------------*/
-
-void calypso_framework_renderer_pixel_opengl_es_set_log_callback(calypso_framework_renderer_pixel_opengl_es_log_callback_t log_callback)
-{
-    _calypso_framework_renderer_pixel_opengl_es_log_callback = log_callback;
-}
-
-void calypso_framework_renderer_pixel_opengl_es_do_log_callback(const char* log_msg, const unsigned char  log_type)
-{
-    if (_calypso_framework_renderer_pixel_opengl_es_log_callback == NULL)
-        return;
-
-    _calypso_framework_renderer_pixel_opengl_es_log_callback(log_msg,log_type);
-}
-
-void calypso_framework_renderer_pixel_opengl_es_log_graphics_card()
-{
-    // Check If We Are Init
-    if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
-    {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_log_graphics_card\n",3);
-        return;
-    }
-
-    // Log
-    const char* vendor = (const char*)glGetString(GL_VENDOR);
-    const char* renderer = (const char*)glGetString(GL_RENDERER);
-    calypso_framework_renderer_pixel_opengl_es_do_log_callback("Graphics Card[",1);
-    calypso_framework_renderer_pixel_opengl_es_do_log_callback(vendor,1);
-    calypso_framework_renderer_pixel_opengl_es_do_log_callback(":",1);
-    calypso_framework_renderer_pixel_opengl_es_do_log_callback(renderer,1);
-    calypso_framework_renderer_pixel_opengl_es_do_log_callback("]\n",1);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer Pixel OpenGL : Init / Deinit
@@ -269,7 +225,9 @@ void calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel(calypso_f
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-         _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->set_pixel_buffer","Pixel buffer is not valid",3);
+        #endif
         return;
     }
 
@@ -296,7 +254,9 @@ void calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_rect(calypso_fram
      // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-         _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_buffer_pixel\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->fill_rect","Pixel buffer is not valid",3);
+        #endif
         return;
     }
 
@@ -328,7 +288,9 @@ void calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_screen(calypso_fr
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_screen\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->set_pixel_fill_screen","Pixel buffer is not valid",3);
+        #endif
         return;
     }
     
@@ -351,14 +313,18 @@ void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_fram
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->render_pixel_buffer","Not Init",3);
+        #endif
         return;
     }
 
     // Check If Pixel Buffer Is Valid
     if (pixel_buffer->buffer_width <= 0 || pixel_buffer->buffer_height <= 0 || pixel_buffer->buffer_length <= 0)
     {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Invalid Pixel Buffer : calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->render_pixel_buffer","Pixel buffer is not valid",3);
+        #endif
         return;
     }
 
@@ -374,9 +340,10 @@ void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_fram
     int location = glGetUniformLocation(_calypso_framework_renderer_pixel_opengl_es_shader_program,uniform_texture_parameter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_pixel_opengl_es_do_log_callback("Renderer: Can't set shader program paramater float(",2);
-        calypso_framework_renderer_pixel_opengl_es_do_log_callback(uniform_texture_parameter_name,2);
-        calypso_framework_renderer_pixel_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->render_pixel_buffer","Can't set shader program paramater float",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",uniform_texture_parameter_name,2);
+        #endif
         return;
     }
     glUniform1i(location,texture_slot);
@@ -422,7 +389,9 @@ void calypso_framework_renderer_pixel_opengl_es_clear()
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_clear\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->clear","Renderer not initalized.",3);
+        #endif
         return;
     }
 
@@ -439,7 +408,9 @@ void calypso_framework_renderer_pixel_opengl_es_renderer_resize(const int width,
      // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_pixel_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_pixel_opengl_es_renderer_resize\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_pixel->resize","Renderer not initalized.",3);
+        #endif
         return;
     }
 

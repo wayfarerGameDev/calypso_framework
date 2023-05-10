@@ -11,10 +11,6 @@
 Calypso Framework Renderer 2D OpenGL : Data
 ------------------------------------------------------------------------------*/
 
-// Logging Callback
-typedef void (*calypso_framework_renderer_quad_opengl_es_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_renderer_quad_opengl_es_log_callback_t _calypso_framework_renderer_quad_opengl_es_log_callback;
-
 // State
 #define CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_STATE_NULL                         0b00000000
 #define CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_STATE_INIT                         0b00000001
@@ -50,41 +46,6 @@ unsigned int _calypso_framework_renderer_quad_opengl_es_current_program;
 
 // Other
 int _calypso_framework_renderer_quad_opengl_es_transpose_matrix =                    0;
-
-/*------------------------------------------------------------------------------
-Calypso Framework Renderer 2D OpenGL : Log Callback
-------------------------------------------------------------------------------*/
-
-void calypso_framework_renderer_quad_opengl_es_set_log_callback(calypso_framework_renderer_quad_opengl_es_log_callback_t log_callback)
-{
-    _calypso_framework_renderer_quad_opengl_es_log_callback = log_callback;
-}
-
-void calypso_framework_renderer_quad_opengl_es_do_log_callback(const char* log_msg, const unsigned char  log_type)
-{
-    if (_calypso_framework_renderer_quad_opengl_es_log_callback == NULL)
-        return;
-
-    _calypso_framework_renderer_quad_opengl_es_log_callback(log_msg,log_type);
-}
-
-void calypso_framework_renderer_quad_opengl_es_log_graphics_card()
-{
-    // Check If We Are Init
-    if (_calypso_framework_renderer_quad_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_STATE_INIT)
-    {
-        _calypso_framework_renderer_quad_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_quad_opengl_es_log_graphics_card\n",3);
-        return;
-    }
-
-    // Log
-    const char* vendor = (const char*)glGetString(GL_VENDOR);
-    const char* renderer = (const char*)glGetString(GL_RENDERER);
-    calypso_framework_renderer_quad_opengl_es_do_log_callback("Graphics Card\n",1);
-    calypso_framework_renderer_quad_opengl_es_do_log_callback(vendor,1);
-    calypso_framework_renderer_quad_opengl_es_do_log_callback("\n",1);
-    calypso_framework_renderer_quad_opengl_es_do_log_callback(renderer,1);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework Renderer 2D OpenGL : Init / Deinit
@@ -142,11 +103,17 @@ unsigned int calypso_framework_renderer_quad_opengl_es_compile_shader(const char
 
         // log
         if (shader_type == GL_VERTEX_SHADER)
-            calypso_framework_renderer_quad_opengl_es_do_log_callback("Render: Vertex Shader (ERROR)\n",3);
+        {
+            #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+            CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad->compile_shader","Vertex Shader(ERROR)",3);
+            #endif
+        }
         if (shader_type == GL_FRAGMENT_SHADER)
-            calypso_framework_renderer_quad_opengl_es_do_log_callback("Render: Fragm9ent Shader (ERROR)\n",3);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(log_message,3);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("\n",0);
+        {
+            #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+            CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad->compile_shader","Fragment Shader(ERROR)",3);
+            #endif
+        }
     }
 
     // Return Shader ID
@@ -874,14 +841,15 @@ void calypso_framework_renderer_quad_opengl_es_set_current_render_shader_program
     _calypso_framework_renderer_quad_opengl_es_current_program = shader_program;
 }
 
-void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_i(char* texture_parameter_name, const int value)
+void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parameter_i(char* parameter_name, const int value)
 {
-    int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,texture_parameter_name);
+    int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,parameter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater float(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(texture_parameter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater int",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",parameter_name,2);
+        #endif
         return;
     }
 
@@ -893,9 +861,10 @@ void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parame
     int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,paramter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater float(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(paramter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater float",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",paramter_name,2);
+        #endif
         return;
     }
 
@@ -907,10 +876,12 @@ void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parame
     int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,paramter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater vec2f(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(paramter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater vec2_f",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",paramter_name,2);
+        #endif
         return;
+    
     }
 
     glUniform2f(location,v0,v1);
@@ -921,9 +892,10 @@ void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parame
     int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,paramter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater vec3f(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(paramter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater vec3_f",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",paramter_name,2);
+        #endif
         return;
     }
 
@@ -935,9 +907,10 @@ void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parame
     int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,paramter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater vec4f(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(paramter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater vec4_f",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",paramter_name,2);
+        #endif
         return;
     }
 
@@ -949,9 +922,10 @@ void calypso_framework_renderer_quad_opengl_es_set_current_shader_program_parame
     int location = glGetUniformLocation(_calypso_framework_renderer_quad_opengl_es_current_program,paramter_name);
     if (location == -1)
     {
-        calypso_framework_renderer_quad_opengl_es_do_log_callback("Renderer: Can't set shader program paramater mat4f(",2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(paramter_name,2);
-        calypso_framework_renderer_quad_opengl_es_do_log_callback(")\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad","Can't set shader program paramater mat4_f",2);
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",paramter_name,2);
+        #endif
         return;
     }
 
@@ -987,7 +961,9 @@ void calypso_framework_renderer_quad_opengl_es_clear()
     // Check If We Are Init
     if (_calypso_framework_renderer_quad_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_quad_opengl_es_log_callback("Renderer GL 2D: Not init\n",3);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad->clear","Not Initalized",2);
+        #endif
         return;
     }
     
@@ -1004,7 +980,10 @@ void calypso_framework_renderer_quad_opengl_es_renderer_resize(const int width, 
      // Check If We Are Init
     if (_calypso_framework_renderer_quad_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_QUAD_OPENGL_ES_STATE_INIT)
     {
-        _calypso_framework_renderer_quad_opengl_es_log_callback("Renderer Not init : calypso_framework_renderer_quad_opengl_es_renderer_resize\n",3);
+         #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("render_module_opengl_es_quad->resize","Not Initalized",2);
+        #endif
+        return;
         return;
     }
 

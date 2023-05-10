@@ -9,10 +9,6 @@
 #include <dependencies/SDL2/SDL_ttf.h>
 #include <dependencies/SDL2/SDL_image.h>
 
-// Logging Callback
-typedef void (*calypso_framework_sdl2_renderer_log_callback_t)(const char* log_msg, const unsigned char log_type);
-calypso_framework_sdl2_renderer_log_callback_t _calypso_framework_sdl2_renderer_log_callback;
-
 // State
 #define CALYPSO_FRAMEWORK_SDL2_RENDERER_STATE_NULL                          0b00000000
 #define CALYPSO_FRAMEWORK_SDL2_RENDERER_STATE_INIT                          0b00000001
@@ -26,10 +22,10 @@ SDL_Window* _calypso_framework_sdl2_renderer_window_ptr                     = NU
 SDL_Renderer* _calypso_framework_sdl2_renderer_renderer_ptr                 = NULL;
 
 // Clear Color (Cornflower Blue By Default)
-unsigned char _calypso_framework_sdl2_renderer_clear_color_r                      = 100;
-unsigned char _calypso_framework_sdl2_renderer_clear_color_g                      = 149;
-unsigned char _calypso_framework_sdl2_renderer_clear_color_b                      = 237;
-unsigned char _calypso_framework_sdl2_renderer_clear_color_a                      = 255;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_r                = 100;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_g                = 149;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_b                = 237;
+unsigned char _calypso_framework_sdl2_renderer_clear_color_a                = 255;
 
 // Render Space
 #define CALYPSO_FRAMEWORK_SDL2_RENDERER_RENDER_SPACE_WORLD                  0
@@ -44,23 +40,6 @@ double* _calypso_framework_sdl2_renderer_render_space_offset_y_ptr          = NU
 
 // Font
 void* _calypso_framework_sdl2_renderer_font_map_item_ttf_current_ptr        = NULL;
-
-/*------------------------------------------------------------------------------
-Calypso Framework SDL Renderer : Log
-------------------------------------------------------------------------------*/
-
-void calypso_framework_sdl2_renderer_set_log_callback(calypso_framework_sdl2_renderer_log_callback_t log_callback)
-{
-    _calypso_framework_sdl2_renderer_log_callback = log_callback;
-}
-
-void calypso_framework_sdl2_renderer_do_log_callback(const char* log_msg, const unsigned char log_type)
-{
-    if (_calypso_framework_sdl2_renderer_log_callback == NULL)
-        return;
-
-    _calypso_framework_sdl2_renderer_log_callback(log_msg,log_type);
-}
 
 /*------------------------------------------------------------------------------
 Calypso Framework SDL Renderer : Init | Denint
@@ -90,7 +69,9 @@ void calypso_framework_sdl2_renderer_init(SDL_Window* sdl_window_ptr)
     // Only Init Once
     if (_calypso_framework_sdl2_renderer_state != CALYPSO_FRAMEWORK_SDL2_RENDERER_STATE_NULL)
     {
-        calypso_framework_sdl2_app_do_log_callback("App: App already init\n",2);
+        #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+        CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_rednerer->init","Already Initalized",2);
+        #endif
         return;
     }
 
