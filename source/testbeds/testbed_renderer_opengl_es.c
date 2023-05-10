@@ -123,7 +123,7 @@ void start(void)
             float color[4] = {0,0,0,1};
             float scale = 1;
             calypso_framework_random_rand_set_seed_as_time();
-            for (int i = 0; i < CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT; i++)
+            for (int i = 0; i < _renderer_quad_batch_textured_a.batch_size_max; i++)
             {
                 position[0] = calypso_framework_math_random_rand_range_i(min_width,max_width);
                 position[1] = calypso_framework_math_random_rand_range_i(min_height,max_height);
