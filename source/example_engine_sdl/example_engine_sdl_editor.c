@@ -1,3 +1,7 @@
+// Calypso (Logging)
+#define CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
+#include "../calypso_framework_misc/calypso_framework_log.c"
+
 // Includes (Calypso) 
 #include "../calypso_framework_gui/calypso_framework_imgui_minimal.c"
 #include "../calypso_framework_math/calypso_framework_math_colors.c"
@@ -175,37 +179,8 @@ void resize()
     calpyso_framework_sdl2_renderer_set_viewport_scaled(0,0,calypso_framework_sdl2_app_get_window_width(),calypso_framework_sdl2_app_get_window_height());
 }
 
-void log_message(const char* log_message, const uint8_t log_type)
-{
-    // Color Log
-    if (log_type == 1)
-        printf("\033[0;32m"); // Green
-    else if (log_type == 2)
-        printf("\033[33m"); // Yellow
-    else if (log_type == 3)
-        printf("\033[0;31m"); // Red
-    else 
-        printf("\033[0;00m"); // White
-    
-    // Log
-    printf(log_message);
-
-    // Reset Log
-    printf("\033[0;00m"); // White
-}
-
 int main(int argc, char** argv)
 {
-    // Logging
-    #if 1
-    {
-        calypso_framework_sdl2_app_set_log_callback(log_message);
-        calypso_framework_sdl2_renderer_set_log_callback(log_message);
-        calypso_framework_imgui_minimal_set_log_callback(log_message);
-        calypso_framework_io_file_set_log_callback(log_message);
-    }
-    #endif
-
     // App (SDL)
     calypso_framework_sdl2_app_init();
     calypso_framework_sdl2_app_set_events(start,end,update, resize);
