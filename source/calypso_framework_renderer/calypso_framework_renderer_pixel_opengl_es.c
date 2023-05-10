@@ -118,10 +118,10 @@ void calypso_framework_renderer_pixel_opengl_es_init(void* opengl_proc_address, 
         "#version 330 core \n"
         "out vec4 fragColor_s; \n"
         "in vec2 texCoord_s; \n"
-        "uniform sampler2D tex; \n"
+        "uniform sampler2D u_texture; \n"
         "void main() \n"
         "{\n"
-        "  fragColor_s = texture(tex, texCoord_s);\n"
+        "  fragColor_s = texture(u_texture, texCoord_s);\n"
         "}\n";
 
         // Define Vertex Shader
@@ -346,7 +346,7 @@ void calypso_framework_renderer_pixel_opengl_es_set_pixel_fill_screen(calypso_fr
 * \brief renderer render
 * \return void
 */
-void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer)
+void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_framework_renderer_pixel_opengl_es_pixel_buffer_t* pixel_buffer, const unsigned int texture_slot)
 {
     // Check If We Are Init
     if (_calypso_framework_renderer_pixel_opengl_es_state != CALYPSO_FRAMEWORK_RENDERER_PIXEL_OPENGL_ES_STATE_INIT)
@@ -367,15 +367,23 @@ void calypso_framework_renderer_pixel_opengl_es_render_pixel_buffer(calypso_fram
 
     // Create Texture From Pixels | Bind It
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixel_buffer->buffer_width, pixel_buffer->buffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,pixel_buffer->buffer);
+    glActiveTexture(GL_TEXTURE0 + texture_slot);
     glBindTexture(GL_TEXTURE_2D,_calypso_framework_renderer_pixel_opengl_es_texture);
+
+    const char* uniform_texture_parameter_name = "u_texture";
+    int location = glGetUniformLocation(_calypso_framework_renderer_pixel_opengl_es_shader_program,uniform_texture_parameter_name);
+    if (location == -1)
+    {
+        calypso_framework_renderer_pixel_opengl_es_do_log_callback("Renderer: Can't set shader program paramater float(",2);
+        calypso_framework_renderer_pixel_opengl_es_do_log_callback(uniform_texture_parameter_name,2);
+        calypso_framework_renderer_pixel_opengl_es_do_log_callback(")\n",2);
+        return;
+    }
+    glUniform1i(location,texture_slot);
         
     // Render    
     glBindVertexArray(_calypso_framework_renderer_pixel_opengl_es_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    // Unbind
-    //glBindTexture(GL_TEXTURE_2D, 0);
-    // glBindVertexArray(0);
 }
 
 /*------------------------------------------------------------------------------

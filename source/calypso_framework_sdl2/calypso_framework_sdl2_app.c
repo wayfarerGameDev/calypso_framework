@@ -322,6 +322,11 @@ void calypso_framework_sdl2_app_init_with_opengl(const int major_version, const 
     }
 }
 
+void calypso_framework_sdl2_app_swap_buffer()
+{
+    SDL_GL_SwapWindow(_calypso_framework_sdl2_app_window_ptr);
+}
+
 void* calypso_framework_sdl2_app_get_open_gl_proc_address()
 {
     return SDL_GL_GetProcAddress;
@@ -398,9 +403,8 @@ void calypso_framework_sdl2_app_run(void)
          if (_calypso_framework_sdl2_app_event_on_update != NULL)
             _calypso_framework_sdl2_app_event_on_update();
 
-        // Swap Window (OpenGL Is Using 2 Buffers)
-        if (_calypso_framework_sdl2_app_gl_context_ptr)
-            SDL_GL_SwapWindow(_calypso_framework_sdl2_app_window_ptr);  
+        // Swap Back And Front Buffers
+        SDL_GL_SwapWindow(_calypso_framework_sdl2_app_window_ptr);  
     }
 
     // On Event Shutdown

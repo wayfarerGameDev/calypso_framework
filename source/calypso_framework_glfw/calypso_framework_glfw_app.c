@@ -5,7 +5,7 @@
 #pragma once
 
 // Includes
-#include <stdio.h> // snprintf
+#include <stdio.h> //snprintf
 #include <dependencies/GLFW/glfw3.h>
 
 // Logging Callback
@@ -163,14 +163,6 @@ void calypso_framework_glfw_app_init_with_opengl(const int major_version, const 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
         glfwWindowHint(GLFW_OPENGL_PROFILE, context_profile);
-        //glfwWindowHint(GLFW_DOUBLEBUFFER,1);
-        //glfwWindowHint(GLFW_DEPTH_BITS,24);
-
-        //GLFW_GL_SetAttribute(GLFW_GL_RED_SIZE,5);
-        //GLFW_GL_SetAttribute(GLFW_GL_GREEN_SIZE,5);
-        //GLFW_GL_SetAttribute(GLFW_GL_BLUE_SIZE,5);
-        //GLFW_GL_SetAttribute(GLFW_GL_DEPTH_SIZE,16);
-        //GLFW_GL_SetAttribute(GLFW_GL_DOUBLEBUFFER,1);
     }
 
     // Only Init Once
@@ -279,7 +271,7 @@ void calypso_framework_glfw_app_run(void)
         if (_calypso_framework_glfw_app_event_on_update != NULL)
             _calypso_framework_glfw_app_event_on_update();
 
-        // Swap Window (Open GL Is Using 2 Buffers)
+        // Swap Back And Front Buffers
         glfwSwapBuffers(_calypso_framework_glfw_app_window);
     }
 
