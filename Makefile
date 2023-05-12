@@ -1,6 +1,6 @@
 # Shared
 # MAIN_FILE = source/example_engine_sdl/example_engine_sdl_editor.c
-MAIN_FILE = source/testbeds/testbed_renderer_opengl_es.c
+MAIN_FILE = source/example_render_pipeline/example_render_pipeline_main.c
 CC = gcc
 CC_FLAGS_DEBUG = -std=c99 -Wall -O0 -g -DNDEBUG
 CC_FLAGS_RELEASE = -std=c99 -O3

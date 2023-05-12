@@ -143,7 +143,7 @@ void calypso_framework_sdl2_renderer_set_draw_color_rgb_hex(int hex_value)
     SDL_SetRenderDrawColor(_calypso_framework_sdl2_renderer_renderer_ptr, r, g, b, 255);
 }
 
-void calypso_framework_sdl2_renderer_set_draw_color_rgba_hex(int hex_value, unsigned char a)
+void calypso_framework_sdl2_renderer_set_draw_color_hex_a(int hex_value, unsigned char a)
 {
     // Convert Hex Color to RGB
     unsigned char r = ((hex_value >> 16) & 0xFF);

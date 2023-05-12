@@ -65,10 +65,6 @@ const unsigned int calypso_framework_render_module_opengl_es_shader_create_textu
     return texture;
 }
 
-/*------------------------------------------------------------------------------
-Calypso Framework Render Module (OpenGl ES Texture) : Un/Bind Texture
-------------------------------------------------------------------------------*/
-
 void calypso_framework_render_module_opengl_es_shader_bind_texture_2d(const unsigned int texture, const unsigned int texture_slot)
 {
     glActiveTexture(GL_TEXTURE0 + texture_slot);

@@ -21,3 +21,4 @@ do {                                                                       \
         /* Set Print Color (White) */                                      \
         printf("\033[0;00m");                                              \
 } while(0)
+// New Line At End Of File Fix

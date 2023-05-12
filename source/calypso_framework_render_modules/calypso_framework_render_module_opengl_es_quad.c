@@ -26,6 +26,8 @@ typedef struct calypso_framework_render_module_opengl_es_quad_batch_t
     unsigned int vbo;                       // Vertex buffer object
     unsigned int ibo;                       // Index buffer object
 } calypso_framework_render_module_opengl_es_quad_batch_t;
+calypso_framework_render_module_opengl_es_quad_batch_t* _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+calypso_framework_render_module_opengl_es_quad_batch_t* _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
 
 /*------------------------------------------------------------------------------
 Calypso Framework Render Module (OpenGl ES Quad) : Quad (Immediate)
@@ -187,15 +189,31 @@ calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_
     return batch;
 }
 
-void calypso_framework_render_module_opengl_es_quad_build_quad_batch(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_bind_quad_batch(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
 {
+    _calypso_framework_renderer_module_opengl_es_quad_batch_binded = batch;
+}
+
+void calypso_framework_render_module_opengl_es_quad_build_quad_batch()
+{
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+        
     // Vertices
     glBindBuffer(GL_ARRAY_BUFFER,batch->vbo);
     glBufferSubData(GL_ARRAY_BUFFER,0,batch->vertex_buffer_data_size,batch->vertex_buffer);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float position[3], const float size, const float color[4])
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(const int instance, const float position[3], const float size, const float color[4])
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
+    // Validate
     if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
@@ -228,8 +246,14 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 20] = color[3];                  vertex_buffer[offset + 27] = color[3];
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float position[3], const float size)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform(const int instance, const float position[3], const float size)
 {
+     // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
+     // Validate   
      if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
@@ -254,9 +278,15 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 16] = position[2];               vertex_buffer[offset + 23] = position[2];
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float color[4])
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color(const int instance, const float color[4])
 {
-     if (instance < 0 || instance >= batch->batch_size_max)
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
+    // Validate
+    if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
     // Vertices (One Quad)
@@ -282,44 +312,60 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 20] = color[3];                  vertex_buffer[offset + 27] = color[3];
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_default(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_default()
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
     // Cache Repeated Values
     float position[3] = {0,0,0};
     float color[4] = {1,1,1,1};
 
     //Set Instance Data (Default)
     for (int i = 0; i < batch->batch_size_max; i++)
-        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(batch,i,position,10,color);
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(i,position,10,color);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed()
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
     // Cache Repeated Values
     float position[3] = {0,0,0};
     float color[4] = {0,0,0,0};
 
     //Set Instance Data (Default)
     for (int i = 0; i < batch->batch_size_max; i++)
-        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(batch,i,position,0,color);
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(i,position,0,color);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_default(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_default(const int instance)
 {
+
     float position[3] = {0,0,0};
     float color[4] = {1,1,1,1};
-    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(batch,instance,position,10,color);
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(instance,position,10,color);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_zeroed(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_zeroed(const int instance)
 {
     float position[3] = {0,0,0};
     float color[4] = {0,0,0,0};
-    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(batch,instance,position,10,color);
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data(instance,position,10,color);
 }
 
-void calypso_framework_render_module_opengl_es_quad_render_quad_batched(calypso_framework_render_module_opengl_es_quad_batch_t* batch) 
+void calypso_framework_render_module_opengl_es_quad_render_quad_batched() 
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded;
+    if (batch == NULL)
+        return;
+
     // OpenGL
     glBindVertexArray(batch->vao);
     glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_max, GL_UNSIGNED_INT, 0);
@@ -436,15 +482,31 @@ calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_
     return batch;
 }
 
-void calypso_framework_render_module_opengl_es_quad_build_quad_batch_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_bind_quad_batch_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
 {
+    _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured = batch;
+}
+
+void calypso_framework_render_module_opengl_es_quad_build_quad_batch_textured()
+{
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+        
     // Vertices
     glBindBuffer(GL_ARRAY_BUFFER,batch->vbo);
     glBufferSubData(GL_ARRAY_BUFFER,0,batch->vertex_buffer_data_size,batch->vertex_buffer);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float position[3], const float size, const float color[4], int texture_index)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(const int instance, const float position[3], const float size, const float color[4], int texture_index)
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+
+    // Validate
     if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
@@ -483,9 +545,15 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 29] = texture_index;             vertex_buffer[offset + 39] = texture_index;
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float position[3], const float size)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_transform_textured(const int instance, const float position[3], const float size)
 {
-     if (instance < 0 || instance >= batch->batch_size_max)
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+
+    // Validate
+    if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
      // Vertices (One Quad)
@@ -509,9 +577,15 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 22] = position[2];               vertex_buffer[offset + 32] = position[2];
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, const float color[4])
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_color_textured(const int instance, const float color[4])
 {
-     if (instance < 0 || instance >= batch->batch_size_max)
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+
+    // Validate
+    if (instance < 0 || instance >= batch->batch_size_max)
         return;
 
     // Vertices (One Quad)
@@ -537,10 +611,16 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 26] = color[3];                  vertex_buffer[offset + 36] = color[3];
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_texture_index_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance, int texture_index)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_texture_index_textured(const int instance, int texture_index)
 {
-     if (instance < 0 || instance >= batch->batch_size_max)
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
         return;
+
+    // Validate
+    if (instance < 0 || instance >= batch->batch_size_max)
+       return;
 
     // Vertices (One Quad)
     //    POS (XYZ)           COLOR (RGBA)                    Texture (UV)        Texture (Index/ID)
@@ -559,44 +639,59 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data
     vertex_buffer[offset + 29] = texture_index;             vertex_buffer[offset + 39] = texture_index;
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_default_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_default_textured()
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+
     // Cache Repeated Values
     float position[3] = {0,0,0};
     float color[4] = {1,1,1,1};
 
     //Set Instance Data (Default)
     for (int i = 0; i < batch->batch_size_max; i++)
-        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(batch,i,position,0,color,0);
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(i,position,0,color,0);
 }
 
-void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch)
+void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured()
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+
     // Cache Repeated Values
     float position[3] = {0,0,0};
     float color[4] = {0,0,0,0};
 
     //Set Instance Data (Default)
     for (int i = 0; i < batch->batch_size_max; i++)
-        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(batch,i,position,0,color,10);
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(i,position,0,color,10);
 }
 
 void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_default_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance)
 {
     float position[3] = {0,0,0};
     float color[4] = {1,1,1,1};
-    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(batch,instance,position,10,color,10);
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(instance,position,10,color,10);
 }
 
 void calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_zeroed_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch, const int instance)
 {
     float position[3] = {0,0,0};
     float color[4] = {0,0,0,0};
-    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(batch,instance,position,10,color,0);
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(instance,position,10,color,0);
 }
 
-void calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured(calypso_framework_render_module_opengl_es_quad_batch_t* batch) 
+void calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured() 
 {
+    // Validate Current Batch
+    calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
+    if (batch == NULL)
+        return;
+        
     // OpenGL
     glBindVertexArray(batch->vao);
     glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_max, GL_UNSIGNED_INT, 0);
