@@ -6,6 +6,7 @@
 // Calypso (Math)
 #include "../calypso_framework_math/calypso_framework_math_colors.c"
 #include "../calypso_framework_math/calypso_framework_math_matrix4.c"
+#include "../calypso_framework_math/calypso_framework_math_random.c"
 
 // Calypso (Render Modules)
 #define CALYPSO_FRAMEWORK_OPENGL_ES_SHADER_DEBUGGING_ENABLED
@@ -13,6 +14,11 @@
 #include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_quad.c"
 #include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_shader.c"
 #include "../calypso_framework_render_modules/calypso_framework_render_module_opengl_es_texture.c"
+
+// Render
+void(*_example_render_pipeline_render_world_func_ptr)(void);
+void(*_example_render_pipeline_render_screen_func_ptr)(void);
+void(*_example_render_pipeline_render_end_func_ptr)(void);
 
 // Texture
 typedef struct example_render_pipeline_texture_t
@@ -41,8 +47,111 @@ float _example_render_pipeline_render_color_a;
 float _example_renderer_pipeline_render_scale_x;
 float _example_renderer_pipeline_render_scale_y;
 
-// Shader Programs
-unsigned int _example_render_pipleline_shader_program_quad_immediate;
+// Rect
+unsigned int _example_render_pipleline_shader_program_rect;
+
+// Spritebatch
+typedef calypso_framework_render_module_opengl_es_quad_batch_t example_render_pipeline_sprite_batch_t;
+unsigned int _example_render_pipleline_shader_program_sprite_batch;
+
+/*------------------------------------------------------------------------------
+Example Render Pipeline : Main
+------------------------------------------------------------------------------*/
+
+void example_render_pipeline_init(const void* opengl_processing_address, void(*render_world_func_ptr)(void),void(*render_screen_func_ptr)(void), void(*render_end_func_ptr)(void))
+{
+    // Init Render Modules
+    calypso_framework_render_module_opengl_es_core_init(opengl_processing_address);
+
+    // Set Clear
+    calypso_framework_render_module_opengl_es_core_set_clear_color(0,0,0,1);
+    calypso_framework_render_module_opengl_es_core_set_clear_depth(1);
+
+    // Default Draw Scale
+    _example_renderer_pipeline_render_scale_x = 100;
+    _example_renderer_pipeline_render_scale_y = 100;
+
+    // Enable Features
+    calypso_framework_renderer_module_opengl_es_core_enable(GL_BLEND);
+    calypso_framework_renderer_module_opengl_es_core_enable(GL_DEPTH_TEST);
+
+    // Depth/Blend Function
+    calypso_framework_renderer_module_opengl_es_core_set_blend_function(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    calypso_framework_renderer_module_opengl_es_core_set_depth_function(GL_LESS);
+    
+    // Rect
+    {
+        // Create Default Shader Program (Quad Immediate)
+        _example_render_pipleline_shader_program_rect = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_quad_immediate(calypso_framework_render_module_opengl_es_shader_create_shader);
+        calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_example_render_pipleline_shader_program_rect);
+        calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",255,0,0,0);
+
+        // Build Quad Immediate
+        calypso_framework_render_module_opengl_es_quad_build_quad_immediate();
+    }
+
+    // Spritebatch 
+    {
+        // Shader Program
+        _example_render_pipleline_shader_program_sprite_batch = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_batched_quad_textured(calypso_framework_render_module_opengl_es_shader_create_shader);
+    }
+
+    // Render World | Screen
+    _example_render_pipeline_render_world_func_ptr = render_world_func_ptr;
+    _example_render_pipeline_render_screen_func_ptr = render_screen_func_ptr;
+    _example_render_pipeline_render_end_func_ptr = render_end_func_ptr;
+}
+
+void example_render_pipeline_update(const int window_width, const int window_height)
+{
+    // Clear
+    calypso_framework_render_module_opengl_es_core_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Update Viewport
+    calypso_framework_render_module_opengl_es_core_set_viewport(window_width, window_height);
+
+    // Movdel View Projection Matrix (World) | Render World
+    {
+        // Viewport Transform
+        float position_x = window_width / 2;
+        float position_y = window_height / 2;
+
+        // View Matrix
+        calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_view_matrix);
+        calypso_framework_math_matrix4_modify_scale_f(0.3f,0.3f,1,_example_render_pipeline_view_matrix);
+        calypso_framework_math_matrix4_modify_position_f(position_x,position_y,0,_example_render_pipeline_view_matrix);
+
+        // Projection Matrix
+        calypso_framework_math_matrix4_build_projection_ortho_matrix_f(0,window_width,0,window_height,-100,100,_example_render_pipeline_projection_matrix);
+
+        // Projection * View Matrix
+        calypso_framework_math_matrix4_modify_mult_f(_example_render_pipeline_projection_matrix,_example_render_pipeline_view_matrix,_example_render_pipeline_projection_view_matrix);
+    
+        // Render World
+        _example_render_pipeline_render_world_func_ptr();
+    }
+
+    // Movdel View Projection Matrix (Screen) | Render Screen
+    {
+        // View Matrix
+        calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_view_matrix);
+        calypso_framework_math_matrix4_modify_scale_f(0.3f,0.3f,1,_example_render_pipeline_view_matrix);
+        calypso_framework_math_matrix4_modify_position_f(0,0,0,_example_render_pipeline_view_matrix);
+
+        // Projection Matrix
+        calypso_framework_math_matrix4_build_projection_ortho_matrix_f(0,window_width,0,window_height,-100,100,_example_render_pipeline_projection_matrix);
+
+        // Projection
+        calypso_framework_math_matrix4_modify_mult_f(_example_render_pipeline_projection_matrix,_example_render_pipeline_view_matrix,_example_render_pipeline_projection_view_matrix);
+    
+        _example_render_pipeline_render_screen_func_ptr();
+    }
+
+    // TODO: Post Processing Here
+
+    // Render End
+    _example_render_pipeline_render_end_func_ptr();
+}
 
 /*------------------------------------------------------------------------------
 Example Render Pipeline : Render Scale
@@ -136,7 +245,7 @@ example_render_pipeline_texture_t example_render_pipeline_load_texture_file_tga(
 void example_render_pipeline_bind_texture(const example_render_pipeline_texture_t* texture, const unsigned int texture_slot)
 {
     // Validate
-    if (texture != ((void*)0) && texture->is_valid == 1)
+    if (texture == ((void*)0) || texture->is_valid != 1)
         return;
 
     // Bind
@@ -149,10 +258,10 @@ void example_render_pipeline_unbind_texture()
 }
 
 /*------------------------------------------------------------------------------
-Example Render Pipeline : Render (Quad Immediate)
+Example Render Pipeline : Render (Rect)
 ------------------------------------------------------------------------------*/
 
-void example_render_pipeline_render_quad_immediate(const float position_x, const float position_y, const float position_z)
+void example_render_pipeline_render_rect(const float position_x, const float position_y, const float position_z)
 {
     // Model Matrix
     calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_model_matrix);
@@ -160,7 +269,7 @@ void example_render_pipeline_render_quad_immediate(const float position_x, const
     calypso_framework_math_matrix4_modify_scale_f(_example_renderer_pipeline_render_scale_x,_example_renderer_pipeline_render_scale_y,1,_example_render_pipeline_model_matrix);
     
     // Update Shader Program
-    calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_example_render_pipleline_shader_program_quad_immediate);
+    calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_example_render_pipleline_shader_program_rect);
     calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_example_render_pipeline_projection_view_matrix[0],0); // Apply Viewport Projection And View
     calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",_example_render_pipeline_render_color_r,_example_render_pipeline_render_color_g,_example_render_pipeline_render_color_b,_example_render_pipeline_render_color_a);
     calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_example_render_pipeline_model_matrix[0],0); // Apply Transfor
@@ -173,96 +282,57 @@ void example_render_pipeline_render_quad_immediate(const float position_x, const
 Example Render Pipeline : Render Sprite
 ------------------------------------------------------------------------------*/
 
-void example_render_pipeline_draw_sprite_batch_begin()
+
+void example_render_pipeline_sprite_batch_apply_shaders()
 {
-}
-
-void example_render_pipeline_draw_sprite_batch_element()
-{
-}
-
-void example_render_pipeline_draw_sprite_batch_end()
-{
-}
-
-/*------------------------------------------------------------------------------
-Example Render Pipeline : Main
-------------------------------------------------------------------------------*/
-
-void example_render_pipeline_init(const void* opengl_processing_address)
-{
-    // Init Render Modules
-    calypso_framework_render_module_opengl_es_core_init(opengl_processing_address);
-
-    // Set Clear
-    calypso_framework_render_module_opengl_es_core_set_clear_color(0,0,0,1);
-    calypso_framework_render_module_opengl_es_core_set_clear_depth(1);
-
-    // Default Draw Scale
-    _example_renderer_pipeline_render_scale_x = 100;
-    _example_renderer_pipeline_render_scale_y = 100;
-
-    // Enable Features
-    calypso_framework_renderer_module_opengl_es_core_enable(GL_BLEND);
-    calypso_framework_renderer_module_opengl_es_core_enable(GL_DEPTH_TEST);
-
-    // Depth/Blend Function
-    calypso_framework_renderer_module_opengl_es_core_set_blend_function(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    calypso_framework_renderer_module_opengl_es_core_set_depth_function(GL_LESS);
+    // Update Model Matrix
+    calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_model_matrix);
+    calypso_framework_math_matrix4_modify_scale_f(50,50,1,_example_render_pipeline_model_matrix);
+    calypso_framework_math_matrix4_modify_position_f(0,0,0,_example_render_pipeline_model_matrix);
     
-    // Quad Immediate
-    {
-        // Create Default Shader Program (Quad Immediate)
-        _example_render_pipleline_shader_program_quad_immediate = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_quad_immediate(calypso_framework_render_module_opengl_es_shader_create_shader);
-        calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_example_render_pipleline_shader_program_quad_immediate);
-        calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_vec4_f("color_in",255,0,0,0);
-
-        // Build Quad Immediate
-        calypso_framework_render_module_opengl_es_quad_build_quad_immediate();
-    }
+    // Update Shader Program
+    calypso_framework_render_module_opengl_es_shader_set_current_shader_program(_example_render_pipleline_shader_program_sprite_batch = calypso_framework_render_module_opengl_es_quad_create_default_shader_program_batched_quad_textured(calypso_framework_render_module_opengl_es_shader_create_shader));
+    calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("projection_view_in",_example_render_pipeline_projection_view_matrix[0],0); // Apply Viewport Projection And View
+    calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_matrix4_f("model_in",_example_render_pipeline_model_matrix[0],0); // Apply Transform
+    calypso_framework_render_module_opengl_es_shader_set_current_shader_program_parameter_i("u_texture",0);
 }
 
-void example_render_pipeline_update(void(*draw_world_func_ptr)(void),void(*draw_screen_func_ptr)(void), const int window_width, const int window_height)
+example_render_pipeline_sprite_batch_t example_render_pipeline_sprite_batch_create(const unsigned int batch_size)
 {
-    // Clear
-    calypso_framework_render_module_opengl_es_core_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Create Batch
+    example_render_pipeline_sprite_batch_t batch = calypso_framework_render_module_opengl_es_quad_create_quad_batch_textured(batch_size);
+    calypso_framework_render_module_opengl_es_quad_bind_quad_batch_textured(&batch);
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured();
 
-    // Update Viewport
-    calypso_framework_render_module_opengl_es_core_set_viewport(window_width, window_height);
+    return batch;
+}
 
-    // Movdel View Projection Matrix (World) | Draw World
-    {
-        // Viewport Transform
-        float position_x = window_width / 2;
-        float position_y = window_height / 2;
+void example_render_pipeline_sprite_batch_build(example_render_pipeline_sprite_batch_t* batch_ptr)
+{
+    // Bind (Textured)
+    calypso_framework_render_module_opengl_es_quad_bind_quad_batch_textured(batch_ptr);
+    calypso_framework_render_module_opengl_es_quad_build_quad_batch_textured();
+}
 
-        // View Matrix
-        calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_view_matrix);
-        calypso_framework_math_matrix4_modify_scale_f(0.3f,0.3f,1,_example_render_pipeline_view_matrix);
-        calypso_framework_math_matrix4_modify_position_f(position_x,position_y,0,_example_render_pipeline_view_matrix);
+void example_render_pipeline_sprite_batch_draw(example_render_pipeline_sprite_batch_t* batch_ptr, const int count)
+{    
+    // Set Batch Size
+    batch_ptr->batch_size_current = count;
 
-        // Projection Matrix
-        calypso_framework_math_matrix4_build_projection_ortho_matrix_f(0,window_width,0,window_height,-100,100,_example_render_pipeline_projection_matrix);
+    // Reuild batch | Render Batch
+    calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured();
+}
 
-        // Projection * View Matrix
-        calypso_framework_math_matrix4_modify_mult_f(_example_render_pipeline_projection_matrix,_example_render_pipeline_view_matrix,_example_render_pipeline_projection_view_matrix);
-    }
-    draw_world_func_ptr();
+void example_render_pipeline_sprite_batch_set_element(example_render_pipeline_sprite_batch_t* batch_ptr,const int index, const float position_x, const float position_y, const float position_z)
+{   
+    // Set Batch Data
+    float position[3] = {position_x,position_y,position_z};
+    float color[4] = {1,1,1,1};
+    float scale = 3;
 
-    // Movdel View Projection Matrix (Screen) | Draw Screen
-    {
-        // View Matrix
-        calypso_framework_math_matrix4_build_identity_matrix_f(_example_render_pipeline_view_matrix);
-        calypso_framework_math_matrix4_modify_scale_f(0.3f,0.3f,1,_example_render_pipeline_view_matrix);
-        calypso_framework_math_matrix4_modify_position_f(0,0,0,_example_render_pipeline_view_matrix);
+    // Bind (Textured)
+    calypso_framework_render_module_opengl_es_quad_bind_quad_batch_textured(batch_ptr);
 
-        // Projection Matrix
-        calypso_framework_math_matrix4_build_projection_ortho_matrix_f(0,window_width,0,window_height,-100,100,_example_render_pipeline_projection_matrix);
-
-        // Projection
-        calypso_framework_math_matrix4_modify_mult_f(_example_render_pipeline_projection_matrix,_example_render_pipeline_view_matrix,_example_render_pipeline_projection_view_matrix);
-    }
-    draw_screen_func_ptr();
-
-    // TODO: Post Processing Here
+    // Set Data
+    calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(index,position,scale,color,0);
 }

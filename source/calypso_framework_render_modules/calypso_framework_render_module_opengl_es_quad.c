@@ -14,13 +14,12 @@ unsigned int _calypso_framework_render_module_opengl_es_quad_ibo_immediate;
 
 // Quad (Batch)
 #define CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_BATCH_INDICIES_DATA_STRIDE           6
-#define CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT        1024 * 10
-#define CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INDEX_BUFFER_SIZE         CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_BATCH_INDICIES_DATA_STRIDE * CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT
 typedef struct calypso_framework_render_module_opengl_es_quad_batch_t
 {
     float* vertex_buffer;
     // int* idnex_buffer;                   // IBO contains this data and it only needs to be set once and is static
     int batch_size_max;
+    int batch_size_current;
     int vertex_buffer_data_size;
     unsigned int vao;                       // Vertex array object (Encapsulates VBO and IBO)
     unsigned int vbo;                       // Vertex buffer object
@@ -129,13 +128,13 @@ unsigned int calypso_framework_render_module_opengl_es_quad_create_default_shade
 Calypso Framework Render Module (OpenGl ES Quad) : Quad (Batch)
 ------------------------------------------------------------------------------*/
 
-calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_module_opengl_es_quad_create_quad_batch()
+calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_module_opengl_es_quad_create_quad_batch(const unsigned int batch_size_max)
 {
     // Create Batch | Set batch instance count
     calypso_framework_render_module_opengl_es_quad_batch_t batch;
 
     // Set Size Max
-    batch.batch_size_max = CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT;
+    batch.batch_size_max = batch_size_max;
 
     // Vertex
     const int vertex_data_stride = 7;
@@ -150,11 +149,11 @@ calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_
     //    8, 9, 10, 10, 11, 8,      // Quad 2
     //    12, 13, 14, 14, 15, 12,   // Quad 3
     //};
-    const int indicies_data_stride = 6;
-    unsigned int index_buffer[CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INDEX_BUFFER_SIZE];
-    for (int i = 0; i < CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT; i++)
+    const unsigned int index_buffer_size = batch.batch_size_max * 6 * sizeof(unsigned int);
+    unsigned int* index_buffer = malloc(index_buffer_size);
+    for (int i = 0; i < batch.batch_size_max; i++)
     {
-        const int offset = indicies_data_stride * i;
+        const int offset = CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_BATCH_INDICIES_DATA_STRIDE * i;
         const int offsetV = 4 * i;
 
         index_buffer[offset + 0] = offsetV + 0;           index_buffer[offset + 3] = offsetV + 2;
@@ -366,9 +365,13 @@ void calypso_framework_render_module_opengl_es_quad_render_quad_batched()
     if (batch == NULL)
         return;
 
+    // Clamp Batch Size
+    if (batch->batch_size_current > batch->batch_size_max) 
+        batch->batch_size_current = batch->batch_size_max;   
+
     // OpenGL
     glBindVertexArray(batch->vao);
-    glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_max, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_current, GL_UNSIGNED_INT, 0);
 }
 
 unsigned int calypso_framework_render_module_opengl_es_quad_create_default_shader_program_quad_batched(unsigned int (*operation)(const char*, const char*))
@@ -411,13 +414,13 @@ unsigned int calypso_framework_render_module_opengl_es_quad_create_default_shade
 Calypso Framework Render Module (OpenGl ES Quad) : Quad (Batch)(Textured)
 ------------------------------------------------------------------------------*/
 
-calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_module_opengl_es_quad_create_quad_batch_textured()
+calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_module_opengl_es_quad_create_quad_batch_textured(const unsigned int batch_size_max)
 {
     // Create Batch | Set batch instance count
     calypso_framework_render_module_opengl_es_quad_batch_t batch;
 
     // Set Size Max
-    batch.batch_size_max = CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INSTANCE_MAX_COUNT;
+    batch.batch_size_max = batch_size_max;
 
     // Vertex
     const int vertex_data_stride = 10;
@@ -432,11 +435,12 @@ calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_
     //    8, 9, 10, 10, 11, 8,      // Quad 2
     //    12, 13, 14, 14, 15, 12,   // Quad 3
     //};
-    const int indicies_data_stride = 6;
-    unsigned int index_buffer[CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INDEX_BUFFER_SIZE];
+    // unsigned int index_buffer[CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_QUAD_BATCH_INDEX_BUFFER_SIZE];
+    const unsigned int index_buffer_size = batch.batch_size_max * 6 * sizeof(unsigned int);
+    unsigned int* index_buffer = malloc(index_buffer_size);
     for (int i = 0; i < batch.batch_size_max; i++)
     {
-        const int offset = indicies_data_stride * i;
+        const int offset = CALYPSO_FRAMEWORK_RENDER_MODULE_OPENGL_ES_QUAD_BATCH_INDICIES_DATA_STRIDE * i;
         const int offsetV = 4 * i;
 
         index_buffer[offset + 0] = offsetV + 0;           index_buffer[offset + 3] = offsetV + 2;
@@ -458,7 +462,7 @@ calypso_framework_render_module_opengl_es_quad_batch_t calypso_framework_render_
     // IBO (Index Buffer Object)
     glGenBuffers(1, &batch.ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batch.ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_buffer),index_buffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size,index_buffer, GL_STATIC_DRAW);
     
     // Vertex Attributes (XYZ)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_data_stride * sizeof(float), (void*)0);
@@ -652,7 +656,7 @@ void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_default_
 
     //Set Instance Data (Default)
     for (int i = 0; i < batch->batch_size_max; i++)
-        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(i,position,0,color,0);
+        calypso_framework_render_module_opengl_es_quad_set_quad_batch_instance_data_textured(i,position,3,color,1);
 }
 
 void calypso_framework_render_module_opengl_es_quad_set_quad_batch_data_zeroed_textured()
@@ -691,10 +695,14 @@ void calypso_framework_render_module_opengl_es_quad_render_quad_batched_textured
     calypso_framework_render_module_opengl_es_quad_batch_t* batch = _calypso_framework_renderer_module_opengl_es_quad_batch_binded_textured;
     if (batch == NULL)
         return;
-        
-    // OpenGL
+
+    // Clamp Batch Size
+    if (batch->batch_size_current > batch->batch_size_max) 
+        batch->batch_size_current = batch->batch_size_max;   
+    
+    // Render
     glBindVertexArray(batch->vao);
-    glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_max, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6 * batch->batch_size_current, GL_UNSIGNED_INT, 0);
 }
 
 unsigned int calypso_framework_render_module_opengl_es_quad_create_default_shader_program_batched_quad_textured(unsigned int (*operation)(const char*, const char*))

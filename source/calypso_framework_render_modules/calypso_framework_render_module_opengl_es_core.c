@@ -80,13 +80,7 @@ void calypso_framework_renderer_module_opengl_es_core_set_depth_function(const u
 
 void calypso_framework_renderer_module_opengl_es_core_set_wireframe_mode(const unsigned char value)
 {
-    // Wire frame On
-    if (value == 1)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    // Wire frame Off
-    else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    value == 1 ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 /*------------------------------------------------------------------------------

@@ -24,11 +24,6 @@ SDL_Window* _calypso_framework_sdl2_app_window_ptr;
 // Open GL Context
 SDL_GLContext _calypso_framework_sdl2_app_gl_context_ptr;
 
-// Time
-float _calypso_framework_sdl2_app_time_delta_time             = 0;
-float _calypso_framework_sdl2_app_time_fps                    = 0;
-char _calypso_framework_sdl2_app_time_fps_as_string[16];
-
 // Events
 typedef void (*calypso_framework_sdl2_app_event_t)(void);
 calypso_framework_sdl2_app_event_t _calypso_framework_sdl2_app_event_on_startup;
@@ -194,17 +189,17 @@ void calypso_framework_sdl2_app_enable_window_custom_toolbar(const int is_enable
 }
 
 /*------------------------------------------------------------------------------
-Calypso Framework SDL App : Time
+Calypso Framework SDL App : Swap
 ------------------------------------------------------------------------------*/
 
-float calypso_framework_sdl2_app_get_time_delta_time(void)
+void calypso_framework_sdl2_app_set_swap_interval(const int interval)
 {
-    return _calypso_framework_sdl2_app_time_delta_time;
+    SDL_GL_SetSwapInterval(interval);
 }
 
-float* calypso_framework_sdl2_app_get_time_delta_time_ptr(void)
+void calypso_framework_sdl2_app_set_swap_buffers()
 {
-    return &_calypso_framework_sdl2_app_time_delta_time;
+    SDL_GL_SwapWindow(_calypso_framework_sdl2_app_window_ptr);
 }
 
 /*------------------------------------------------------------------------------
@@ -352,12 +347,13 @@ void calypso_framework_sdl2_app_run(void)
     // Set State To Running
     _calypso_framework_sdl2_app_state = CALYPSO_FRAMEWORK_SDL2_APP_STATE_RUNNING;
 
-    // Time Data To Do Calculations
-    Uint64 time_time_previous = SDL_GetTicks64();
-
     // Run
     while(_calypso_framework_sdl2_app_state == CALYPSO_FRAMEWORK_SDL2_APP_STATE_RUNNING)
     {
+        // On Event Update
+        if (_calypso_framework_sdl2_app_event_on_update != NULL)
+           _calypso_framework_sdl2_app_event_on_update();
+
         // Event Loop
         {
             SDL_Event event;
@@ -371,37 +367,6 @@ void calypso_framework_sdl2_app_run(void)
                 }
             }
         }
-
-        // Get Time
-        {
-            Uint32 currentTime = SDL_GetTicks();
-            _calypso_framework_sdl2_app_time_delta_time  = (float)(currentTime - time_time_previous) / 1000.0f; // Convert to seconds
-            time_time_previous = currentTime;
-        }
-
-        // Get FPS
-        {
-            // Get FPS (Float)
-            _calypso_framework_sdl2_app_time_fps = 1 / _calypso_framework_sdl2_app_time_delta_time;  
-
-            // Get FPS (String) | Check For Errors
-            int len = snprintf(_calypso_framework_sdl2_app_time_fps_as_string, sizeof(_calypso_framework_sdl2_app_time_fps_as_string), "%.2f", 1.0 / _calypso_framework_sdl2_app_time_delta_time);
-            if (len < 0 || len >= sizeof(_calypso_framework_sdl2_app_time_fps_as_string)) 
-            {
-                #ifdef CALYPSO_FRAMEWORK_LOG_MESSAGE_ENABLED
-                CALYPSO_FRAMEWORK_LOG_MESSAGE("sdl_app->run","FPS string is invalid.",2);
-                CALYPSO_FRAMEWORK_LOG_MESSAGE("\t",SDL_GetError(),3);
-                #endif
-            }
-
-        }
-
-         // On Event Update
-         if (_calypso_framework_sdl2_app_event_on_update != NULL)
-            _calypso_framework_sdl2_app_event_on_update();
-
-        // Swap Back And Front Buffers
-        SDL_GL_SwapWindow(_calypso_framework_sdl2_app_window_ptr);  
     }
 
     // On Event Shutdown
